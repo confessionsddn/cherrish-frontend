@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { confessionsAPI, authAPI } from './services/api'
+import { confessionsAPI, authAPI, API_URL } from './services/api'
 import LandingPage from './pages/LandingPage'
 import AccessCodePage from './pages/AccessCodePage'
 import AdminPanel from './pages/AdminPanel'
@@ -26,7 +26,6 @@ import {
   BrutalNotification 
 } from './components/Animations/AnimationComponents'
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 function App() {
   // ============================================
@@ -120,7 +119,7 @@ function App() {
   
   const loadConfessions = async () => {
     try {
-      let url = `${API_BASE_URL}/api/confessions`
+      let url = `${API_URL}/api/confessions`
       const params = new URLSearchParams()
       
       // Apply filters
@@ -180,7 +179,7 @@ function App() {
         formData.append('voice_duration', confession.voice_duration || 0)
       }
       
-const response = await fetch(`${API_BASE_URL}/api/confessions`, {
+const response = await fetch(`${API_URL}/api/confessions`, {
           method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
@@ -300,7 +299,7 @@ const response = await fetch(`${API_BASE_URL}/api/confessions`, {
   
   const handleSendGift = async (giftType, price) => {
     try {
- const response = await fetch(`${API_BASE_URL}/api/gifts/send`, {
+ const response = await fetch(`${API_URL}/api/gifts/send`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
