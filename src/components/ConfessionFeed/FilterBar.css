@@ -1,0 +1,210 @@
+/* --- CONTAINER --- */
+.filter-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 240, 245, 0.95); /* Matches page bg + transparent */
+  backdrop-filter: blur(5px);
+  border-bottom: 2px solid rgba(0,0,0,0.05);
+  padding: 10px 0;
+}
+
+/* --- 1. FILTERS (Scrollable Area) --- */
+.filters-scroll-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  /* Scroll Mechanics */
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 15px; /* Vital padding for shadows */
+  -webkit-overflow-scrolling: touch; 
+  scrollbar-width: none; 
+  flex: 1; 
+  
+  /* Fade Effect on Edges */
+  mask-image: linear-gradient(to right, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
+}
+
+.filters-scroll-area::-webkit-scrollbar { display: none; }
+
+/* Filter Pill Button */
+.filter-pill {
+  background: var(--candy-white);
+  border: 2px solid var(--candy-black);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--candy-black);
+  cursor: pointer;
+  white-space: nowrap; 
+  box-shadow: 3px 3px 0px var(--candy-black);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  
+  /* Initial State: Hidden until visible */
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+/* Active State (Selected) */
+.filter-pill.active {
+  background: var(--candy-black);
+  color: var(--pop-yellow);
+  box-shadow: 2px 2px 0px var(--pop-purple);
+  
+  /* Ensure active state stays visible even before animation */
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.filter-pill:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--candy-black);
+  background: #FFFBE6;
+}
+
+.filter-pill:active {
+  transform: translate(2px, 2px) scale(0.95);
+  box-shadow: 0px 0px 0px var(--candy-black);
+}
+
+.filter-icon { font-size: 1.1rem; }
+
+/* --- ANIMATION LOGIC (Triggered by JS Class) --- */
+.filter-bar-container.visible .filter-pill {
+  animation: elasticSlide 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes elasticSlide {
+  0% { 
+    opacity: 0;
+    transform: translateX(50px) scaleX(0.5); 
+  }
+  60% { 
+    opacity: 1;
+    transform: translateX(-10px) scaleX(1.1); 
+  }
+  100% { 
+    opacity: 1;
+    transform: translateX(0) scaleX(1); 
+  }
+}
+
+/* Stagger Delays */
+.filter-bar-container.visible .filter-pill:nth-child(1) { animation-delay: 0.1s; }
+.filter-bar-container.visible .filter-pill:nth-child(2) { animation-delay: 0.2s; }
+.filter-bar-container.visible .filter-pill:nth-child(3) { animation-delay: 0.3s; }
+.filter-bar-container.visible .filter-pill:nth-child(4) { animation-delay: 0.4s; }
+.filter-bar-container.visible .filter-pill:nth-child(5) { animation-delay: 0.5s; }
+.filter-bar-container.visible .filter-pill:nth-child(6) { animation-delay: 0.6s; }
+
+/* --- 2. SORT TOGGLE (Fixed Right) --- */
+.sort-group {
+  flex-shrink: 0;
+  padding-right: 15px;
+  padding-left: 5px;
+  z-index: 2;
+}
+
+.sort-capsule {
+  display: flex;
+  align-items: center;
+  background: var(--candy-white);
+  border: 2px solid var(--candy-black);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0px var(--candy-black);
+  overflow: hidden;
+}
+
+.sort-option {
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  font-family: 'Dela Gothic One', cursive;
+  font-size: 0.75rem;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.2s;
+}
+
+.sort-option:hover { background: #f0f0f0; }
+
+.sort-option.active {
+  background: var(--pop-yellow);
+  color: var(--candy-black);
+}
+
+.sort-divider {
+  width: 2px;
+  height: 20px;
+  background: #eee;
+}
+
+/* --- MOBILE OPTIMIZATIONS --- */
+@media (max-width: 600px) {
+  .filter-bar-container {
+    gap: 5px;
+    padding: 5px 0;
+  }
+
+  .filters-scroll-area {
+    padding: 10px 10px;
+  }
+
+  .filter-pill {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  /* Compact Sort */
+  .sort-text { display: none; }
+  
+  .sort-option {
+    padding: 8px 10px;
+    font-size: 1rem;
+  }
+  
+  .sort-group { padding-right: 10px; }
+}
+
+.my-posts-pill {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.my-posts-pill.active {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.refresh-pill {
+  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  min-width: 50px;
+  transition: all 0.3s ease;
+}
+
+.refresh-pill:hover {
+  transform: rotate(180deg);
+  box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+}

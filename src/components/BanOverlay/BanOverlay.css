@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Montserrat:wght@600;700;900&display=swap');
+
+:root {
+  --danger-red: #FF0000;
+  --alert-bg: #FFEBEB;
+  --highlight-green: #00E676;
+  --hard-black: #000000;
+  --pure-white: #FFFFFF;
+  --border-thick: 4px solid var(--hard-black);
+}
+
+.ban-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent; /* Transparent so homepage shows */
+  backdrop-filter: blur(8px) brightness(0.4); /* Blur and darken homepage */
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+}
+
+/* --- JAIL BARS BG --- */
+.jail-bars {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(50, 50, 50, 0.8),
+    rgba(50, 50, 50, 0.8) 50px,
+    rgba(100, 100, 100, 0.6) 50px,
+    rgba(100, 100, 100, 0.6) 70px
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dark-tint {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* --- WIDE CARD --- */
+.wide-ban-card {
+  position: relative;
+  z-index: 10;
+  width: 850px;
+  max-width: 95%;
+  background: var(--pure-white);
+  border: var(--border-thick);
+  box-shadow: 20px 20px 0px var(--hard-black);
+}
+
+/* Header */
+.ban-header-strip {
+  background: var(--danger-red);
+  border-bottom: var(--border-thick);
+  padding: 15px;
+  text-align: center;
+}
+
+.ban-header-strip h1 {
+  font-family: 'Dela Gothic One', cursive;
+  color: var(--pure-white);
+  margin: 0;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 4px 4px 0px var(--hard-black);
+}
+
+/* Split Body */
+.ban-body-horizontal {
+  display: flex;
+  padding: 30px;
+  gap: 30px;
+  align-items: center;
+}
+
+/* Left Col: Info */
+.col-left {
+  flex: 1.2;
+}
+
+.info-table {
+  border: 3px solid var(--hard-black);
+  margin-bottom: 20px;
+  background: #fff;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 2px solid var(--hard-black);
+  font-weight: 900;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-row.highlight-red {
+  background: var(--alert-bg);
+  color: var(--danger-red);
+}
+
+.info-label { opacity: 0.7; }
+.info-value { text-transform: uppercase; text-align: right; }
+.tag { 
+  background: var(--hard-black); 
+  color: #fff; 
+  padding: 2px 6px; 
+  font-size: 0.7rem; 
+  border-radius: 4px; 
+  margin-left: 5px; 
+}
+
+.blink-text { animation: blink 1s infinite; }
+
+/* FOMO Mini */
+.fomo-mini {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #FAFAFA;
+  border: 2px dashed var(--hard-black);
+  padding: 15px;
+}
+.fomo-icon { font-size: 2rem; animation: pulse 2s infinite; }
+.fomo-text strong { 
+  display: block; 
+  font-family: 'Dela Gothic One', cursive; 
+  font-size: 0.9rem; 
+  margin-bottom: 4px; 
+}
+.fomo-text p { 
+  margin: 0; 
+  font-size: 0.8rem; 
+  font-weight: 600; 
+  color: #666; 
+}
+
+/* Divider */
+.dashed-divider {
+  width: 2px;
+  background: repeating-linear-gradient(
+    to bottom, 
+    #000, #000 10px, 
+    transparent 10px, transparent 20px
+  );
+  align-self: stretch;
+}
+
+/* Right Col: Action */
+.col-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bail-header { margin-bottom: 20px; text-align: center; }
+.bail-header h3 { 
+  font-family: 'Dela Gothic One', cursive; 
+  margin: 0; 
+  font-size: 1.4rem; 
+  line-height: 1; 
+}
+.bail-header p { 
+  margin: 5px 0 0; 
+  font-size: 0.85rem; 
+  font-weight: 700; 
+  color: #555; 
+}
+
+.brutal-pay-btn-large {
+  width: 100%;
+  background: var(--highlight-green);
+  border: var(--border-thick);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 8px 8px 0px var(--hard-black);
+  transition: all 0.1s;
+}
+
+.brutal-pay-btn-large:active {
+  transform: translate(4px, 4px);
+  box-shadow: 4px 4px 0px var(--hard-black);
+}
+
+.btn-left {
+  background: var(--hard-black);
+  color: var(--highlight-green);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 120px;
+}
+.btn-left .label { 
+  font-size: 0.7rem; 
+  font-weight: 900; 
+  color: #fff; 
+}
+.btn-left .price { 
+  font-family: 'Dela Gothic One', cursive; 
+  font-size: 1.8rem; 
+  line-height: 1; 
+  margin-top: 5px; 
+}
+
+.btn-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Dela Gothic One', cursive;
+  font-size: 1.5rem;
+  color: var(--hard-black);
+}
+
+.secure-badge {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #888;
+  text-transform: uppercase;
+}
+
+/* Footer */
+.card-footer-strip {
+  background: var(--hard-black);
+  color: var(--pure-white);
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+/* Animations */
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes pulse { 
+  0% { transform: scale(1); } 
+  50% { transform: scale(1.2); } 
+  100% { transform: scale(1); } 
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+  .wide-ban-card { width: 90%; }
+  .ban-body-horizontal {
+    flex-direction: column;
+    padding: 20px;
+  }
+  .dashed-divider {
+    width: 100%;
+    height: 2px;
+    background: repeating-linear-gradient(
+      to right, 
+      #000, #000 10px, 
+      transparent 10px, transparent 20px
+    );
+  }
+}

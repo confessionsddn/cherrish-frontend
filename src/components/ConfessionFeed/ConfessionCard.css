@@ -1,0 +1,706 @@
+/* --- CARD CONTAINER --- */
+.confession-card {
+  background: #fcf0f2 !important;
+  border: 3px solid var(--candy-black);
+  border-radius: 16px;
+  padding: 25px 20px 20px 20px; /* Top padding creates space below sticker */
+  box-shadow: 6px 6px 0px var(--candy-black);
+  position: relative;
+  /* CRITICAL: Allows the sticker to pop out of the box */
+  overflow: visible; 
+  display: flex;
+  flex-direction: column;
+  margin-top: 25px; /* Spacing for the pop-out sticker */
+  height: auto;
+}
+
+.confession-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--candy-black);
+}
+
+
+.confession-menu-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 5px;
+  cursor: pointer;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.confession-menu-btn:hover {
+  transform: rotate(90deg);
+  color: #666;
+}
+
+/* Moves the menu button to the right */
+
+/* --- 1. THE MOOD STICKER (Centered Top) --- */
+.mood-sticker {
+  position: absolute;
+  top: -18px; /* Pulls it UP out of the card */
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg); /* Centered + slight tilt */
+  
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  
+  background: #000;
+  border: 3px solid var(--candy-black);
+  border-radius: 50px;
+  box-shadow: 3px 3px 0px var(--candy-black);
+  z-index: 2;
+  
+  font-family: 'Dela Gothic One', cursive;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+
+/* Sticker Colors */
+.mood-sticker.Crush { background: var(--pop-pink); color: var(--candy-black); }
+.mood-sticker.Heartbreak { background: var(--pop-blue); color: white; border-color: var(--candy-black); }
+.mood-sticker.SecretAdmirer { background: var(--pop-purple); color: white; }
+.mood-sticker.LoveStories { background: var(--pop-orange); color: white; }
+
+.sticker-icon { font-size: 1rem; }
+
+/* --- 2. HEADER ROW (Avatar + Flag) --- */
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed #eee;
+}
+
+/* User Profile Group */
+.user-profile-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #E0B0FF; /* Light Purple as per Figma */
+  border: 2px solid var(--candy-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Dela Gothic One', cursive;
+  font-size: 1.2rem;
+  color: var(--candy-black);
+}
+
+.user-text-info {
+  display: flex;
+    font-family: 'Montserrat' !important;
+
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-name-row {
+  font-family: 'Montserrat' !important;
+  font-size: 1rem;
+  color: var(--candy-black);
+  text-transform: uppercase;
+}
+
+.user-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+  margin-left: 4px;
+}
+
+.post-time {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Report Icon (Top Right) */
+.report-icon-btn {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 5px;
+}
+.report-icon-btn:hover { color: var(--pop-red); }
+
+/* --- 3. CONTENT --- */
+.confession-content {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  font-weight: 500;
+  color: var(--candy-black);
+  margin-bottom: 20px;
+  word-wrap: break-word;
+}
+
+/* --- 4. AUDIO PLAYER (REDESIGNED) --- */
+.audio-player {
+  display: flex;
+  align-items: center;
+  background: #F4F4F4; /* Industrial Grey */
+  border: 3px solid var(--candy-black);
+  border-radius: 50px; /* Full Capsule Shape */
+  padding: 8px 8px 8px 15px; /* Less padding on right for button */
+  gap: 15px;
+  margin-bottom: 20px;
+  box-shadow: 4px 4px 0px var(--candy-black);
+  transition: transform 0.2s;
+  justify-content: space-between;
+}
+
+.audio-player:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px var(--candy-black);
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+}
+
+.audio-wave {
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #666;
+  flex: 1; /* Pushes text to fill space */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Specific Play Button inside Card */
+.audio-player .btn--primary {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: var(--pop-green); /* Bright Green */
+  border: 2px solid var(--candy-black);
+  color: var(--candy-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1rem;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+}
+
+.audio-player .btn--primary:active {
+  transform: scale(0.95);
+  box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2);
+}
+
+/* --- 5. FOOTER ACTIONS --- */
+.confession-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1px;
+}
+
+.reactions-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* Pill Buttons */
+.reaction-pill {
+  background: #FFF;
+  border: 2px solid var(--candy-black);
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--candy-black);
+  transition: all 0.1s;
+}
+
+.reaction-pill:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0px var(--candy-black); }
+.reaction-pill:active { transform: translate(1px, 1px); box-shadow: 0px 0px 0px var(--candy-black); }
+
+/* Active States */
+.reaction-pill.active {
+  background: var(--pop-pink);
+  color: white;
+  border-color: var(--candy-black);
+}
+
+/* Gift Button */
+.gift-action-btn {
+  background: #88ff33;
+  border: 2px solid var(--candy-black);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: 'Dela Gothic One', cursive;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px var(--candy-black);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto; /* Push to right */
+}
+
+.gift-action-btn:hover { background: #04ff00; transform: translate(-2px, -2px); box-shadow: 5px 5px 0px var(--candy-black); }
+.gift-action-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px var(--candy-black); }
+
+/* --- NEO AUDIO CAPSULE --- */
+.neo-audio-capsule {
+  display: flex;
+  align-items: center;
+  background: #F4F4F4;
+  border: 3px solid var(--candy-black);
+  border-radius: 50px;
+  padding: 8px 8px 8px 15px;
+  gap: 12px;
+  margin-bottom: 20px;
+  box-shadow: 4px 4px 0px var(--candy-black);
+  transition: all 0.2s;
+}
+
+/* Green glow when playing */
+.neo-audio-capsule.playing {
+  border-color: var(--pop-green);
+  box-shadow: 4px 4px 0px var(--pop-green);
+  background: #fff;
+}
+
+/* Icon Box */
+.capsule-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--candy-black);
+  color: var(--pop-yellow);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+/* --- THE FAKE WAVEFORM --- */
+.capsule-track {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px; /* Fixed height for bars */
+  padding-left: 5px;
+  overflow: hidden;
+}
+
+.wave-bar {
+  width: 4px;
+  background: #CCC;
+  border-radius: 2px;
+  height: 6px; /* Default static height */
+  transition: background 0.2s;
+}
+
+.wave-bar.medium { height: 12px; }
+.wave-bar.tall { height: 18px; }
+.wave-bar.short { height: 4px; }
+
+.capsule-status {
+  margin-left: auto; /* Push to right */
+  margin-right: 10px;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+/* --- ANIMATION LOGIC --- */
+
+/* When playing, change color and animate */
+.neo-audio-capsule.playing .wave-bar {
+  background: var(--pop-green);
+  animation: soundWave 0.6s infinite ease-in-out alternate;
+}
+
+/* Stagger animations for "Random" look */
+.neo-audio-capsule.playing .wave-bar:nth-child(odd) { animation-duration: 0.4s; }
+.neo-audio-capsule.playing .wave-bar:nth-child(2n) { animation-duration: 0.5s; }
+.neo-audio-capsule.playing .wave-bar:nth-child(3n) { animation-duration: 0.7s; }
+.neo-audio-capsule.playing .wave-bar:nth-child(4n) { animation-duration: 0.3s; }
+
+@keyframes soundWave {
+  0% { height: 6px; }
+  100% { height: 22px; }
+}
+
+/* Play/Pause Button */
+.capsule-play-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--pop-green);
+  border: 3px solid var(--candy-black);
+  color: var(--candy-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+  transition: all 0.1s;
+}
+
+/* Change button style when playing */
+.neo-audio-capsule.playing .capsule-play-btn {
+  background: var(--pop-pink); /* Switch to Pink for Pause */
+  color: white;
+}
+
+.capsule-play-btn:hover { transform: scale(1.05); }
+.capsule-play-btn:active { transform: scale(0.95); box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2); }
+
+
+.premium-badge-inline {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-left: 4px;
+  animation: premiumGlow 2s ease-in-out infinite;
+}
+
+.boost-action-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border: none;
+  border-radius: 20px;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+}
+
+.boost-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.boost-action-btn i {
+  margin-right: 4px;
+  animation: starPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes starPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+
+@keyframes premiumGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 3px gold);
+    transform: scale(1);
+  }
+  50% { 
+    filter: drop-shadow(0 0 8px gold);
+    transform: scale(1.1);
+  }
+}
+/* --- MOBILE TWEAKS --- */
+@media (max-width: 600px) {
+  .reaction-pill {
+    padding: 6px 8px; /* Tighter on mobile */
+    font-size: 0.8rem;
+  }
+  
+  .reactions-group {
+    gap: 5px;
+  }
+}
+
+
+/* ... (Keep existing styles for card container, mood sticker, etc.) ... */
+
+/* --- 2. HEADER ROW (Refined) --- */
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Aligns to top so multiline names don't break layout */
+  margin-top: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed #eee;
+}
+
+/* User Profile Group (Left) */
+.user-profile-group {
+  display: flex;
+  font: 'Montserrat' !important;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ... (Keep avatar styles) ... */
+
+.user-text-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-name-row {
+  font: 'Montserrat' !important;
+  font-size: 1rem;
+  color: var(--candy-black);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.user-number {
+  font-family: 'Montserrat';
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 700;
+}
+
+/* RIGHT SIDE GROUP: Timestamp + Report */
+.header-meta-group {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Space between timestamp and flag */
+}
+
+/* THE TIMESTAMP STYLE */
+.confession-timestamp {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #030303;
+  text-transform: uppercase;
+  background: #ffe9bb; /* Subtle pill background */
+  padding: 4px 8px;
+  margin-right: -20px;
+  margin-top: -8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.fire-effect {
+  font-size: 0.9rem;
+  animation: pulseFire 1.5s infinite;
+}
+
+@keyframes pulseFire {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Report Icon (Updated) */
+.report-icon-btn {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+}
+.report-icon-btn:hover { color: var(--pop-red); }
+
+/* Mobile Responsive Tweak */
+@media (max-width: 480px) {
+  .card-header-row {
+    flex-wrap: wrap; /* Allow wrapping on very small screens */
+    gap: 10px;
+  }
+  
+  .header-meta-group {
+    margin-left: auto; /* Keep pushing to right */
+  }
+}
+
+/* ... (Keep rest of your CSS) ... */
+.spotlight-badge-container,
+.boost-badge-container {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+}
+
+.boost-badge-container {
+  top: 48px;
+}
+
+.info-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+}
+
+.spotlight-badge-container .info-btn {
+  color: #ffd700;
+}
+
+.boost-badge-container .info-btn {
+  color: #ff6b9d;
+}
+
+.info-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+
+.confession-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  
+
+}
+
+.views-stat {
+  font-size: 0.85rem;
+  color: #000000;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  margin-bottom: -15px;
+  margin-top: 5px;
+  gap: 5px;
+}
+
+.views-stat i {
+  color: #000000;
+}
+
+/* Unique views badge */
+
+.card-header-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed #eee;
+}
+
+/* this pushes timestamp + 3 dots to the extreme right */
+.header-meta-right {
+  margin-left: auto;        
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.confession-menu-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 5px;
+  cursor: pointer;
+  color: #000;
+  display: flex;
+  margin-right: -20px;
+  margin-top: -8px;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.confession-menu-btn:hover {
+  transform: rotate(90deg);
+  color: #666;
+}
+
+/* --- FIXED "HANG TIME" ANIMATION --- */
+.floating-heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+  
+  /* Start invisible at origin */
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 1;
+  
+  /* 4.5s Total Duration */
+  animation: hangTimeBurst 4.5s ease-out forwards;
+}
+
+@keyframes hangTimeBurst {
+  /* PHASE 1: EXPLODE (0s - 0.4s) */
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  10% {
+    /* Move to final spread position quickly */
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.2) rotate(var(--rot));
+    opacity: 1;
+  }
+  
+  /* PHASE 2: THE HOLD (0.4s - 4.0s) */
+  /* CRITICAL: We keep opacity at 1 here so they stay visible */
+  85% {
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y) - 20px)) scale(1) rotate(calc(var(--rot) + 10deg));
+    opacity: 1; 
+  }
+  
+  /* PHASE 3: FADE OUT (4.0s - 4.5s) */
+  100% {
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y) - 50px)) scale(0.8);
+    opacity: 0;
+  }
+}

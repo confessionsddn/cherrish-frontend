@@ -1,0 +1,382 @@
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Montserrat:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-page: #FFF0F5;
+  --panel-left: #FFFFFF;
+  --panel-right: #9D2B48;
+  --text-black: #1A1A1A;
+  --text-grey: #666666;
+  --text-white: #FFFFFF;
+  
+  --radius-lg: 32px;
+  --radius-sm: 16px;
+  --radius-pill: 60px;
+  
+  --ease-butter: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --shadow-float: 0 20px 40px rgba(157, 43, 72, 0.15);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.access-code-page {
+  /* Default Desktop: Lock to viewport for that "App" feel */
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: radial-gradient(#9D2B48 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+}
+
+/* --- Card Container --- */
+.soft-card-container {
+  display: flex;
+  width: 1000px; /* Slightly wider */
+  max-width: 95%;
+  /* Increased Height as requested */
+  min-height: 700px; 
+  /* Cap height to avoid issues on small laptops, but allow auto if content is huge */
+  max-height: 95vh;
+  background: var(--panel-left);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  overflow: hidden;
+}
+
+/* --- Panels --- */
+.panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  /* Ensure panel takes full height */
+  min-height: 100%;
+}
+
+/* --- LEFT PANEL --- */
+.left-panel { 
+  background: var(--panel-left); 
+  color: var(--text-black);
+  /* Alignment: Content pushed left */
+  padding: 50px 40px 50px 60px; 
+}
+
+.panel-content {
+  width: 100%;
+  max-width: 380px;
+  margin-left: 0; 
+  margin-right: auto;
+}
+
+.icon-wrapper {
+  width: 50px;
+  height: 50px;
+  background: #FFF0F5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.icon-key { font-size: 1.2rem; color: var(--panel-right); }
+
+.brand-header h1 {
+  font-family: 'Dela Gothic One', cursive;
+  font-size: 2.5rem;
+  line-height: 1;
+  margin: 0 0 10px 0;
+  color: var(--text-black);
+  letter-spacing: -1px;
+}
+
+.brand-header .subtitle {
+  font-weight: 600;
+  color: var(--text-grey);
+  margin: 0 0 30px 0;
+  font-size: 0.9rem;
+}
+
+/* User Badge */
+.user-badge {
+  background: #FAFAFA;
+  border: 1px solid #F0F0F0;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 30px;
+  width: 100%;
+}
+.badge-label { font-size: 0.7rem; font-weight: 800; color: #BBB; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+.badge-email { font-weight: 700; color: var(--text-black); font-size: 0.95rem; word-break: break-all; }
+
+/* Inputs */
+.input-label {
+  font-family: 'Dela Gothic One', cursive;
+  font-size: 0.8rem;
+  margin-bottom: 12px;
+  display: block;
+  color: var(--text-black);
+}
+
+.input-group { position: relative; margin-bottom: 25px; }
+
+.soft-input {
+  width: 100%;
+  padding: 20px 24px;
+  border: 2px solid transparent;
+  background: #F4F6F8;
+  border-radius: var(--radius-sm);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s var(--ease-butter);
+}
+
+.soft-input:focus {
+  outline: none;
+  background: #FFF;
+  border-color: var(--panel-right);
+  box-shadow: 0 0 0 4px rgba(157, 43, 72, 0.1);
+  transform: translateY(-2px);
+}
+
+.code-input { letter-spacing: 2px; text-transform: uppercase; }
+
+/* Buttons */
+.btn-soft {
+  width: 100%;
+  padding: 18px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  font-family: 'Dela Gothic One', cursive;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s var(--ease-butter);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-black {
+  background: var(--text-black);
+  color: var(--text-white);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.btn-black:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  background: #000;
+}
+
+.btn-black:active:not(:disabled) { transform: scale(0.98); }
+
+/* Footer */
+.secure-footer {
+  margin-top: 40px;
+  border-top: 1px solid #F0F0F0;
+  padding-top: 20px;
+  color: var(--text-grey);
+}
+.footer-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; margin-bottom: 15px; }
+.footer-row i { color: var(--panel-right); }
+
+.link-back {
+  background: none;
+  border: none;
+  color: var(--text-black);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  transition: color 0.2s;
+}
+.link-back:hover { color: var(--panel-right); }
+
+/* --- RIGHT PANEL --- */
+.right-panel {
+  background: var(--panel-right);
+  color: var(--text-white);
+  padding: 60px;
+}
+
+.right-panel .panel-content {
+  margin: 0 auto; 
+  text-align: left;
+}
+
+.right-panel h2 { font-family: 'Dela Gothic One', cursive; font-size: 2.2rem; margin-bottom: 15px; }
+.right-panel h3 { font-family: 'Dela Gothic One', cursive; font-size: 1.8rem; margin-bottom: 10px; }
+.right-panel p { line-height: 1.6; opacity: 0.9; margin-bottom: 30px; font-weight: 500; }
+
+.assurance-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.15);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+/* Right Panel Buttons & Inputs */
+.btn-white {
+  background: var(--text-white);
+  color: var(--panel-right);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.btn-white:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.white-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-white);
+  padding-left: 50px;
+}
+.white-input:focus {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--text-white);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+.white-input::placeholder { color: rgba(255,255,255,0.5); }
+
+.at-prefix {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 1.3rem;
+  color: rgba(255,255,255,0.7);
+  z-index: 2;
+}
+
+.btn-white-fill {
+  background: var(--text-white);
+  color: var(--panel-right);
+  font-weight: 700;
+}
+.btn-white-fill:hover { transform: translateY(-2px); }
+
+.btn-text-only {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.btn-text-only:hover { color: #FFF; }
+
+.btn-column { display: flex; flex-direction: column; width: 100%; }
+
+/* --- Errors --- */
+.error-soft {
+  padding: 15px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFF4F4;
+  color: #D32F2F;
+  border: 1px solid #FFCDD2;
+}
+.error-white {
+  background: rgba(0,0,0,0.2);
+  color: #FFCDD2;
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.fade-in-up { animation: fadeInUp 0.6s var(--ease-butter) forwards; }
+.delayed { animation-delay: 0.1s; }
+.scale-in { animation: scaleIn 0.4s var(--ease-butter) forwards; }
+.shake-anim { animation: shake 0.4s var(--ease-butter); }
+.scale-hover:hover { transform: scale(1.05); }
+
+/* --- MOBILE RESPONSIVENESS FIXES --- */
+@media (max-width: 900px) {
+  .access-code-page {
+    /* Unlock height on mobile so user can scroll */
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    padding: 20px;
+    align-items: flex-start; /* Start from top */
+  }
+
+  .soft-card-container {
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    min-height: auto; /* Allow auto height based on content */
+    max-height: none; /* Remove cap */
+    height: auto;
+    margin-bottom: 40px;
+  }
+
+  .panel {
+    /* Stack panels vertically */
+    width: 100%;
+    min-height: auto; /* Adjust to content */
+    padding: 40px 25px; /* Reduce side padding for mobile */
+  }
+
+  /* Left Panel adjustments */
+  .left-panel {
+    padding: 40px 25px;
+  }
+  
+  .panel-content {
+    margin: 0 auto; /* Re-center content on mobile for balance */
+    max-width: 100%;
+  }
+
+  /* Font Resizing to prevent overflow */
+  .brand-header h1 {
+    font-size: 1.8rem; /* Smaller font for header */
+  }
+  
+  .badge-email {
+    font-size: 0.85rem;
+  }
+
+  .right-panel h2 { font-size: 1.8rem; }
+  .right-panel h3 { font-size: 1.6rem; }
+}

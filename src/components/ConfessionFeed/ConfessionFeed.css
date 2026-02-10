@@ -1,0 +1,181 @@
+/* Confessions Feed */
+.confessions-feed {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+/* Filter Bar */
+.mood-filter-bar {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0 auto 20px auto;
+  padding: 0;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #fff;
+  color: #232323;
+  border: 2.2px solid #232323;
+  border-radius: 11px;
+  box-shadow: 2.5px 4.5px 0 #232323;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.11rem;
+  padding: 9px 18px 9px 13px;
+  line-height: 1.15;
+  height: 48px;
+  min-width: 120px;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.11s, color 0.09s, border 0.11s;
+  position: relative;
+}
+
+.filter-btn svg {
+  width: 29px;
+  height: 29px;
+  margin-right: 4px;
+  min-width: 29px;
+  min-height: 29px;
+  flex-shrink: 0;
+  fill: #232323;
+  stroke: #232323;
+  vertical-align: middle;
+}
+
+.filter-btn.active,
+.filter-btn:focus {
+  background: #FFF39A;
+  color: #232323;
+  border-color: #DEB800;
+  box-shadow: 2.5px 4.5px 0 #EEC41A;
+}
+
+.filter-btn.active svg,
+.filter-btn:focus svg {
+  fill: #232323 !important;
+  stroke: #232323 !important;
+}
+
+@media (max-width: 650px) {
+  .mood-filter-bar {
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    font-size: 0.98rem;
+    padding: 7px 7px 7px 5px;
+    min-width: 82px;
+    height: 43px;
+  }
+  .filter-btn svg {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+  }
+}
+@media (min-width: 1000px) and (max-width: 1599px) {
+  .feed-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Spotlight Effect */
+.confession-card.spotlight-active {
+  position: relative;
+  border: 4px solid #FFD700;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 8px 8px 0 #000;
+  animation: spotlightGlow 2s infinite alternate;
+}
+
+@keyframes spotlightGlow {
+  from { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 8px 8px 0 #000; }
+  to { box-shadow: 0 0 50px rgba(255, 215, 0, 0.9), 8px 8px 0 #000; }
+}
+
+.spotlight-badge {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #000;
+  padding: 5px 15px;
+  font-weight: 900;
+  font-size: 0.75rem;
+  box-shadow: 4px 4px 0 #000;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  animation: badgeBounce 1s infinite;
+}
+
+@keyframes badgeBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.spotlight-badge i {
+  animation: starSpin 2s linear infinite;
+}
+
+@keyframes starSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Boost Indicator (subtle) */
+.boost-indicator {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(33, 150, 243, 0.1);
+  border: 2px solid #2196F3;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #2196F3;
+  z-index: 5;
+}
+
+/* 3-Dot Menu Button */
+.confession-menu-btn {
+  background: transparent;
+  border: 2px solid #000;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.confession-menu-btn:hover {
+  background: #F5F5F5;
+  transform: scale(1.1);
+}
+
+.confession-menu-btn:active {
+  transform: scale(0.95);
+}
+
+/* Header adjustments */
+.confession-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

@@ -1,0 +1,208 @@
+/* --- VARIABLES: CANDY SHOP PALETTE --- */
+:root {
+  --neo-black: #0d0d0d;
+  --neo-white: #ffffff;
+  --candy-pink: #ff70a6;
+  --candy-blue: #70d6ff;
+  --candy-purple: #9d4edd;
+  --candy-orange: #ff9770;
+  --candy-yellow: #ffd670;
+  
+  --border-thick: 3px solid var(--neo-black);
+  --shadow-hard: 5px 5px 0px var(--neo-black);
+  --shadow-hover: 8px 8px 0px var(--neo-black);
+  --shadow-active: 2px 2px 0px var(--neo-black);
+}
+
+.mood-selector-container {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+/* --- THE LABEL (STICKER STYLE) --- */
+.label-wrapper {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.form-label {
+  display: inline-block;
+  background: var(--candy-yellow);
+  color: var(--neo-black);
+  padding: 10px 20px;
+  font-family: 'Courier New', Courier, monospace; /* Or a heavy Google Font */
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: -1px;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-hard);
+  transform: rotate(-2deg);
+  text-transform: uppercase;
+}
+
+.star-icon {
+  color: var(--candy-pink);
+  margin: 0 5px;
+}
+
+/* --- GRID LAYOUT --- */
+.mood-zones {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* Mobile: Stacked */
+  gap: 20px;
+  padding: 10px;
+}
+
+@media (min-width: 600px) {
+  .mood-zones {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .mood-zones {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* --- THE CANDY CARD (BUTTON) --- */
+.mood-zone {
+  position: relative;
+  height: 200px; /* Taller for dramatic effect */
+  background: var(--neo-white);
+  border: var(--border-thick);
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy transition */
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Push text to bottom */
+  text-decoration: none;
+}
+
+/* --- VIDEO LAYER --- */
+.video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: black; /* Fallback */
+}
+
+.mood-video-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6; /* Dim video slightly so text pops */
+  transition: opacity 0.3s;
+  filter: grayscale(80%) contrast(1.2); /* Default: moody/retro */
+}
+
+/* Scanline effect for that "Modern Aesthetic" */
+.scanline-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0) 50%,
+    rgba(0,0,0,0.1) 50%,
+    rgba(0,0,0,0.1)
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* --- TYPOGRAPHY & CONTENT --- */
+.mood-content {
+  position: relative;
+  z-index: 2;
+  padding: 15px;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.mood-title {
+  color: var(--neo-white);
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.9;
+  font-family: sans-serif; /* Replace with a heavy font like 'Anton' */
+  text-shadow: 3px 3px 0px var(--neo-black);
+  transform: skewX(-5deg);
+  transition: transform 0.2s;
+}
+
+.mood-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background: var(--neo-white);
+  color: var(--neo-black);
+  padding: 4px 8px;
+  border: 2px solid var(--neo-black);
+  box-shadow: 2px 2px 0px var(--neo-black);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- HOVER EFFECTS --- */
+.mood-zone:hover {
+  transform: translate(-3px, -3px) rotate(1deg);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--mood-color); /* Border turns into mood color */
+}
+
+.mood-zone:hover .mood-video-bg {
+  opacity: 1; /* Video brightens */
+  filter: grayscale(0%) contrast(1.1); /* Full color */
+}
+
+.mood-zone:hover .mood-title {
+  color: var(--mood-color);
+  text-shadow: 3px 3px 0px var(--neo-black);
+  transform: skewX(-5deg) translateX(5px);
+}
+
+.mood-zone:hover .mood-badge {
+  background: var(--mood-color);
+  color: var(--neo-black);
+}
+
+/* --- ACTIVE STATE (SELECTED) --- */
+.mood-zone.active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-active);
+  border-color: var(--mood-color);
+}
+
+.mood-zone.active .mood-video-bg {
+  opacity: 1;
+  filter: grayscale(0%);
+}
+
+.mood-zone.active .mood-title {
+  color: var(--mood-color);
+  -webkit-text-stroke: 1px var(--neo-white); /* Outline effect */
+}
+
+.mood-zone.active .mood-badge {
+  background: var(--mood-color);
+  content: "SELECTED";
+}
+
+/* Specific styling hooks for colors if needed purely via CSS */
+.mood-zone[data-mood="Crush"] { --mood-color: var(--candy-pink); }
+.mood-zone[data-mood="Heartbreak"] { --mood-color: var(--candy-blue); }
+.mood-zone[data-mood="Secret Admirer"] { --mood-color: var(--candy-purple); }
+.mood-zone[data-mood="Love Stories"] { --mood-color: var(--candy-orange); }

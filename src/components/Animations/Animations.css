@@ -1,0 +1,323 @@
+/*ANIMATION CSS ============================================
+    SHAPES BACKGROUND
+   ============================================ */
+
+.floating-shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.shape {
+  position: absolute;
+  animation: floatShapes 20s infinite linear;
+}
+
+.shape-square {
+  width: 20px;
+  height: 20px;
+  background-color: var(--pastel-mint);
+  border: 2px solid var(--brutal-black);
+}
+
+.shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid var(--pastel-peach);
+  border-top: 2px solid var(--brutal-black);
+}
+
+.shape-circle {
+  width: 18px;
+  height: 18px;
+  background-color: var(--pastel-blue);
+  border: 2px solid var(--brutal-black);
+  border-radius: 50%;
+}
+
+.shape:nth-child(1) { left: 10%; animation-delay: 0s; }
+.shape:nth-child(2) { left: 25%; animation-delay: 3s; }
+.shape:nth-child(3) { left: 40%; animation-delay: 6s; }
+.shape:nth-child(4) { left: 55%; animation-delay: 9s; }
+.shape:nth-child(5) { left: 70%; animation-delay: 12s; }
+.shape:nth-child(6) { left: 85%; animation-delay: 15s; }
+.shape:nth-child(7) { left: 5%; animation-delay: 18s; }
+.shape:nth-child(8) { left: 95%; animation-delay: 21s; }
+
+@keyframes floatShapes {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0.8;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   CONFETTI ANIMATION
+   ============================================ */
+
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.confetti {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--brutal-black);
+  animation: confettiFall 3s ease-out forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   MOOD TRANSITION OVERLAYS
+   ============================================ */
+
+.mood-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.4);
+  transition: opacity 0.6s;
+  pointer-events: none;
+}
+
+.mood-transition-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+  animation: moodFadeIn 0.6s;
+}
+
+.mood-transition-icon {
+  font-size: 4rem;
+  opacity: 0.5;
+  animation: iconFloatAcross 1.6s cubic-bezier(.45, .24, .56, 1.09) forwards;
+  position: absolute;
+}
+
+@keyframes moodFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes iconFloatAcross {
+  from {
+    left: -50px;
+    opacity: 0;
+  }
+  to {
+    left: 100vw;
+    opacity: 1;
+  }
+}
+
+/* Broken Heart Float (Heartbreak Transition) */
+.broken-heart-float {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-size: 17.5rem;
+  opacity: 0.85;
+  pointer-events: none;
+  animation: heartbreakFloatUp 4s cubic-bezier(.34, .94, .47, .99) forwards;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 15px rgba(237, 18, 59, 0.8));
+}
+
+@keyframes heartbreakFloatUp {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(3.5) rotate(0deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-95vh) translateX(var(--float-x)) scale(6.5) rotate(var(--float-rot));
+  }
+}
+
+/* ============================================
+   FULLSCREEN HEART BURST
+   ============================================ */
+
+#fullscreen-hearts {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 99;
+}
+
+.floating-heart {
+  position: absolute;
+  font-size: 2.2rem;
+  pointer-events: none;
+  opacity: 0.92;
+  will-change: transform, opacity;
+  animation: floatBalloonHeart 5s cubic-bezier(.16, .62, .46, 1.04) forwards;
+}
+
+@keyframes floatBalloonHeart {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7) rotate(0deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) scale(1.3) rotate(var(--rot));
+  }
+}
+
+/* ============================================
+   BRUTAL NOTIFICATION
+   ============================================ */
+
+.brutal-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px;
+  border: 3px solid #000;
+  color: #000;
+  font-family: 'Montserrat', 'Arial Black', Arial, sans-serif;
+  font-weight: 900;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  z-index: 1001;
+  animation: brutalSlideIn 0.2s ease-out;
+  max-width: 300px;
+  box-shadow: 4px 4px 0px #000;
+  letter-spacing: -0.01em;
+  border-radius: 9px;
+}
+
+@keyframes brutalSlideIn {
+  from {
+    transform: translate(100%, -4px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes brutalSlideOut {
+  from {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(100%, -4px);
+    opacity: 0;
+  }
+}
+
+/* Gift Effect Animation */
+@keyframes brutaGiftEffect {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translate(-4px, 4px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) translate(0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translate(4px, -4px);
+  }
+}
+
+
+/* --- POP & FLOAT ANIMATION --- */
+.floating-heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+  
+  /* Initial State: Hidden at source */
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  
+  /* 5 Second Duration */
+  animation: popAndFloat 5s ease-out forwards;
+}
+
+@keyframes popAndFloat {
+  /* 0% - 10%: THE POP (Fast appearance) */
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  10% {
+    /* Move 20% of the way to the target quickly */
+    transform: translate(calc(-50% + (var(--x) * 0.2)), calc(-50% + (var(--y) * 0.2))) scale(1.2);
+    opacity: 1;
+  }
+  
+  /* 10% - 80%: THE FLOAT (Slow drift) */
+  /* Keeps moving up slowly while staying visible */
+  80% {
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1) rotate(var(--rot));
+    opacity: 1; /* Still fully visible */
+  }
+  
+  /* 80% - 100%: THE FADE (Disappear) */
+  100% {
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y) - 50px)) scale(0.8);
+    opacity: 0;
+  }
+}

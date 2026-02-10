@@ -1,0 +1,345 @@
+/* --- AESTHETIC CANDY PALETTE --- */
+:root {
+  --bg-cream: #FFFDF7; /* Warm Paper */
+  --ink-black: #1a1a1a;
+  --pop-pink: #FF85A2; /* Strawberry */
+  --pop-yellow: #FCE38A; /* Lemon */
+  --pop-mint: #95E1D3; /* Mint */
+  --pop-blue: #A2D2FF; /* Sky */
+  
+  --font-display: 'Luckiest Guy', cursive;
+  --font-hand: 'Patrick Hand', cursive;
+  --font-body: 'Fredoka', sans-serif;
+  
+  --border-bold: 3px solid var(--ink-black);
+  --shadow-block: 5px 5px 0px var(--ink-black);
+  --shadow-hover: 8px 8px 0px var(--ink-black);
+}
+
+/* --- MAIN CONTAINER --- */
+.confession-candy-shop {
+  background: var(--bg-cream);
+  border-radius: 20px;
+  padding: 50px 40px;
+  position: relative;
+  margin: 40px auto;
+max-width: 1200px; /* Increased from 900px */
+  width: 98%;
+}
+
+/* --- DECORATIVE TAPE --- */
+.masking-tape {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1.5deg);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px dashed var(--ink-black);
+  padding: 5px 25px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: var(--ink-black);
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+/* --- HEADER --- */
+.shop-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.shop-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.85;
+}
+
+.title-outline {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  color: white;
+  -webkit-text-stroke: 3px var(--ink-black);
+  text-shadow: 4px 4px 0px var(--pop-blue);
+  letter-spacing: 2px;
+}
+
+.title-solid {
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  color: var(--ink-black);
+  background: var(--pop-pink);
+  padding: 0px 20px;
+  transform: rotate(-3deg) translateY(-10px);
+  border: var(--border-bold);
+  box-shadow: 6px 6px 0px var(--pop-yellow);
+}
+
+.shop-subtitle {
+  margin-top: 25px;
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+  color: var(--ink-black);
+  transform: rotate(1deg);
+}
+
+/* --- VIBE STICKER (Centered Badge) --- */
+.vibe-sticker-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 5;
+}
+
+.vibe-sticker {
+  background: var(--pop-yellow);
+  border: var(--border-bold);
+  padding: 8px 30px;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 3px 3px 0px var(--ink-black);
+  transform: rotate(-1deg);
+}
+
+/* --- TEXT AREA (Paper Stack Look) --- */
+.input-zone {
+  margin: 30px 0;
+}
+
+.candy-textarea {
+  width: 100%;
+  border: var(--border-bold);
+  border-radius: 12px;
+  background: white;
+  padding: 25px;
+  font-family: var(--font-hand); /* Aesthetic handwritten font */
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: var(--ink-black);
+  resize: none;
+  box-shadow: inset 0px 4px 10px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+  
+  /* Lined Paper Effect */
+  background-image: linear-gradient(#eee 1px, transparent 1px);
+  background-size: 100% 2.2rem;
+  background-attachment: local;
+}
+
+.candy-textarea:focus {
+  outline: none;
+  border-color: var(--pop-blue);
+  box-shadow: var(--shadow-block);
+  transform: translate(-2px, -2px);
+}
+
+.candy-textarea::placeholder {
+  color: #ccc;
+  font-family: var(--font-body);
+}
+
+.chars-count {
+  text-align: right;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  margin-top: 8px;
+  opacity: 0.6;
+}
+
+/* --- PILL BUTTONS (Shorter & Chunkier) --- */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 40px; /* Less wide, more padding */
+  border-radius: 40px; /* Full rounded pill */
+  border: var(--border-bold);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-block);
+  transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+  text-transform: uppercase;
+  width: auto; /* IMPORTANT: Prevents full width */
+  min-width: 200px;
+}
+
+.btn-pill:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-pill:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--ink-black);
+}
+
+/* Voice Button */
+.voice-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.btn-voice {
+  background: white;
+  color: var(--ink-black);
+}
+
+.btn-voice:hover {
+  background: var(--pop-mint);
+}
+
+.btn-voice.active {
+  background: var(--pop-mint);
+  box-shadow: inset 3px 3px 0px rgba(0,0,0,0.1);
+  transform: translate(2px, 2px);
+}
+
+/* Submit Button */
+.action-zone {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-submit {
+  background: var(--pop-pink);
+  color: var(--ink-black);
+  font-size: 1.3rem;
+  padding: 18px 50px;
+}
+
+.btn-submit:hover {
+  background: #ff9eb5;
+}
+
+/* --- EXTRAS --- */
+.recorder-pop {
+  margin-top: 15px;
+  border: var(--border-bold);
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.candy-cassette {
+  margin-top: 20px;
+  background: var(--ink-black);
+  border-radius: 50px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: white;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+}
+
+.cassette-details {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+}
+
+.track-name { font-size: 0.9rem; font-weight: 700; color: var(--pop-mint); }
+.track-time { font-size: 0.8rem; opacity: 0.8; }
+
+.btn-eject-round {
+  background: var(--pop-pink);
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.btn-eject-round:hover { transform: scale(1.1); }
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .confession-candy-shop { padding: 30px 20px; width: 100%; }
+  .title-outline { font-size: 2.5rem; }
+  .title-solid { font-size: 3rem; }
+  .btn-pill { width: 100%; } /* Stack buttons on mobile */
+}
+/* --- MAIN CONTAINER (No Border) --- */
+.confession-form-container {
+  background: var(--candy-bg);
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Fredoka', sans-serif;
+  
+  /* REMOVED BORDER & SHADOW */
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* --- MOBILE RESPONSIVENESS (Refined Header) --- */
+@media (max-width: 600px) {
+  /* 1. Main Container: Add top padding so tape doesn't get cut off */
+  .confession-candy-shop { 
+    padding: 45px 20px 30px 20px; 
+    width: 95%; 
+    margin: 30px auto;
+  }
+
+  /* 2. Tape: Scale down and prevent wrapping */
+  .masking-tape {
+    font-size: 0.6rem;
+    padding: 4px 12px;
+    top: -12px; /* Position half-in/half-out */
+    border-width: 1.5px;
+    white-space: nowrap;
+    width: auto;
+    max-width: 85%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 3. Header Spacing */
+  .shop-header {
+    margin-bottom: 25px;
+  }
+
+  /* 4. "SPILL THE" - Scaled down stroke and size */
+  .title-outline { 
+    font-size: 2.4rem; /* Readable but punchy */
+    -webkit-text-stroke: 2px var(--ink-black); /* Thinner stroke for small screens */
+    text-shadow: 2px 2px 0px var(--pop-blue); /* Tighter shadow */
+    letter-spacing: 1px;
+    margin-bottom: -5px; /* Pull "TEA" closer */
+  }
+
+  /* 5. "TEA" - Adjusted rotation and box size */
+  .title-solid { 
+    font-size: 3rem; 
+    padding: 0 15px;
+    transform: rotate(-3deg) translateY(0); /* Reset Y to avoid gaps */
+    border-width: 2.5px; 
+    box-shadow: 4px 4px 0px var(--pop-yellow);
+  }
+
+  /* 6. Subtitle - Readable size */
+  .shop-subtitle {
+    font-size: 1rem;
+    margin-top: 15px;
+    line-height: 1.4;
+    padding: 0 10px;
+  }
+}
