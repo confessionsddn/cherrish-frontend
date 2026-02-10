@@ -7,7 +7,7 @@ export default function LandingPage() {
   const handleGoogleLogin = () => {
     setShowAnimation(true)
     setTimeout(() => {
-window.location.href = `${API_BASE_URL}/auth/google`;
+window.location.href = `${API_URL}/auth/google`;
     }, 800)
   }
 
