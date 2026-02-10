@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './LandingPage.css'
+import { API_URL } from '../services/api';
 
 export default function LandingPage() {
   const [showAnimation, setShowAnimation] = useState(false)
