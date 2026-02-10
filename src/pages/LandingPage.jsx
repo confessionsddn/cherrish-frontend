@@ -6,11 +6,12 @@ export default function LandingPage() {
   const [showAnimation, setShowAnimation] = useState(false)
 
   const handleGoogleLogin = () => {
-    setShowAnimation(true)
-    setTimeout(() => {
-window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
-    }, 800)
-  }
+  setShowAnimation(true);
+  setTimeout(() => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+  }, 800);
+};
+
 
   return (
     <div className="neo-landing-page">
