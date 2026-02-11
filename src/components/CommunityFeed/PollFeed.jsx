@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { pollsAPI } from '../../services/api';
+import { API_URL,pollsAPI } from '../../services/api';
 import './PollFeed.css';
 
 const PollFeed = () => {

@@ -1,7 +1,7 @@
 // frontend/src/components/AdminCommunityPanel/SendMessageModal.jsx
 
 import React, { useState } from 'react';
-import { messagesAPI } from '../../services/api';
+import { API_URL,messagesAPI } from '../../services/api';
 import './AdminCommunityPanel.css';
 
 const SendMessageModal = ({ onClose, onMessageSent }) => {

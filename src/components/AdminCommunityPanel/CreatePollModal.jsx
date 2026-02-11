@@ -1,7 +1,7 @@
 // frontend/src/components/AdminCommunityPanel/CreatePollModal.jsx
 
 import React, { useState } from 'react';
-import { pollsAPI } from '../../services/api';
+import { API_URL,pollsAPI } from '../../services/api';
 import './AdminCommunityPanel.css';
 
 const CreatePollModal = ({ onClose, onPollCreated }) => {

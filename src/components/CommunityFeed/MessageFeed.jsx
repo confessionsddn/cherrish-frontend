@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { messagesAPI } from '../../services/api';
+import { API_URL,messagesAPI } from '../../services/api';
 import './PollFeed.css'; // Updated CSS file import
 
 const REACTION_EMOJIS = {

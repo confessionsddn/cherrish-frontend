@@ -1,7 +1,7 @@
 // frontend/src/components/AdminCommunityPanel/AdminCommunityPanel.jsx
 
 import React, { useState, useEffect } from 'react';
-import { pollsAPI, messagesAPI } from '../../services/api';
+import {API_URL, pollsAPI, messagesAPI } from '../../services/api';
 import CreatePollModal from './CreatePollModal';
 import SendMessageModal from './SendMessageModal';
 import './AdminCommunityPanel.css';
