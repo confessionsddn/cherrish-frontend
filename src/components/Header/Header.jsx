@@ -1,151 +1,233 @@
+// frontend/src/components/Header/Header.jsx
 import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
 import { API_URL } from '../../services/api';
 
-// A simple SVG component for visual flair
-const BrutalistStar = ({ color = "black", size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{marginLeft: 'auto'}}>
-    <path 
-      d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" 
-      fill={color} stroke="black" strokeWidth="2"
-    />
-  </svg>
-);
-
 export default function Header({
-  credits, onThemeToggle, onPremiumClick, onBuyCreditsClick, theme, isAuthenticated, user
+  credits,
+  onThemeToggle,
+  onPremiumClick,
+  onBuyCreditsClick,
+  theme,
+  isAuthenticated,
+  user
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  // --- ACTIONS ---
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
     window.location.href = '/';
   };
 
-  const handleMobileAction = (action) => {
-    if (action) action();
+  const closeMenu = (callback) => {
     setIsMobileMenuOpen(false);
+    if (callback) callback();
   };
 
+  // --- POLLING FOR MESSAGES ---
   useEffect(() => {
     if (!isAuthenticated) return;
-    // ... (Your existing fetch logic remains the same) ...
+
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/admin-messages/unread-count`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) setUnreadCount(data.unread_count || 0);
+        }
+      } catch (error) {
+        console.error('Header polling error:', error);
+      }
+    };
+
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 10000); // 10s poll
+    return () => clearInterval(interval);
   }, [isAuthenticated]);
 
   return (
     <header className="navbar">
       <div className="nav-container">
         
-        {/* BRAND: Red Montserrat Text */}
+        {/* 1. BRAND LOGO */}
         <div className="nav-brand" onClick={() => window.location.href = '/'}>
-          <div className="logo-icon-box">
+          <div className="logo-box">
             <i className="fas fa-heart"></i>
           </div>
           <h1 className="logo-text">CHERRISH.</h1>
         </div>
 
-        {/* DESKTOP HUD */}
-        <div className="desktop-controls">
+        {/* 2. DESKTOP MENU (Hidden on Mobile) */}
+        <div className="desktop-menu">
           {isAuthenticated && user && (
             <>
-              {/* User Pill */}
-              <div className="user-badge-pill">
-                <div className="user-avatar"><i className="fas fa-user-astronaut"></i></div>
-                <div className="user-details">
-                  <span className="u-name">{user.username}</span>
-                  <span className="u-tag">#{user.user_number}</span>
+              {/* User Info Pill */}
+              <div className="user-pill">
+                <div className="pill-avatar"><i className="fas fa-user"></i></div>
+                <div className="pill-info">
+                  <span className="pill-name">{user.username}</span>
+                  <span className="pill-tag">#{user.user_number}</span>
                 </div>
               </div>
 
-              {/* Credits Button (Green) */}
+              {/* Credits */}
               <button className="neo-btn btn-credits" onClick={onBuyCreditsClick}>
                 <i className="fas fa-coins"></i> {credits}
               </button>
 
-              {/* Community (Blue) */}
+              {/* Admin Actions Group */}
+              {user.is_admin && (
+                <>
+                  <button className="neo-btn btn-admin btn-icon-only" 
+                    onClick={() => window.location.href = '/admin'} 
+                    title="Admin Panel"
+                  >
+                    <i className="fas fa-shield-alt"></i>
+                  </button>
+                  <button className="neo-btn btn-admin btn-icon-only" 
+                    onClick={() => window.location.href = '/admin/community'} 
+                    title="Manage Polls/Community"
+                  >
+                    <i className="fas fa-poll"></i>
+                  </button>
+                </>
+              )}
+
+              {/* Community */}
               <button className="neo-btn btn-community" onClick={() => window.location.href = '/community'}>
                 COMMUNITY
               </button>
 
-              {/* Support */}
-              <button className="neo-btn" onClick={() => window.location.href = '/admin-chat'}>
-                SUPPORT {unreadCount > 0 && <span style={{color:'red', fontWeight:'900'}}>!</span>}
+              {/* Support / Contact Admin */}
+              <button className="neo-btn btn-support" onClick={() => window.location.href = '/admin-chat'}>
+                SUPPORT
+                {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
               </button>
 
-              {/* Logout (Red) */}
-              <button className="neo-btn btn-logout" onClick={handleLogout} title="Logout">
+              {/* Username Change (If eligible) */}
+              {!user.username_changed && (
+                <button className="neo-btn" onClick={() => setShowUsernameModal(true)}>
+                  <i className="fas fa-pen"></i>
+                </button>
+              )}
+
+              {/* Premium Upsell */}
+              {!user.is_premium && (
+                <button className="neo-btn btn-premium" onClick={onPremiumClick}>
+                  PREMIUM
+                </button>
+              )}
+
+              {/* Logout */}
+              <button className="neo-btn btn-logout" onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt"></i>
               </button>
             </>
           )}
 
           {/* Theme Toggle */}
-          <button className="neo-btn btn-theme" onClick={onThemeToggle}>
+          <button className="neo-btn btn-icon-only" onClick={onThemeToggle} style={{background: 'var(--nb-black)', color: 'white'}}>
             <i className={`fas fa-${theme === 'light' ? 'moon' : 'sun'}`}></i>
           </button>
         </div>
 
-        {/* MOBILE TOGGLE */}
+        {/* 3. MOBILE HAMBURGER BUTTON */}
         <button 
-          className={`mobile-toggle ${isMobileMenuOpen ? 'active' : ''}`} 
+          className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
-          <span className="bar"></span>
-          <span className="bar"></span>
-          <span className="bar"></span>
+          <div></div>
+          <div></div>
+          <div></div>
         </button>
       </div>
 
-      {/* MOBILE MENU (Full Width Overlay) */}
-      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
-        {isAuthenticated && user && (
-          <div className="m-profile">
-            <div className="m-head">
-              <div className="m-avatar"><i className="fas fa-user-astronaut"></i></div>
-              <div>
-                <div style={{fontWeight:'900', fontSize:'1.2rem'}}>{user.username}</div>
-                <div style={{fontFamily:'monospace'}}>#{user.user_number}</div>
+      {/* 4. MOBILE DRAWER (All Buttons Restored Here) */}
+      <div className={`mobile-drawer ${isMobileMenuOpen ? 'open' : ''}`}>
+        
+        {isAuthenticated && user ? (
+          <>
+            {/* Mobile Profile Card */}
+            <div className="m-profile">
+              <div className="m-user-row">
+                <div className="m-avatar-box"><i className="fas fa-user-astronaut"></i></div>
+                <div>
+                  <div style={{fontWeight: 900, fontSize: '1.2rem'}}>{user.username}</div>
+                  <div style={{fontFamily: 'monospace'}}>#{user.user_number}</div>
+                  {user.is_premium && <span style={{color: 'var(--nb-pink)', fontWeight: 'bold'}}>PREMIUM MEMBER</span>}
+                </div>
               </div>
-              {user.is_premium && <BrutalistStar color="#ff3333" />}
-            </div>
-            
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderTop:'2px dashed black', paddingTop:'15px'}}>
-              <span style={{fontWeight:'bold'}}>BALANCE: {credits}</span>
-              <button 
-                onClick={() => handleMobileAction(onBuyCreditsClick)}
-                style={{background:'black', color:'#00e676', border:'none', padding:'8px 12px', fontWeight:'bold', cursor:'pointer'}}
-              >
-                + ADD
+              
+              <button className="neo-btn btn-credits span-2" style={{width: '100%'}} onClick={() => closeMenu(onBuyCreditsClick)}>
+                <i className="fas fa-coins"></i> BALANCE: {credits} (ADD)
               </button>
             </div>
+
+            {/* Mobile Action Grid */}
+            <div className="m-actions-grid">
+              
+              {/* Community */}
+              <button className="neo-btn m-btn btn-community span-2" onClick={() => closeMenu(() => window.location.href = '/community')}>
+                <i className="fas fa-comments"></i> COMMUNITY
+              </button>
+
+              {/* Support */}
+              <button className="neo-btn m-btn btn-support span-2" onClick={() => closeMenu(() => window.location.href = '/admin-chat')}>
+                <i className="fas fa-headset"></i> CONTACT SUPPORT
+                {unreadCount > 0 && <span className="notif-badge" style={{top: '10px', right: '10px'}}>{unreadCount}</span>}
+              </button>
+
+              {/* Admin Area (Restored!) */}
+              {user.is_admin && (
+                <>
+                  <button className="neo-btn m-btn btn-admin" onClick={() => closeMenu(() => window.location.href = '/admin')}>
+                    <i className="fas fa-shield-alt"></i> ADMIN PANEL
+                  </button>
+                  <button className="neo-btn m-btn btn-admin" onClick={() => closeMenu(() => window.location.href = '/admin/community')}>
+                    <i className="fas fa-poll"></i> MANAGE POLLS
+                  </button>
+                </>
+              )}
+
+              {/* Utilities */}
+              {!user.username_changed && (
+                <button className="neo-btn m-btn" onClick={() => closeMenu(() => setShowUsernameModal(true))}>
+                  CHANGE NAME
+                </button>
+              )}
+
+              {!user.is_premium && (
+                <button className="neo-btn m-btn btn-premium span-2" onClick={() => closeMenu(onPremiumClick)}>
+                   GET PREMIUM
+                </button>
+              )}
+
+              <button className="neo-btn m-btn" onClick={() => closeMenu(onThemeToggle)}>
+                {theme === 'light' ? 'DARK MODE' : 'LIGHT MODE'}
+              </button>
+
+              <button className="neo-btn m-btn btn-logout" onClick={handleLogout}>
+                LOGOUT
+              </button>
+            </div>
+          </>
+        ) : (
+          // Guest View
+          <div className="m-actions-grid">
+            <button className="neo-btn m-btn span-2" onClick={onThemeToggle}>
+              SWITCH THEME
+            </button>
           </div>
         )}
-
-        <div className="m-btn-grid">
-           {/* Huge Mobile Buttons for Easy Access */}
-          <button className="neo-btn m-btn btn-community" onClick={() => handleMobileAction(() => window.location.href = '/community')}>
-            <i className="fas fa-comments"></i> COMMUNITY AREA
-          </button>
-          
-          <button className="neo-btn m-btn" onClick={() => handleMobileAction(() => window.location.href = '/admin-chat')}>
-            <i className="fas fa-headset"></i> SUPPORT CHAT
-          </button>
-
-          <button className="neo-btn m-btn btn-theme" style={{width:'100%', color: 'var(--neo-yellow)'}} onClick={() => handleMobileAction(onThemeToggle)}>
-             {theme === 'light' ? 'SWITCH TO DARK' : 'SWITCH TO LIGHT'}
-          </button>
-
-          {isAuthenticated && (
-            <button className="neo-btn m-btn btn-logout" onClick={() => handleMobileAction(handleLogout)}>
-              LOG OUT
-            </button>
-          )}
-        </div>
       </div>
 
+      {/* MODAL RENDER */}
       {showUsernameModal && (
         <ChangeUsernameModal
           onClose={() => setShowUsernameModal(false)}
