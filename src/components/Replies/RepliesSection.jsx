@@ -29,7 +29,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
   const loadReplies = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`http://localhost:3001/api/replies/confession/${confessionId}`, {
+      const response = await fetch(`${API_URL}/api/replies/confession/${confessionId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       })
       const data = await response.json()
@@ -110,7 +110,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
     ))
 
     try {
-      await fetch(`http://localhost:3001/api/replies/${replyId}/like`, {
+      await fetch(`${API_URL}/api/replies/${replyId}/like`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       })
@@ -126,7 +126,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
     setReplies(replies.filter(r => r.id !== replyId))
 
     try {
-      const response = await fetch(`http://localhost:3001/api/replies/${replyId}`, {
+      const response = await fetch(`${API_URL}/api/replies/${replyId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       })

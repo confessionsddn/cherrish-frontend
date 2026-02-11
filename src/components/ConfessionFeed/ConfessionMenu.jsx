@@ -70,7 +70,7 @@ export default function ConfessionMenu({
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/visibility/spotlight/${confessionId}`, {
+      const response = await fetch(`${API_URL}/api/visibility/spotlight/${confessionId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -101,7 +101,7 @@ export default function ConfessionMenu({
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/visibility/boost/${confessionId}`, {
+      const response = await fetch(`${API_URL}/api/visibility/boost/${confessionId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,

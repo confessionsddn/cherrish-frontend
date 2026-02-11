@@ -116,7 +116,7 @@ export default function ConfessionCard({
 
   const trackView = async () => {
     try {
-      await fetch(`http://localhost:3001/api/confessions/${confession.id}/view`, {
+      await fetch(`${API_URL}/api/confessions/${confession.id}/view`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
@@ -156,7 +156,7 @@ export default function ConfessionCard({
   // Delete Handler
   const handleDelete = async (confessionId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/confessions/${confessionId}`, {
+      const response = await fetch(`${API_URL}/api/confessions/${confessionId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
