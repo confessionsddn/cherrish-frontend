@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import './ConfessionCard.css'
 import RepliesSection from '../Replies/RepliesSection'
 import ConfessionMenu from './ConfessionMenu'
+import { API_URL } from '../../services/api';
 
 const MOOD_ICONS = {
   'Crush': '💕',
