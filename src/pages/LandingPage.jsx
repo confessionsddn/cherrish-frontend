@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import './LandingPage.css'
 
+// API URL Configuration
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
 export default function LandingPage() {
   const [showAnimation, setShowAnimation] = useState(false)
 
   const handleGoogleLogin = () => {
     setShowAnimation(true)
     setTimeout(() => {
-window.location.href = `${API_BASE_URL}/auth/google`;
+      window.location.href = `${API_BASE_URL}/auth/google`
     }, 800)
   }
 
@@ -16,55 +19,54 @@ window.location.href = `${API_BASE_URL}/auth/google`;
       {/* Background Decor */}
       <div className="neo-background-grid"></div>
       
-      {/* Floating Neo Shapes */}
       {/* Floating Neo Shapes (SVG VERSION) */}
-<div className="neo-floating-shapes">
-  
-  {/* Shape 1: The Bolt (Yellow) */}
-  <div className="neo-shape shape-1">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M55 5L15 60H45L35 95L85 40H50L55 5Z" fill="#FFC900" stroke="black" strokeWidth="4"/>
-    </svg>
-  </div>
+      <div className="neo-floating-shapes">
+        
+        {/* Shape 1: The Bolt (Yellow) */}
+        <div className="neo-shape shape-1">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M55 5L15 60H45L35 95L85 40H50L55 5Z" fill="#FFC900" stroke="black" strokeWidth="4"/>
+          </svg>
+        </div>
 
-  {/* Shape 2: The Block Heart (Pink) */}
-  <div className="neo-shape shape-2">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 30V10H30V30H50V10H70V30H90V50H70V70H50V90H30V70H10V50H30V30H10Z" fill="#FF90E8" stroke="black" strokeWidth="4"/>
-    </svg>
-  </div>
+        {/* Shape 2: The Block Heart (Pink) */}
+        <div className="neo-shape shape-2">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 30V10H30V30H50V10H70V30H90V50H70V70H50V90H30V70H10V50H30V30H10Z" fill="#FF90E8" stroke="black" strokeWidth="4"/>
+          </svg>
+        </div>
 
-  {/* Shape 3: The Thick X (Red) */}
-  <div className="neo-shape shape-3">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 10L50 40L80 10L90 20L60 50L90 80L80 90L50 60L20 90L10 80L40 50L10 20L20 10Z" fill="#FF4444" stroke="black" strokeWidth="4"/>
-    </svg>
-  </div>
+        {/* Shape 3: The Thick X (Red) */}
+        <div className="neo-shape shape-3">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 10L50 40L80 10L90 20L60 50L90 80L80 90L50 60L20 90L10 80L40 50L10 20L20 10Z" fill="#FF4444" stroke="black" strokeWidth="4"/>
+          </svg>
+        </div>
 
-  {/* Shape 4: The 4-Point Sparkle (Cyan) */}
-  <div className="neo-shape shape-4">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 0L65 35L100 50L65 65L50 100L35 65L0 50L35 35L50 0Z" fill="#23A6D5" stroke="black" strokeWidth="4"/>
-    </svg>
-  </div>
+        {/* Shape 4: The 4-Point Sparkle (Cyan) */}
+        <div className="neo-shape shape-4">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 0L65 35L100 50L65 65L50 100L35 65L0 50L35 35L50 0Z" fill="#23A6D5" stroke="black" strokeWidth="4"/>
+          </svg>
+        </div>
 
-  {/* Shape 5: The Geo Eye (White) */}
-  <div className="neo-shape shape-5">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5 50C20 20 80 20 95 50C80 80 20 80 5 50Z" fill="white" stroke="black" strokeWidth="4"/>
-      <circle cx="50" cy="50" r="15" fill="black"/>
-      <circle cx="55" cy="45" r="5" fill="white"/>
-    </svg>
-  </div>
+        {/* Shape 5: The Geo Eye (White) */}
+        <div className="neo-shape shape-5">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 50C20 20 80 20 95 50C80 80 20 80 5 50Z" fill="white" stroke="black" strokeWidth="4"/>
+            <circle cx="50" cy="50" r="15" fill="black"/>
+            <circle cx="55" cy="45" r="5" fill="white"/>
+          </svg>
+        </div>
 
-  {/* Shape 6: The Spiky Burst (Green) */}
-  <div className="neo-shape shape-6">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 0L60 30L90 20L75 50L100 70L70 80L50 100L30 80L0 70L25 50L10 20L40 30L50 0Z" fill="#00E054" stroke="black" strokeWidth="4"/>
-    </svg>
-  </div>
+        {/* Shape 6: The Spiky Burst (Green) */}
+        <div className="neo-shape shape-6">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 0L60 30L90 20L75 50L100 70L70 80L50 100L30 80L0 70L25 50L10 20L40 30L50 0Z" fill="#00E054" stroke="black" strokeWidth="4"/>
+          </svg>
+        </div>
 
-</div>
+      </div>
 
       <div className="neo-landing-card pop-in">
         

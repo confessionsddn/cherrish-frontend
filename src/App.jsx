@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { confessionsAPI, authAPI } from './services/api'
+import { confessionsAPI, authAPI, API_URL } from './services/api'
 import LandingPage from './pages/LandingPage'
 import AccessCodePage from './pages/AccessCodePage'
 import AdminPanel from './pages/AdminPanel'
@@ -26,7 +26,57 @@ import {
   BrutalNotification 
 } from './components/Animations/AnimationComponents'
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// ============================================
+// HASH ROUTING HANDLER (for OAuth callback)
+// ============================================
+function HashRouter() {
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      
+      // Handle #/auth/callback?token=...
+      if (hash.includes('#/auth/callback')) {
+        const params = new URLSearchParams(hash.split('?')[1]);
+        const token = params.get('token');
+        
+        if (token) {
+          console.log('✅ Token received via hash routing');
+          localStorage.setItem('auth_token', token);
+          
+          // Clear hash and redirect to home
+          window.location.hash = '';
+          window.location.href = '/';
+        }
+      }
+      
+      // Handle #/access-code?data=...
+      if (hash.includes('#/access-code')) {
+        const params = new URLSearchParams(hash.split('?')[1]);
+        const data = params.get('data');
+        
+        if (data) {
+          console.log('✅ Access code data received via hash');
+          // Clear hash and redirect
+          window.location.hash = '';
+          window.location.href = `/access-code?data=${data}`;
+        }
+      }
+    };
+    
+    // Check on mount
+    handleHashChange();
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+  
+  return null;
+}
+
 
 function App() {
   // ============================================
@@ -120,7 +170,7 @@ function App() {
   
   const loadConfessions = async () => {
     try {
-      let url = `${API_BASE_URL}/api/confessions`
+      let url = `${API_URL}/api/confessions`
       const params = new URLSearchParams()
       
       // Apply filters
@@ -180,8 +230,8 @@ function App() {
         formData.append('voice_duration', confession.voice_duration || 0)
       }
       
-const response = await fetch(`${API_BASE_URL}/api/confessions`, {
-          method: 'POST',
+      const response = await fetch(`${API_URL}/api/confessions`, {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         },
@@ -300,7 +350,7 @@ const response = await fetch(`${API_BASE_URL}/api/confessions`, {
   
   const handleSendGift = async (giftType, price) => {
     try {
- const response = await fetch(`${API_BASE_URL}/api/gifts/send`, {
+      const response = await fetch(`${API_URL}/api/gifts/send`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -308,7 +358,7 @@ const response = await fetch(`${API_BASE_URL}/api/confessions`, {
         },
         body: JSON.stringify({
           gift_id: giftType,
-          receiver_id: selectedConfessionId, // This should be the user ID, not confession ID
+          receiver_id: selectedConfessionId,
           confession_id: selectedConfessionId
         })
       })
@@ -370,20 +420,23 @@ const response = await fetch(`${API_BASE_URL}/api/confessions`, {
   // EFFECTS
   // ============================================
   
-  // OAuth callback handler
+  // OAuth callback handler - MUST BE FIRST!
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const token = params.get('token')
     
     if (currentPath === '/auth/callback' && token) {
+      console.log('✅ OAuth token received')
       localStorage.setItem('auth_token', token)
+      
+      // Small delay to ensure storage is written
       setTimeout(() => {
         window.location.href = '/'
       }, 100)
     }
   }, [currentPath])
 
-  // Check auth on mount
+  // Check auth on mount (skip for certain routes)
   useEffect(() => {
     if (currentPath === '/auth/callback' || currentPath === '/access-code') {
       setLoading(false)
@@ -408,7 +461,7 @@ const response = await fetch(`${API_BASE_URL}/api/confessions`, {
   // ROUTING
   // ============================================
   
-  // OAuth callback
+  // OAuth callback - MUST HANDLE FIRST
   if (currentPath === '/auth/callback') {
     return (
       <div style={{ 
@@ -418,9 +471,14 @@ const response = await fetch(`${API_BASE_URL}/api/confessions`, {
         height: '100vh', 
         fontSize: '1.5rem', 
         fontWeight: 'bold',
-        fontFamily: 'Dela Gothic One, cursive'
+        fontFamily: 'Dela Gothic One, cursive',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white'
       }}>
-        LOGGING IN...
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>✅</div>
+          <div>LOGGING IN...</div>
+        </div>
       </div>
     )
   }
@@ -453,6 +511,7 @@ const response = await fetch(`${API_BASE_URL}/api/confessions`, {
     }
     return (
       <>
+        
         <Header 
           credits={userCredits}
           onThemeToggle={toggleTheme}
@@ -570,6 +629,7 @@ const response = await fetch(`${API_BASE_URL}/api/confessions`, {
 
   return (
     <>
+       <HashRouter />
       {/* Global animations */}
       <ConfettiContainer />
       <MoodTransitionOverlay />

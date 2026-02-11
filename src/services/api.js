@@ -3,7 +3,11 @@
 // Global API base URL
 // ============================================
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+// ✅ LOG API URL ON LOAD (for debugging)
+console.log('🔧 API_URL configured:', API_URL);
+console.log('🔧 Environment:', import.meta.env.MODE);
 
 // Helper to get auth headers
 const getAuthHeaders = () => {
@@ -398,7 +402,7 @@ export const messagesAPI = {
 };
 
 // ============================================
-// DEFAULT EXPORT + API_URL
+// DEFAULT EXPORT + API_URL + getAuthHeaders
 // ============================================
 const api = {
   auth: authAPI,
@@ -409,4 +413,4 @@ const api = {
 };
 
 export default api;
-export { API_URL };
+export { getAuthHeaders };
