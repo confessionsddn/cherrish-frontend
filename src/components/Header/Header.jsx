@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
+import { API_URL } from '../../services/api';
 
 export default function Header({
   credits,
