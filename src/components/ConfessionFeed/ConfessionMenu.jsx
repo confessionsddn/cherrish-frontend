@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './ConfessionMenu.css'
+import { API_URL } from '../../services/api';
 
 const getSpotlightOptions = (isPremium, remaining) => [
   { duration: 30, label: '30 minutes', credits: 5, isFree: false },
