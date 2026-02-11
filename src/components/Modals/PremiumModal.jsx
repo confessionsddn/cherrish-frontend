@@ -1,4 +1,4 @@
-//PremiumModal.jsx
+import { API_URL } from '../../services/api';//PremiumModal.jsx
 import './PremiumModal.css'
 
 const PREMIUM_ITEMS = [
