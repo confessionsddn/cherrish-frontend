@@ -1,291 +1,425 @@
-/* --- HEADER.CSS - NEO-BRUTALISM ULTIMATE --- */
-
+/* =========================================
+   NEOBRUTALISM VARIABLES
+   ========================================= */
 :root {
-  /* THE PALETTE */
-  --nb-black: #050505;
-  --nb-white: #ffffff;
-  --nb-red: #FF2E2E;       /* Alerts / Branding */
-  --nb-yellow: #F9ED32;    /* Highlights */
-  --nb-blue: #3E7CFF;      /* Information */
-  --nb-green: #00E055;     /* Money/Success */
-  --nb-purple: #8C52FF;    /* Admin/Royal */
-  --nb-pink: #FF66C4;      /* Support/Love */
-  --nb-cyan: #00F0FF;      /* Community */
-
-  /* PHYSICS */
-  --nb-border: 3px solid var(--nb-black);
-  --nb-shadow: 4px 4px 0px var(--nb-black);
-  --nb-shadow-hover: 2px 2px 0px var(--nb-black);
-  --nb-shadow-active: 0px 0px 0px var(--nb-black);
-  --nb-radius: 8px;
+  --neo-border: 3px solid #000000;
+  --neo-shadow: 4px 4px 0px 0px #000000;
+  --neo-shadow-hover: 6px 6px 0px 0px #000000;
+  --neo-shadow-active: 0px 0px 0px 0px #000000;
+  
+  --neo-white: #ffffff;
+  --neo-bg: #f4f4f0; /* Slight paper color */
+  --neo-yellow: #fff503; /* Premium */
+  --neo-green: #00ff9d; /* Credits */
+  --neo-red: #ff3c3c; /* Alerts/Logout */
+  --neo-blue: #3c9dff; /* Support */
+  --neo-purple: #b983ff; /* Username */
+  --neo-text: #000000;
 }
 
-/* --- LAYOUT --- */
+/* =========================================
+   LAYOUT & CONTAINER
+   ========================================= */
 .navbar {
-  background-color: var(--nb-white);
-  border-bottom: var(--nb-border);
-  padding: 12px 0;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 9999;
+  left: 0;
   width: 100%;
+  height: 80px; /* Taller header for brutalist elements */
+  background-color: var(--neo-white);
+  border-bottom: var(--neo-border);
+  z-index: 1000;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  font-family: 'Courier New', Courier, monospace; /* Or a bold Sans-Serif like Archivo Black */
 }
 
 .nav-container {
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
-/* --- BRANDING (Montserrat Red) --- */
+/* =========================================
+   BRANDING
+   ========================================= */
 .nav-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  text-decoration: none;
   cursor: pointer;
-  user-select: none;
 }
 
-.logo-box {
-  width: 48px;
-  height: 48px;
-  background: var(--nb-red);
-  border: var(--nb-border);
+.logo-icon-box {
+  width: 40px;
+  height: 40px;
+  background: var(--neo-red);
+  border: var(--neo-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  color: var(--nb-white);
-  box-shadow: var(--nb-shadow);
-  transition: transform 0.2s;
-}
-
-.nav-brand:hover .logo-box {
-  transform: rotate(-5deg) scale(1.1);
+  font-size: 1.2rem;
+  color: white;
+  box-shadow: 2px 2px 0px #000;
 }
 
 .logo-text {
-  font-family: 'Montserrat', sans-serif; /* Your requested font */
-  font-weight: 900;
   font-size: 1.8rem;
-  color: var(--nb-red);
+  font-weight: 900;
+  color: var(--neo-text);
   margin: 0;
-  text-transform: uppercase;
   letter-spacing: -1px;
-  /* Clean text, no stroke as requested */
+  text-transform: lowercase;
 }
 
-/* --- DESKTOP CONTROLS --- */
-.desktop-menu {
+/* =========================================
+   DESKTOP CONTROLS (HUD)
+   ========================================= */
+.desktop-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
-/* Hide on mobile */
-@media (max-width: 1100px) {
-  .desktop-menu { display: none; }
-}
-
-/* --- COMPONENT: USER PILL --- */
-.user-pill {
+/* General Button Style - The "Block" */
+.nav-btn, .credits-ticket {
+  height: 45px;
+  padding: 0 16px;
+  border: var(--neo-border);
+  background: var(--neo-white);
+  color: var(--neo-text);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  background: var(--nb-white);
-  border: var(--nb-border);
-  padding: 4px;
-  border-radius: 50px;
-  box-shadow: var(--nb-shadow);
-  margin-right: 8px;
-  gap: 10px;
-  padding-right: 16px;
+  gap: 8px;
+  box-shadow: var(--neo-shadow);
+  transition: all 0.15s ease-in-out;
+  text-transform: uppercase;
 }
 
-.pill-avatar {
-  width: 36px;
-  height: 36px;
-  background: var(--nb-black);
-  color: var(--nb-white);
-  border-radius: 50%;
+/* Hover State: Lift up */
+.nav-btn:hover, .credits-ticket:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--neo-shadow-hover);
+}
+
+/* Active State: Press down */
+.nav-btn:active, .credits-ticket:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--neo-shadow-active);
+}
+
+/* --- Specific Button Variants --- */
+
+/* Support Button */
+.btn-support {
+  background-color: var(--neo-blue);
+  color: white;
+  position: relative;
+}
+
+.unread-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: var(--neo-red);
+  color: white;
+  border: var(--neo-border);
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  z-index: 10;
 }
 
-.pill-info {
+/* Community Button */
+.btn-community, .btn-community-admin {
+  background-color: #ffffff;
+}
+
+/* Admin Shield */
+.btn-admin {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Username Change */
+.btn-username {
+  background-color: var(--neo-purple);
+  color: #fff;
+}
+
+/* Premium Button (Wiggle animation logic below) */
+.btn-premium {
+  background-color: var(--neo-yellow);
+}
+
+/* Logout */
+.btn-logout {
+  background-color: var(--neo-red);
+  color: white;
+  padding: 0 12px;
+}
+
+/* Theme Toggle */
+.btn-theme {
+  background-color: #333;
+  color: #fff;
+  padding: 0 12px;
+}
+
+/* =========================================
+   USER BADGE & CREDITS
+   ========================================= */
+
+/* The User ID Card */
+.user-badge-pill {
+  display: flex;
+  align-items: center;
+  border: var(--neo-border);
+  background: var(--neo-white);
+  padding: 4px 12px 4px 4px;
+  gap: 10px;
+  height: 45px;
+  box-shadow: var(--neo-shadow);
+  margin-right: 8px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Keeping avatar round for contrast, or make it 0 for square */
+  border: 2px solid #000;
+}
+
+.user-details {
   display: flex;
   flex-direction: column;
   line-height: 1;
 }
 
-.pill-name { font-weight: 800; font-size: 0.85rem; }
-.pill-tag { font-size: 0.7rem; font-family: monospace; }
-
-/* --- COMPONENT: NEO BUTTONS --- */
-.neo-btn {
-  height: 44px;
-  padding: 0 18px;
-  border: var(--nb-border);
-  background: var(--nb-white);
-  color: var(--nb-black);
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: var(--nb-shadow);
-  border-radius: var(--nb-radius);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.1s;
-  white-space: nowrap;
+.u-name {
+  font-weight: 900;
+  font-size: 0.9rem;
 }
 
-.neo-btn:hover {
-  transform: translate(2px, 2px);
-  box-shadow: var(--nb-shadow-hover);
-}
-
-.neo-btn:active {
-  transform: translate(4px, 4px);
-  box-shadow: var(--nb-shadow-active);
-}
-
-/* Button Variants (Color Coding) */
-.btn-credits { background: var(--nb-green); min-width: 100px; }
-.btn-admin { background: var(--nb-purple); color: white; }
-.btn-support { background: var(--nb-pink); position: relative; }
-.btn-community { background: var(--nb-cyan); }
-.btn-premium { background: var(--nb-yellow); animation: wobble 3s infinite; }
-.btn-logout { background: var(--nb-red); color: white; width: 44px; padding: 0; justify-content: center; }
-.btn-icon-only { width: 44px; padding: 0; justify-content: center; }
-
-/* Notification Badge */
-.notif-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--nb-red);
-  color: white;
-  border: 2px solid var(--nb-black);
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+.u-tag {
   font-size: 0.7rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
+  color: #666;
+  font-family: monospace;
 }
 
-/* --- MOBILE HAMBURGER --- */
-.hamburger {
+/* Credits Ticket */
+.credits-ticket {
+  background-color: var(--neo-green);
+  margin-right: 8px;
+}
+
+.c-label {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.c-value {
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+/* =========================================
+   ACTION GROUP
+   ========================================= */
+.action-group {
+  display: flex;
+  gap: 8px;
+  border-left: 3px solid #000;
+  padding-left: 16px;
+  margin-left: 8px;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+.mobile-toggle {
   display: none;
-  width: 50px;
-  height: 50px;
-  background: var(--nb-yellow);
-  border: var(--nb-border);
-  box-shadow: var(--nb-shadow);
+  background: transparent;
+  border: var(--neo-border);
+  width: 45px;
+  height: 45px;
   cursor: pointer;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 6px;
+  box-shadow: var(--neo-shadow);
 }
 
-.hamburger div {
-  width: 24px;
-  height: 4px;
-  background: var(--nb-black);
+.bar {
+  width: 25px;
+  height: 3px;
+  background-color: #000;
   transition: 0.3s;
 }
 
-.hamburger.active { background: var(--nb-red); transform: translate(4px, 4px); box-shadow: none; }
-.hamburger.active div:nth-child(1) { transform: rotate(45deg) translate(6px, 8px); }
-.hamburger.active div:nth-child(2) { opacity: 0; }
-.hamburger.active div:nth-child(3) { transform: rotate(-45deg) translate(6px, -8px); }
-
-@media (max-width: 1100px) {
-  .hamburger { display: flex; }
-}
-
-/* --- MOBILE DRAWER (The "Control Center") --- */
-.mobile-drawer {
+.mobile-menu {
   position: fixed;
-  top: 76px;
+  top: 80px; /* Height of header */
   left: 0;
   width: 100%;
-  height: calc(100vh - 76px);
-  background: var(--nb-white);
-  border-top: var(--nb-border);
+  height: calc(100vh - 80px);
+  background: var(--neo-bg);
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  z-index: 9998;
-  padding: 20px;
+  transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* Bouncy slide */
+  z-index: 999;
+  border-top: var(--neo-border);
   overflow-y: auto;
+}
+
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
+.mobile-menu-content {
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.mobile-drawer.open { transform: translateX(0); }
-
-/* Mobile Profile Card */
-.m-profile {
-  background: var(--nb-yellow);
-  border: var(--nb-border);
-  box-shadow: var(--nb-shadow);
-  padding: 15px;
-  border-radius: var(--nb-radius);
+/* Mobile User Card */
+.mobile-user-card {
+  border: var(--neo-border);
+  background: var(--neo-white);
+  padding: 1rem;
+  box-shadow: var(--neo-shadow);
 }
 
-.m-user-row {
+.m-card-header {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 15px;
-  border-bottom: 2px dashed var(--nb-black);
-  padding-bottom: 15px;
 }
 
-.m-avatar-box {
+.m-avatar {
   width: 50px;
   height: 50px;
-  background: var(--nb-black);
-  color: white;
+  background: #000;
+  color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
-.m-actions-grid {
+.m-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.m-username { font-weight: 900; font-size: 1.2rem; }
+.m-usertag { font-family: monospace; color: #555; }
+
+.m-card-divider {
+  height: 3px;
+  background: #000;
+  margin: 15px 0;
+}
+
+.m-credits-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.m-credits-badge {
+  background: var(--neo-green);
+  padding: 5px 10px;
+  border: 2px solid #000;
+}
+
+.m-buy-credits-btn {
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  color: #fff;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+/* Mobile Buttons Grid */
+.mobile-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr; /* Stack them for brutal look */
   gap: 12px;
 }
 
-/* Full width buttons in grid */
-.span-2 { grid-column: span 2; }
-
 .m-btn {
-  height: 56px; /* Larger touch target */
-  font-size: 0.9rem;
+  width: 100%;
+  padding: 16px;
+  border: var(--neo-border);
+  background: var(--neo-white);
+  font-weight: 800;
+  text-align: left;
+  box-shadow: 4px 4px 0px #000;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
 }
 
-/* Animations */
-@keyframes wobble {
+.m-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.m-premium { background: var(--neo-yellow); }
+.m-support { background: var(--neo-blue); color: white; justify-content: space-between; }
+.m-logout { background: var(--neo-red); color: white; }
+
+/* =========================================
+   ANIMATIONS
+   ========================================= */
+@keyframes wiggle {
   0% { transform: rotate(0deg); }
-  15% { transform: rotate(-3deg); }
-  30% { transform: rotate(3deg); }
-  45% { transform: rotate(-3deg); }
-  60% { transform: rotate(3deg); }
-  75% { transform: rotate(-3deg); }
+  25% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+  75% { transform: rotate(-1deg); }
   100% { transform: rotate(0deg); }
+}
+
+.wiggle-effect:hover {
+  animation: wiggle 0.4s ease-in-out;
+}
+
+/* =========================================
+   MEDIA QUERIES
+   ========================================= */
+@media (max-width: 960px) {
+  .desktop-controls {
+    display: none;
+  }
+  
+  .mobile-toggle {
+    display: flex;
+  }
 }
