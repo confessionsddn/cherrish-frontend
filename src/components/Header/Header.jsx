@@ -1,4 +1,4 @@
-// frontend/src/components/Header/Header.jsx - COMPLETE WORKING VERSION
+// frontend/src/components/Header/Header.jsx - REDESIGNED VERSION
 import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
@@ -16,22 +16,19 @@ export default function Header({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token');
-    window.location.href = '/';
+    if (window.confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem('auth_token');
+      window.location.href = '/';
+    }
   };
 
-  const toggleMenu = () => {
+  const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const handleMobileAction = (action) => {
-    if (action) action();
-    setIsMobileMenuOpen(false);
-  };
-
-  // Navigate to admin chat
   const handleAdminChatClick = () => {
     window.location.href = '/admin-chat';
   };
@@ -48,267 +45,385 @@ export default function Header({
           }
         });
         
-        if (!response.ok) {
-          console.error('Unread count fetch failed:', response.status);
-          return;
-        }
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          setUnreadCount(data.unread_count || 0);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setUnreadCount(data.unread_count || 0);
+          }
         }
       } catch (error) {
-        console.error('Unread count error:', error);
+        // Silent fail
       }
     };
 
-    // Fetch immediately
     fetchUnreadCount();
-    
-    // Poll every 10 seconds (faster refresh)
     const interval = setInterval(fetchUnreadCount, 10000);
     
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
+  // Close menus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.user-menu-dropdown') && !e.target.closest('.user-profile-btn')) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  if (!isAuthenticated || !user) {
+    return null;
+  }
+
   return (
-    <header className="navbar">
-      <div className="nav-container">
-        {/* LOGO SECTION */}
-        <div className="nav-brand">
-          <div className="logo-icon-box">
-            <i className="fas fa-heart"></i>
-          </div>
-          <h1 className="logo-text">cherrish.</h1>
-        </div>
-
-        {/* DESKTOP HUD */}
-        <div className="desktop-controls">
-          {isAuthenticated && user && (
-            <>
-              {/* Admin Button */}
-              {user.is_admin && (
-                <button
-                  className="nav-btn btn-admin"
-                  onClick={() => (window.location.href = '/admin')}
-                  title="Admin Panel"
-                >
-                  <i className="fas fa-shield-alt"></i>
-                </button>
-              )}
-
-              {/* SUPPORT BUTTON - FIXED */}
-              <button
-                type="button"
-                className="nav-btn btn-support contact-admin-btn"
-                title="Contact Admin"
-                onClick={handleAdminChatClick}
-              >
-                <i className="fas fa-comment-dots"></i>
-                <span className="nav-btn-text">SUPPORT</span>
-                {unreadCount > 0 && (
-                  <span className="unread-badge">{unreadCount}</span>
-                )}
-              </button>
-
-              {/* Community Buttons */}
-              <button
-                className="nav-btn btn-community"
-                onClick={() => (window.location.href = '/community')}
-                title="Community Polls & Messages"
-              >
-                <i className="fas fa-comments"></i> COMMUNITY
-              </button>
-
-              {user.is_admin && (
-                <button
-                  className="nav-btn btn-community-admin"
-                  onClick={() => (window.location.href = '/admin/community')}
-                  title="Manage Community"
-                >
-                  <i className="fas fa-poll"></i>
-                </button>
-              )}
-
-              {/* Username Change */}
-              {!user.username_changed && (
-                <button
-                  className="nav-btn btn-username"
-                  onClick={() => setShowUsernameModal(true)}
-                  title={`Change username (${user.is_premium ? 'FREE' : '200 credits'}) - Once only!`}
-                >
-                  <i className="fas fa-user-edit"></i>
-                </button>
-              )}
-
-              {/* User Badge */}
-              <div className="user-badge-pill">
-                <div className="user-avatar">
-                  <i className="fas fa-user-astronaut"></i>
-                </div>
-                <div className="user-details">
-                  <span className="u-name">{user.username}</span>
-                  <span className="u-tag">#{user.user_number}</span>
-                </div>
-                {user.is_premium && <span className="premium-star">⭐</span>}
-              </div>
-
-              {/* Credits */}
-              <button
-                className="credits-ticket clickable-credits"
-                onClick={onBuyCreditsClick}
-                title="Buy more credits"
-              >
-                <span className="c-label">BALANCE</span>
-                <span className="c-value">
-                  <i className="fas fa-coins"></i> {credits}
-                </span>
-                <i className="fas fa-plus-circle add-credits-icon"></i>
-              </button>
-            </>
-          )}
-
-          {/* Action Buttons */}
-          <div className="action-group">
-            <button className="nav-btn btn-theme" onClick={onThemeToggle}>
-              <i className={`fas fa-${theme === 'light' ? 'moon' : 'sun'}`}></i>
-            </button>
-
-            {isAuthenticated && !user?.is_premium && (
-              <button className="nav-btn btn-premium wiggle-effect" onClick={onPremiumClick}>
-                <i className="fas fa-crown"></i> PREMIUM
-              </button>
-            )}
-
-            {isAuthenticated && (
-              <button className="nav-btn btn-logout" onClick={handleLogout}>
-                <i className="fas fa-sign-out-alt"></i>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* MOBILE TOGGLE */}
-        <button
-          className={`mobile-toggle ${isMobileMenuOpen ? 'active' : ''}`}
-          onClick={toggleMenu}
-        >
-          <span className="bar"></span>
-          <span className="bar"></span>
-          <span className="bar"></span>
-        </button>
-      </div>
-
-      {/* MOBILE MENU */}
-      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
-        <div className="mobile-menu-content">
-          {isAuthenticated && user && (
-            <div className="mobile-user-card">
-              <div className="m-card-header">
-                <div className="m-avatar">
-                  <i className="fas fa-user-astronaut"></i>
-                </div>
-                <div className="m-user-info">
-                  <span className="m-username">{user.username}</span>
-                  <span className="m-usertag">#{user.user_number}</span>
-                  {user.is_premium && <span className="m-premium-badge">⭐ PREMIUM</span>}
-                </div>
-              </div>
-              <div className="m-card-divider"></div>
-              <div className="m-credits-row">
-                <span>CREDITS AVAILABLE</span>
-                <div className="m-credits-badge">
-                  <i className="fas fa-coins"></i> {credits}
-                </div>
-              </div>
-              <button
-                className="m-buy-credits-btn"
-                onClick={() => handleMobileAction(onBuyCreditsClick)}
-              >
-                <i className="fas fa-plus-circle"></i> BUY MORE CREDITS
-              </button>
-            </div>
-          )}
-
-          {/* Mobile Buttons */}
-          <div className="mobile-grid">
-            {/* SUPPORT BUTTON - MOBILE */}
-            <button
-              className="m-btn m-support"
-              onClick={() => handleMobileAction(handleAdminChatClick)}
+    <>
+      <header className="header-neo">
+        <div className="header-container">
+          
+          {/* LEFT: LOGO */}
+          <div className="header-left">
+            <button 
+              className="logo-btn"
+              onClick={() => window.location.href = '/'}
+              aria-label="Home"
             >
-              <i className="fas fa-comment-dots"></i> SUPPORT
+              <div className="logo-icon">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M16 6L20 10L16 14L12 10L16 6Z" fill="currentColor"/>
+                  <path d="M8 12L12 16L8 20L4 16L8 12Z" fill="currentColor"/>
+                  <path d="M24 12L28 16L24 20L20 16L24 12Z" fill="currentColor"/>
+                  <path d="M16 18L20 22L16 26L12 22L16 18Z" fill="currentColor"/>
+                </svg>
+              </div>
+              <span className="logo-text">cherrish</span>
+            </button>
+          </div>
+
+          {/* CENTER: NAVIGATION */}
+          <nav className="header-nav">
+            <button 
+              className="nav-link"
+              onClick={() => window.location.href = '/community'}
+            >
+              <i className="fas fa-users"></i>
+              <span>Community</span>
+            </button>
+            
+            <button 
+              className="nav-link nav-link-support"
+              onClick={handleAdminChatClick}
+            >
+              <i className="fas fa-headset"></i>
+              <span>Support</span>
               {unreadCount > 0 && (
-                <span className="m-unread-badge">{unreadCount}</span>
+                <span className="nav-badge pulse">{unreadCount}</span>
               )}
             </button>
 
-            {isAuthenticated && !user?.username_changed && (
-              <button
-                className="m-btn m-username"
-                onClick={() => handleMobileAction(() => setShowUsernameModal(true))}
+            {user.is_admin && (
+              <button 
+                className="nav-link nav-link-admin"
+                onClick={() => window.location.href = '/admin'}
               >
-                <i className="fas fa-user-edit"></i> CHANGE USERNAME
+                <i className="fas fa-shield-halved"></i>
+                <span>Admin</span>
+              </button>
+            )}
+          </nav>
+
+          {/* RIGHT: ACTIONS */}
+          <div className="header-right">
+            
+            {/* Credits Button */}
+            <button 
+              className="credits-btn"
+              onClick={onBuyCreditsClick}
+              title="Buy credits"
+            >
+              <div className="credits-icon">
+                <i className="fas fa-coins"></i>
+              </div>
+              <div className="credits-info">
+                <span className="credits-label">Credits</span>
+                <span className="credits-value">{credits.toLocaleString()}</span>
+              </div>
+              <i className="fas fa-plus credits-plus"></i>
+            </button>
+
+            {/* Premium Button */}
+            {!user.is_premium && (
+              <button 
+                className="premium-btn shine"
+                onClick={onPremiumClick}
+              >
+                <i className="fas fa-crown"></i>
+                <span>Premium</span>
               </button>
             )}
 
-            <button
-              className="m-btn m-theme"
-              onClick={() => handleMobileAction(onThemeToggle)}
+            {/* Theme Toggle */}
+            <button 
+              className="icon-btn"
+              onClick={onThemeToggle}
+              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             >
               <i className={`fas fa-${theme === 'light' ? 'moon' : 'sun'}`}></i>
-              {theme === 'light' ? 'DARK MODE' : 'LIGHT MODE'}
             </button>
 
-            <button
-              className="m-btn m-community"
-              onClick={() => handleMobileAction(() => (window.location.href = '/community'))}
+            {/* User Menu */}
+            <div className="user-menu">
+              <button 
+                className="user-profile-btn"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+              >
+                <div className="user-avatar">
+                  {user.username.charAt(0).toUpperCase()}
+                </div>
+                <div className="user-info">
+                  <span className="user-name">{user.username}</span>
+                  <span className="user-id">#{user.user_number}</span>
+                </div>
+                {user.is_premium && (
+                  <i className="fas fa-crown premium-crown"></i>
+                )}
+                <i className={`fas fa-chevron-down dropdown-arrow ${showUserMenu ? 'rotated' : ''}`}></i>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showUserMenu && (
+                <div className="user-menu-dropdown">
+                  <div className="dropdown-header">
+                    <div className="dropdown-user-badge">
+                      <div className="dropdown-avatar">
+                        {user.username.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="dropdown-username">{user.username}</div>
+                        <div className="dropdown-email">{user.email}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="dropdown-divider"></div>
+
+                  <div className="dropdown-section">
+                    <div className="dropdown-stat">
+                      <i className="fas fa-coins"></i>
+                      <span>{credits} Credits</span>
+                    </div>
+                    {user.is_premium && (
+                      <div className="dropdown-stat premium">
+                        <i className="fas fa-crown"></i>
+                        <span>Premium Active</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="dropdown-divider"></div>
+
+                  {!user.username_changed && (
+                    <button 
+                      className="dropdown-item"
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        setShowUsernameModal(true);
+                      }}
+                    >
+                      <i className="fas fa-user-edit"></i>
+                      <span>Change Username</span>
+                      <span className="dropdown-badge">
+                        {user.is_premium ? 'FREE' : '200₹'}
+                      </span>
+                    </button>
+                  )}
+
+                  {user.is_admin && (
+                    <button 
+                      className="dropdown-item"
+                      onClick={() => window.location.href = '/admin/community'}
+                    >
+                      <i className="fas fa-poll"></i>
+                      <span>Community Admin</span>
+                    </button>
+                  )}
+
+                  <div className="dropdown-divider"></div>
+
+                  <button 
+                    className="dropdown-item danger"
+                    onClick={handleLogout}
+                  >
+                    <i className="fas fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <button 
+              className="mobile-menu-btn"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
             >
-              <i className="fas fa-comments"></i> COMMUNITY
+              <span className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
             </button>
-
-            {isAuthenticated && user?.is_admin && (
-              <>
-                <button
-                  className="m-btn m-community-admin"
-                  onClick={() =>
-                    handleMobileAction(() => (window.location.href = '/admin/community'))
-                  }
-                >
-                  <i className="fas fa-poll"></i> MANAGE COMMUNITY
-                </button>
-
-                <button
-                  className="m-btn m-admin"
-                  onClick={() => handleMobileAction(() => (window.location.href = '/admin'))}
-                >
-                  <i className="fas fa-shield-alt"></i> ADMIN PANEL
-                </button>
-              </>
-            )}
-
-            {isAuthenticated && !user?.is_premium && (
-              <button
-                className="m-btn m-premium"
-                onClick={() => handleMobileAction(onPremiumClick)}
-              >
-                <i className="fas fa-crown"></i> GET PREMIUM
-              </button>
-            )}
-
-            {isAuthenticated && (
-              <button
-                className="m-btn m-logout"
-                onClick={() => handleMobileAction(handleLogout)}
-              >
-                <i className="fas fa-sign-out-alt"></i> LOGOUT
-              </button>
-            )}
           </div>
         </div>
-      </div>
 
+        {/* MOBILE MENU */}
+        {isMobileMenuOpen && (
+          <div className="mobile-menu-overlay" onClick={toggleMobileMenu}>
+            <div className="mobile-menu-panel" onClick={(e) => e.stopPropagation()}>
+              
+              {/* Mobile Header */}
+              <div className="mobile-menu-header">
+                <div className="mobile-user-card">
+                  <div className="mobile-avatar">
+                    {user.username.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="mobile-user-info">
+                    <div className="mobile-username">
+                      {user.username}
+                      {user.is_premium && <i className="fas fa-crown"></i>}
+                    </div>
+                    <div className="mobile-user-id">#{user.user_number}</div>
+                    <div className="mobile-user-email">{user.email}</div>
+                  </div>
+                </div>
+
+                <div className="mobile-credits-card">
+                  <div className="mobile-credits-label">Your Balance</div>
+                  <div className="mobile-credits-amount">
+                    <i className="fas fa-coins"></i>
+                    {credits.toLocaleString()} Credits
+                  </div>
+                  <button 
+                    className="mobile-add-credits"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      onBuyCreditsClick();
+                    }}
+                  >
+                    <i className="fas fa-plus"></i> Buy More
+                  </button>
+                </div>
+              </div>
+
+              {/* Mobile Navigation */}
+              <div className="mobile-menu-nav">
+                <button 
+                  className="mobile-nav-item"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    window.location.href = '/community';
+                  }}
+                >
+                  <i className="fas fa-users"></i>
+                  <span>Community</span>
+                </button>
+
+                <button 
+                  className="mobile-nav-item"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleAdminChatClick();
+                  }}
+                >
+                  <i className="fas fa-headset"></i>
+                  <span>Support</span>
+                  {unreadCount > 0 && (
+                    <span className="mobile-badge">{unreadCount}</span>
+                  )}
+                </button>
+
+                {user.is_admin && (
+                  <>
+                    <button 
+                      className="mobile-nav-item"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        window.location.href = '/admin';
+                      }}
+                    >
+                      <i className="fas fa-shield-halved"></i>
+                      <span>Admin Panel</span>
+                    </button>
+
+                    <button 
+                      className="mobile-nav-item"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        window.location.href = '/admin/community';
+                      }}
+                    >
+                      <i className="fas fa-poll"></i>
+                      <span>Community Admin</span>
+                    </button>
+                  </>
+                )}
+
+                {!user.is_premium && (
+                  <button 
+                    className="mobile-nav-item premium-item"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      onPremiumClick();
+                    }}
+                  >
+                    <i className="fas fa-crown"></i>
+                    <span>Get Premium</span>
+                  </button>
+                )}
+
+                {!user.username_changed && (
+                  <button 
+                    className="mobile-nav-item"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setShowUsernameModal(true);
+                    }}
+                  >
+                    <i className="fas fa-user-edit"></i>
+                    <span>Change Username</span>
+                    <span className="mobile-price-tag">
+                      {user.is_premium ? 'FREE' : '200₹'}
+                    </span>
+                  </button>
+                )}
+
+                <button 
+                  className="mobile-nav-item"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onThemeToggle();
+                  }}
+                >
+                  <i className={`fas fa-${theme === 'light' ? 'moon' : 'sun'}`}></i>
+                  <span>{theme === 'light' ? 'Dark' : 'Light'} Mode</span>
+                </button>
+
+                <button 
+                  className="mobile-nav-item danger-item"
+                  onClick={handleLogout}
+                >
+                  <i className="fas fa-right-from-bracket"></i>
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Username Change Modal */}
       {showUsernameModal && (
         <ChangeUsernameModal
           onClose={() => setShowUsernameModal(false)}
@@ -321,6 +436,6 @@ export default function Header({
           }}
         />
       )}
-    </header>
+    </>
   );
 }
