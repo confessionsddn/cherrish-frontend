@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './AccessCodePage.css'
+import { API_URL } from '../services/api';
 
 export default function AccessCodePage() {
   const [accessCode, setAccessCode] = useState('')
@@ -45,7 +46,7 @@ export default function AccessCodePage() {
 
   const checkRequestStatus = async (email) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/access-requests/status/${email}`)
+      const response = await fetch(`${API_URL}/api/access-requests/status/${email}`)
       const data = await response.json()
       
       if (data.success && data.status !== 'none') {
@@ -87,7 +88,7 @@ export default function AccessCodePage() {
       setLoading(true)
       setError('')
       
-      const response = await fetch('http://localhost:3001/api/auth/register/complete-oauth', {
+      const response = await fetch(`${API_URL}/api/auth/register/complete-oauth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,7 +128,7 @@ export default function AccessCodePage() {
       setLoading(true)
       setError('')
       
-      const response = await fetch('http://localhost:3001/api/access-requests/request', {
+      const response = await fetch(`${API_URL}/api/access-requests/request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

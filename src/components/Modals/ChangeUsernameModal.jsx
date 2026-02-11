@@ -40,7 +40,7 @@ export default function ChangeUsernameModal({
     setLoading(true)
     
     try {
-      const response = await fetch('http://localhost:3001/api/auth/change-username', {
+      const response = await fetch(`${API_URL}/api/auth/change-username`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,

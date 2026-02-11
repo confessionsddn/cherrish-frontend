@@ -26,7 +26,7 @@ export default function AdminChatPage() {
 
   const loadMessages = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin-messages/conversation', {
+      const response = await fetch(`${API_URL}/api/admin-messages/conversation`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         }
@@ -51,7 +51,7 @@ export default function AdminChatPage() {
     setSending(true);
     
     try {
-      const response = await fetch('http://localhost:3001/api/admin-messages/send', {
+      const response = await fetch(`${API_URL}/api/admin-messages/send`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,

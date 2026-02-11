@@ -74,7 +74,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
 
     // 2. BACKGROUND SYNC
     try {
-      const response = await fetch('http://localhost:3001/api/replies', {
+      const response = await fetch(`${API_URL}/api/replies`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,

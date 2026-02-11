@@ -54,7 +54,7 @@ const handlePurchase = async (pkg) => {
   console.log('🛒 Starting purchase for:', pkg.name)
 
   try {
-    const res = await fetch('http://localhost:3001/api/payments/create-order', {
+    const res = await fetch(`${API_URL}/api/payments/create-order`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -87,7 +87,7 @@ const handlePurchase = async (pkg) => {
       order_id: data.order_id,
       handler: async function (response) {
         try {
-          const verifyRes = await fetch('http://localhost:3001/api/payments/verify-payment', {
+          const verifyRes = await fetch(`${API_URL}/api/payments/verify-payment`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,

@@ -1,6 +1,7 @@
 // frontend/src/pages/AdminPanel.jsx - COMPLETE WORKING VERSION
 import { useState, useEffect } from 'react'
 import './AdminPanel.css'
+import { API_URL } from '../services/api';
 
 export default function AdminPanel() {
   // State variables
@@ -39,7 +40,7 @@ export default function AdminPanel() {
   // Load functions
   const loadStats = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/stats', {
+      const response = await fetch(`${API_URL}/api/admin/stats`, {
         headers: getAuthHeaders()
       })
       const data = await response.json()
@@ -55,7 +56,7 @@ export default function AdminPanel() {
 
   const loadPendingRequests = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/pending-requests', {
+      const response = await fetch(`${API_URL}/api/admin/pending-requests`, {
         headers: getAuthHeaders()
       })
       const data = await response.json()
@@ -69,7 +70,7 @@ export default function AdminPanel() {
 
   const loadCodes = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/codes', {
+      const response = await fetch(`${API_URL}/api/admin/codes`, {
         headers: getAuthHeaders()
       })
       const data = await response.json()
@@ -84,8 +85,8 @@ export default function AdminPanel() {
   const loadUsers = async (searchTerm = '') => {
     try {
       const url = searchTerm 
-        ? `http://localhost:3001/api/admin/users?search=${encodeURIComponent(searchTerm)}`
-        : 'http://localhost:3001/api/admin/users'
+        ? `${API_URL}/api/admin/users?search=${encodeURIComponent(searchTerm)}`
+        : `${API_URL}/api/admin/users`
         
       console.log('📡 Fetching users from:', url)
         
@@ -112,7 +113,7 @@ export default function AdminPanel() {
 
   const loadPendingConfessions = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/confessions/pending', {
+      const response = await fetch(`${API_URL}/api/admin/confessions/pending`, {
         headers: getAuthHeaders()
       })
       const data = await response.json()
@@ -126,7 +127,7 @@ export default function AdminPanel() {
 
   const loadReports = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/reports', {
+      const response = await fetch(`${API_URL}/api/admin/reports`, {
         headers: getAuthHeaders()
       })
       const data = await response.json()
@@ -140,7 +141,7 @@ export default function AdminPanel() {
 
   const loadActivityLogs = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/activity-logs?limit=100', {
+      const response = await fetch(`${API_URL}/api/admin/activity-logs?limit=100`, {
         headers: getAuthHeaders()
       })
       const data = await response.json()
@@ -154,7 +155,7 @@ export default function AdminPanel() {
 
   const loadConversations = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/messages/conversations', {
+      const response = await fetch(`${API_URL}/api/admin/messages/conversations`, {
         headers: getAuthHeaders()
       })
       const data = await response.json()
@@ -169,7 +170,7 @@ export default function AdminPanel() {
   // Action handlers
   const handleApprove = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/approve-request/${id}`, {
+      const response = await fetch(`${API_URL}/api/admin/approve-request/${id}`, {
         method: 'POST',
         headers: getAuthHeaders()
       })
@@ -192,7 +193,7 @@ export default function AdminPanel() {
     if (!confirm('Are you sure you want to reject this request?')) return
     
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/reject-request/${id}`, {
+      const response = await fetch(`${API_URL}/api/admin/reject-request/${id}`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ reason: 'Not verified' })
@@ -215,7 +216,7 @@ export default function AdminPanel() {
     if (!count) return
     
     try {
-      const response = await fetch('http://localhost:3001/api/admin/generate-codes', {
+      const response = await fetch(`${API_URL}/api/admin/generate-codes`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ count: parseInt(count) })
@@ -253,7 +254,7 @@ export default function AdminPanel() {
     }
     
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/users/${userId}/ban`, {
+      const response = await fetch(`${API_URL}/api/admin/users/${userId}/ban`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ banned, duration })
@@ -272,7 +273,7 @@ export default function AdminPanel() {
 
   const handleViewUserDetails = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/users/${userId}/stats`, {
+      const response = await fetch(`${API_URL}/api/admin/users/${userId}/stats`, {
         headers: getAuthHeaders()
       })
       const data = await response.json()
@@ -297,7 +298,7 @@ ${data.stats.recent_confessions.map(c =>
 
   const handleApproveConfession = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/confessions/${id}/approve`, {
+      const response = await fetch(`${API_URL}/api/admin/confessions/${id}/approve`, {
         method: 'POST',
         headers: getAuthHeaders()
       })
@@ -318,7 +319,7 @@ ${data.stats.recent_confessions.map(c =>
     const reason = prompt('Rejection reason (optional):')
     
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/confessions/${id}/reject`, {
+      const response = await fetch(`${API_URL}/api/admin/confessions/${id}/reject`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ reason })
@@ -342,7 +343,7 @@ ${data.stats.recent_confessions.map(c =>
     }
     
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/reports/${reportId}/resolve`, {
+      const response = await fetch(`${API_URL}/api/admin/reports/${reportId}/resolve`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ action })

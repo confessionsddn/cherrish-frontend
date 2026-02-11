@@ -41,7 +41,7 @@ export default function Header({
 
     const fetchUnreadCount = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/admin-messages/unread-count', {
+        const response = await fetch(`${API_URL}/api/admin-messages/unread-count`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
           }

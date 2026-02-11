@@ -22,7 +22,7 @@ export default function PremiumSubscriptionModal({ onClose }) {
   console.log('👑 Starting premium subscription...')
 
   try {
-    const res = await fetch('http://localhost:3001/api/payments/create-subscription', {
+    const res = await fetch(`${API_URL}/api/payments/create-subscription`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -56,7 +56,7 @@ export default function PremiumSubscriptionModal({ onClose }) {
         console.log('✅ Premium payment successful')
         
         try {
-          const verifyRes = await fetch('http://localhost:3001/api/payments/verify-subscription', {
+          const verifyRes = await fetch(`${API_URL}/api/payments/verify-subscription`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
