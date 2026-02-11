@@ -1,32 +1,38 @@
-/* --- NEO-BRUTALISM RESET & VARIABLES --- */
+/* --- HEADER.CSS - NEO-BRUTALISM ULTIMATE --- */
+
 :root {
-  --neo-black: #000000;
-  --neo-white: #ffffff;
-  --neo-red: #ff3333;
-  --neo-yellow: #ffeb3b; /* Brighter yellow */
-  --neo-blue: #3366ff;
-  --neo-green: #00e676;
-  --neo-purple: #b983ff;
-  
-  --border-width: 3px;
-  --hard-shadow: 4px 4px 0px var(--neo-black);
-  --hard-shadow-hover: 2px 2px 0px var(--neo-black);
-  --hard-shadow-active: 0px 0px 0px var(--neo-black);
+  /* THE PALETTE */
+  --nb-black: #050505;
+  --nb-white: #ffffff;
+  --nb-red: #FF2E2E;       /* Alerts / Branding */
+  --nb-yellow: #F9ED32;    /* Highlights */
+  --nb-blue: #3E7CFF;      /* Information */
+  --nb-green: #00E055;     /* Money/Success */
+  --nb-purple: #8C52FF;    /* Admin/Royal */
+  --nb-pink: #FF66C4;      /* Support/Love */
+  --nb-cyan: #00F0FF;      /* Community */
+
+  /* PHYSICS */
+  --nb-border: 3px solid var(--nb-black);
+  --nb-shadow: 4px 4px 0px var(--nb-black);
+  --nb-shadow-hover: 2px 2px 0px var(--nb-black);
+  --nb-shadow-active: 0px 0px 0px var(--nb-black);
+  --nb-radius: 8px;
 }
 
-/* --- MAIN NAVBAR --- */
+/* --- LAYOUT --- */
 .navbar {
-  background-color: var(--neo-white);
-  border-bottom: var(--border-width) solid var(--neo-black);
-  padding: 15px 0;
+  background-color: var(--nb-white);
+  border-bottom: var(--nb-border);
+  padding: 12px 0;
   position: sticky;
   top: 0;
-  z-index: 1000;
-  font-family: 'Montserrat', sans-serif;
+  z-index: 9999;
+  width: 100%;
 }
 
 .nav-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
@@ -34,223 +40,252 @@
   justify-content: space-between;
 }
 
-/* --- LOGO SECTION (Redesigned) --- */
+/* --- BRANDING (Montserrat Red) --- */
 .nav-brand {
   display: flex;
   align-items: center;
   gap: 12px;
   text-decoration: none;
   cursor: pointer;
+  user-select: none;
 }
 
-/* The Heart Box */
-.logo-icon-box {
-  width: 45px;
-  height: 45px;
-  background: var(--neo-red);
-  border: var(--border-width) solid var(--neo-black);
+.logo-box {
+  width: 48px;
+  height: 48px;
+  background: var(--nb-red);
+  border: var(--nb-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--neo-white);
-  font-size: 1.2rem;
-  box-shadow: var(--hard-shadow);
-  transition: transform 0.1s;
+  font-size: 1.5rem;
+  color: var(--nb-white);
+  box-shadow: var(--nb-shadow);
+  transition: transform 0.2s;
 }
 
-.nav-brand:hover .logo-icon-box {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--neo-black);
+.nav-brand:hover .logo-box {
+  transform: rotate(-5deg) scale(1.1);
 }
 
-/* The Text - Specific User Request: Red, Montserrat, No Border */
 .logo-text {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 900; /* Extra Bold */
-  font-size: 1.6rem;
-  color: var(--neo-red); 
+  font-family: 'Montserrat', sans-serif; /* Your requested font */
+  font-weight: 900;
+  font-size: 1.8rem;
+  color: var(--nb-red);
   margin: 0;
-  letter-spacing: -0.5px;
   text-transform: uppercase;
-  /* Removed -webkit-text-stroke as requested */
+  letter-spacing: -1px;
+  /* Clean text, no stroke as requested */
 }
 
 /* --- DESKTOP CONTROLS --- */
-.desktop-controls {
+.desktop-menu {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-
-/* The "Pill" User Badge */
-.user-badge-pill {
-  display: flex;
-  align-items: center;
-  background: var(--neo-white);
-  border: var(--border-width) solid var(--neo-black);
-  border-radius: 50px; /* Full pill shape */
-  padding: 4px 16px 4px 6px;
   gap: 12px;
-  box-shadow: var(--hard-shadow);
 }
 
-.user-avatar {
+/* Hide on mobile */
+@media (max-width: 1100px) {
+  .desktop-menu { display: none; }
+}
+
+/* --- COMPONENT: USER PILL --- */
+.user-pill {
+  display: flex;
+  align-items: center;
+  background: var(--nb-white);
+  border: var(--nb-border);
+  padding: 4px;
+  border-radius: 50px;
+  box-shadow: var(--nb-shadow);
+  margin-right: 8px;
+  gap: 10px;
+  padding-right: 16px;
+}
+
+.pill-avatar {
   width: 36px;
   height: 36px;
-  background: var(--neo-purple);
-  border: 2px solid var(--neo-black);
+  background: var(--nb-black);
+  color: var(--nb-white);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
 }
 
-.user-details {
+.pill-info {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
+  line-height: 1;
 }
 
-.u-name { font-weight: 800; font-size: 0.9rem; color: var(--neo-black); }
-.u-tag { font-size: 0.75rem; font-weight: 600; color: #555; }
+.pill-name { font-weight: 800; font-size: 0.85rem; }
+.pill-tag { font-size: 0.7rem; font-family: monospace; }
 
-/* --- BUTTONS (The "Neo" Look) --- */
+/* --- COMPONENT: NEO BUTTONS --- */
 .neo-btn {
-  height: 48px; /* Accessible Touch Target */
-  padding: 0 24px;
-  border: var(--border-width) solid var(--neo-black);
-  background: var(--neo-white);
-  color: var(--neo-black);
+  height: 44px;
+  padding: 0 18px;
+  border: var(--nb-border);
+  background: var(--nb-white);
+  color: var(--nb-black);
+  font-family: 'Montserrat', sans-serif;
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: var(--hard-shadow);
-  transition: all 0.1s ease-in-out;
+  box-shadow: var(--nb-shadow);
+  border-radius: var(--nb-radius);
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: all 0.1s;
   white-space: nowrap;
 }
 
 .neo-btn:hover {
   transform: translate(2px, 2px);
-  box-shadow: var(--hard-shadow-hover);
-  background-color: #f0f0f0;
+  box-shadow: var(--nb-shadow-hover);
 }
 
 .neo-btn:active {
   transform: translate(4px, 4px);
-  box-shadow: var(--hard-shadow-active);
+  box-shadow: var(--nb-shadow-active);
 }
 
-/* Button Variants */
-.btn-credits { background: var(--neo-green); }
-.btn-community { background: var(--neo-blue); color: white; }
-.btn-logout { background: var(--neo-red); color: white; }
-.btn-theme { width: 48px; padding: 0; justify-content: center; background: var(--neo-black); color: var(--neo-yellow); }
+/* Button Variants (Color Coding) */
+.btn-credits { background: var(--nb-green); min-width: 100px; }
+.btn-admin { background: var(--nb-purple); color: white; }
+.btn-support { background: var(--nb-pink); position: relative; }
+.btn-community { background: var(--nb-cyan); }
+.btn-premium { background: var(--nb-yellow); animation: wobble 3s infinite; }
+.btn-logout { background: var(--nb-red); color: white; width: 44px; padding: 0; justify-content: center; }
+.btn-icon-only { width: 44px; padding: 0; justify-content: center; }
 
-/* --- HAMBURGER MENU --- */
-.mobile-toggle {
+/* Notification Badge */
+.notif-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--nb-red);
+  color: white;
+  border: 2px solid var(--nb-black);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* --- MOBILE HAMBURGER --- */
+.hamburger {
   display: none;
-  background: var(--neo-yellow);
-  border: var(--border-width) solid var(--neo-black);
   width: 50px;
   height: 50px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
+  background: var(--nb-yellow);
+  border: var(--nb-border);
+  box-shadow: var(--nb-shadow);
   cursor: pointer;
-  box-shadow: var(--hard-shadow);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
-.bar {
+.hamburger div {
   width: 24px;
   height: 4px;
-  background: var(--neo-black);
-  transition: 0.2s;
+  background: var(--nb-black);
+  transition: 0.3s;
 }
 
-.mobile-toggle.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 9px); }
-.mobile-toggle.active .bar:nth-child(2) { opacity: 0; }
-.mobile-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -9px); }
+.hamburger.active { background: var(--nb-red); transform: translate(4px, 4px); box-shadow: none; }
+.hamburger.active div:nth-child(1) { transform: rotate(45deg) translate(6px, 8px); }
+.hamburger.active div:nth-child(2) { opacity: 0; }
+.hamburger.active div:nth-child(3) { transform: rotate(-45deg) translate(6px, -8px); }
 
-/* --- MOBILE MENU OVERLAY --- */
-.mobile-menu {
+@media (max-width: 1100px) {
+  .hamburger { display: flex; }
+}
+
+/* --- MOBILE DRAWER (The "Control Center") --- */
+.mobile-drawer {
   position: fixed;
-  top: 80px;
+  top: 76px;
   left: 0;
   width: 100%;
-  height: calc(100vh - 80px);
-  background: var(--neo-white);
-  padding: 20px;
+  height: calc(100vh - 76px);
+  background: var(--nb-white);
+  border-top: var(--nb-border);
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 998;
-  border-top: var(--border-width) solid var(--neo-black);
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 9998;
+  padding: 20px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.mobile-menu.open { transform: translateX(0); }
+.mobile-drawer.open { transform: translateX(0); }
 
 /* Mobile Profile Card */
 .m-profile {
-  background: var(--neo-yellow);
-  border: var(--border-width) solid var(--neo-black);
-  padding: 20px;
-  margin-bottom: 25px;
-  box-shadow: var(--hard-shadow);
+  background: var(--nb-yellow);
+  border: var(--nb-border);
+  box-shadow: var(--nb-shadow);
+  padding: 15px;
+  border-radius: var(--nb-radius);
+}
+
+.m-user-row {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 15px;
-  position: relative;
+  margin-bottom: 15px;
+  border-bottom: 2px dashed var(--nb-black);
+  padding-bottom: 15px;
 }
 
-/* Brutalist "Jagged" decoration using CSS gradient */
-.m-profile::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 10px;
-  right: 10px;
-  height: 10px;
-  background: repeating-linear-gradient(
-    45deg,
-    var(--neo-black),
-    var(--neo-black) 2px,
-    transparent 2px,
-    transparent 8px
-  );
-  opacity: 0.3;
+.m-avatar-box {
+  width: 50px;
+  height: 50px;
+  background: var(--nb-black);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
 }
 
-.m-head { display: flex; align-items: center; gap: 15px; }
-.m-avatar { 
-  width: 50px; height: 50px; 
-  background: var(--neo-purple); 
-  border: 2px solid var(--neo-black); 
-  color: white; 
-  border-radius: 50%; 
-  display: flex; justify-content: center; align-items: center; font-size: 1.5rem;
-}
-
-.m-btn-grid {
+.m-actions-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
+
+/* Full width buttons in grid */
+.span-2 { grid-column: span 2; }
 
 .m-btn {
-  width: 100%;
-  padding: 18px;
-  font-size: 1.1rem;
-  justify-content: center;
+  height: 56px; /* Larger touch target */
+  font-size: 0.9rem;
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .desktop-controls { display: none; }
-  .mobile-toggle { display: flex; }
+/* Animations */
+@keyframes wobble {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(-3deg); }
+  30% { transform: rotate(3deg); }
+  45% { transform: rotate(-3deg); }
+  60% { transform: rotate(3deg); }
+  75% { transform: rotate(-3deg); }
+  100% { transform: rotate(0deg); }
 }
