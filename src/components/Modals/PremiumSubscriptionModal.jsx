@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import './PremiumSubscriptionModal.css'
-
+import { API_URL } from '../../services/api';
 const AURA_FEATURES = [
   { icon: '🎨', title: 'Unlimited Confessions', desc: 'No credit cost ever.' },
   { icon: '🎤', title: 'Daily Free Voice Note', desc: '30-sec recording.' },
