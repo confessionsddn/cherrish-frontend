@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import './RepliesSection.css'
+import { API_URL } from '../../services/api';
 
 const QUICK_EMOJIS = ['❤️', '😂', '🔥', '😍', '😭', '😮', '👏', '👀', '💯', '✨', '💀', '🤡']
 
