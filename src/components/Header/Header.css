@@ -1,323 +1,256 @@
-/* --- NEO-BRUTALISM VARIABLES --- */
+/* --- NEO-BRUTALISM RESET & VARIABLES --- */
 :root {
-  --nb-black: #1a1a1a;
-  --nb-white: #ffffff;
-  --nb-bg: #fdfdfd;
+  --neo-black: #000000;
+  --neo-white: #ffffff;
+  --neo-red: #ff3333;
+  --neo-yellow: #ffeb3b; /* Brighter yellow */
+  --neo-blue: #3366ff;
+  --neo-green: #00e676;
+  --neo-purple: #b983ff;
   
-  /* Punchy Colors */
-  --pop-pink: #ff9ff3;
-  --pop-blue: #54a0ff;
-  --pop-cyan: #48dbfb;
-  --pop-yellow: #feca57;
-  --pop-red: #ff6b6b;
-  --pop-green: #1dd1a1;
-  --pop-purple: #5f27cd;
-
-  /* Structural */
-  --border-thick: 3px solid var(--nb-black);
-  --border-thin: 2px solid var(--nb-black);
-  --shadow-hard: 4px 4px 0px var(--nb-black);
-  --shadow-hover: 2px 2px 0px var(--nb-black);
-  --shadow-active: 0px 0px 0px var(--nb-black);
-  
-  /* Typography */
-  --font-display: 'Dela Gothic One', cursive; /* or any chunky font */
-  --font-body: 'Space Grotesk', sans-serif;
+  --border-width: 3px;
+  --hard-shadow: 4px 4px 0px var(--neo-black);
+  --hard-shadow-hover: 2px 2px 0px var(--neo-black);
+  --hard-shadow-active: 0px 0px 0px var(--neo-black);
 }
 
-/* --- RESET & BASE --- */
-* {
-  box-sizing: border-box;
-}
-
-/* --- NAVBAR LAYOUT --- */
+/* --- MAIN NAVBAR --- */
 .navbar {
-  background-color: var(--nb-white);
-  border-bottom: var(--border-thick);
-  padding: 16px 0;
+  background-color: var(--neo-white);
+  border-bottom: var(--border-width) solid var(--neo-black);
+  padding: 15px 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  width: 100%;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .nav-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* --- BRANDING --- */
+/* --- LOGO SECTION (Redesigned) --- */
 .nav-brand {
   display: flex;
   align-items: center;
   gap: 12px;
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.2s;
 }
 
-.nav-brand:hover {
-  transform: rotate(-2deg) scale(1.02);
-}
-
+/* The Heart Box */
 .logo-icon-box {
-  width: 48px;
-  height: 48px;
-  background: var(--pop-red);
-  border: var(--border-thick);
+  width: 45px;
+  height: 45px;
+  background: var(--neo-red);
+  border: var(--border-width) solid var(--neo-black);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--nb-white);
-  font-size: 1.5rem;
-  box-shadow: var(--shadow-hard);
+  color: var(--neo-white);
+  font-size: 1.2rem;
+  box-shadow: var(--hard-shadow);
+  transition: transform 0.1s;
 }
 
+.nav-brand:hover .logo-icon-box {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--neo-black);
+}
+
+/* The Text - Specific User Request: Red, Montserrat, No Border */
 .logo-text {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  color: var(--nb-black);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; /* Extra Bold */
+  font-size: 1.6rem;
+  color: var(--neo-red); 
   margin: 0;
-  letter-spacing: -1.5px;
-  text-transform: lowercase;
-  -webkit-text-stroke: 1px var(--nb-black); /* Outline text effect */
-}
-
-/* --- GENERIC BUTTON STYLES (The Neo-Brutalist Button) --- */
-.nb-btn {
-  height: 44px;
-  padding: 0 20px;
-  border: var(--border-thick);
-  background: var(--nb-white);
-  color: var(--nb-black);
-  font-family: var(--font-body);
-  font-weight: 800;
-  font-size: 0.9rem;
+  letter-spacing: -0.5px;
   text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: var(--shadow-hard);
-  transition: all 0.1s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 6px; /* Slight rounding, not pill */
+  /* Removed -webkit-text-stroke as requested */
 }
 
-.nb-btn:hover {
-  transform: translate(2px, 2px);
-  box-shadow: var(--shadow-hover);
-}
-
-.nb-btn:active {
-  transform: translate(4px, 4px);
-  box-shadow: var(--shadow-active);
-}
-
-/* Button Variants */
-.btn-theme { background: var(--nb-black); color: var(--pop-yellow); width: 44px; padding: 0; }
-.btn-admin { background: var(--pop-purple); color: white; }
-.btn-logout { background: var(--pop-red); color: white; }
-.btn-premium { background: var(--pop-pink); color: var(--nb-black); animation: wiggly 3s infinite; }
-.btn-community { background: var(--pop-cyan); }
-.btn-credits { background: var(--pop-yellow); min-width: 110px;}
-
-/* Specific Support Button (Chat Style) */
-.btn-support {
-  background: var(--pop-blue);
-  color: white;
-  position: relative;
-}
-
-/* Badge Logic */
-.badge-count {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--pop-red);
-  color: white;
-  border: var(--border-thin);
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 900;
-  border-radius: 50%;
-  z-index: 10;
-}
-
-/* --- DESKTOP HUD --- */
+/* --- DESKTOP CONTROLS --- */
 .desktop-controls {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-@media (max-width: 1024px) {
-  .desktop-controls { display: none; }
-}
-
-/* User Tag (Nameplate style) */
-.user-tag {
+/* The "Pill" User Badge */
+.user-badge-pill {
   display: flex;
   align-items: center;
-  border: var(--border-thick);
-  background: var(--nb-white);
-  padding: 4px;
-  gap: 10px;
-  height: 44px;
-  box-shadow: var(--shadow-hard);
-  margin-right: 8px;
+  background: var(--neo-white);
+  border: var(--border-width) solid var(--neo-black);
+  border-radius: 50px; /* Full pill shape */
+  padding: 4px 16px 4px 6px;
+  gap: 12px;
+  box-shadow: var(--hard-shadow);
 }
 
-.u-avatar {
-  width: 32px;
-  height: 32px;
-  background: var(--nb-black);
-  color: var(--nb-white);
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--neo-purple);
+  border: 2px solid var(--neo-black);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--nb-black);
+  color: white;
 }
 
-.u-info {
+.user-details {
   display: flex;
   flex-direction: column;
-  padding-right: 12px;
-  line-height: 1;
+  line-height: 1.1;
 }
 
-.u-name { font-weight: 800; font-size: 0.9rem; }
-.u-num { font-size: 0.7rem; font-family: monospace; opacity: 0.7; }
+.u-name { font-weight: 800; font-size: 0.9rem; color: var(--neo-black); }
+.u-tag { font-size: 0.75rem; font-weight: 600; color: #555; }
 
-/* Credits Inner Layout */
-.credits-inner {
+/* --- BUTTONS (The "Neo" Look) --- */
+.neo-btn {
+  height: 48px; /* Accessible Touch Target */
+  padding: 0 24px;
+  border: var(--border-width) solid var(--neo-black);
+  background: var(--neo-white);
+  color: var(--neo-black);
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: var(--hard-shadow);
+  transition: all 0.1s ease-in-out;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 0.9;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
 }
-.credits-lbl { font-size: 0.6rem; }
-.credits-val { font-size: 1rem; font-weight: 900; }
+
+.neo-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: var(--hard-shadow-hover);
+  background-color: #f0f0f0;
+}
+
+.neo-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: var(--hard-shadow-active);
+}
+
+/* Button Variants */
+.btn-credits { background: var(--neo-green); }
+.btn-community { background: var(--neo-blue); color: white; }
+.btn-logout { background: var(--neo-red); color: white; }
+.btn-theme { width: 48px; padding: 0; justify-content: center; background: var(--neo-black); color: var(--neo-yellow); }
 
 /* --- HAMBURGER MENU --- */
 .mobile-toggle {
-  display: none; /* Hidden on desktop */
-  background: none;
-  border: var(--border-thick);
-  width: 48px;
-  height: 48px;
+  display: none;
+  background: var(--neo-yellow);
+  border: var(--border-width) solid var(--neo-black);
+  width: 50px;
+  height: 50px;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
+  gap: 6px;
   cursor: pointer;
-  box-shadow: var(--shadow-hard);
-  background: var(--pop-yellow);
+  box-shadow: var(--hard-shadow);
 }
 
 .bar {
   width: 24px;
   height: 4px;
-  background: var(--nb-black);
+  background: var(--neo-black);
   transition: 0.2s;
 }
 
-.mobile-toggle.active {
-  background: var(--pop-red);
-  transform: translate(4px, 4px);
-  box-shadow: var(--shadow-active);
-}
-.mobile-toggle.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+.mobile-toggle.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 9px); }
 .mobile-toggle.active .bar:nth-child(2) { opacity: 0; }
-.mobile-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
-
-@media (max-width: 1024px) {
-  .mobile-toggle { display: flex; }
-}
+.mobile-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -9px); }
 
 /* --- MOBILE MENU OVERLAY --- */
 .mobile-menu {
   position: fixed;
-  top: 80px; /* Below header */
+  top: 80px;
   left: 0;
   width: 100%;
   height: calc(100vh - 80px);
-  background: var(--nb-white);
-  z-index: 999;
+  background: var(--neo-white);
+  padding: 20px;
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* Bouncy */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 998;
+  border-top: var(--border-width) solid var(--neo-black);
   overflow-y: auto;
-  padding: 24px;
-  border-top: var(--border-thick);
 }
 
-.mobile-menu.open {
-  transform: translateX(0);
-}
+.mobile-menu.open { transform: translateX(0); }
 
 /* Mobile Profile Card */
-.m-profile-card {
-  background: var(--pop-yellow);
-  border: var(--border-thick);
+.m-profile {
+  background: var(--neo-yellow);
+  border: var(--border-width) solid var(--neo-black);
   padding: 20px;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow-hard);
+  margin-bottom: 25px;
+  box-shadow: var(--hard-shadow);
   display: flex;
   flex-direction: column;
   gap: 15px;
+  position: relative;
 }
 
-.m-header-row {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  border-bottom: 2px dashed var(--nb-black);
-  padding-bottom: 15px;
+/* Brutalist "Jagged" decoration using CSS gradient */
+.m-profile::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 10px;
+  right: 10px;
+  height: 10px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--neo-black),
+    var(--neo-black) 2px,
+    transparent 2px,
+    transparent 8px
+  );
+  opacity: 0.3;
 }
 
-.m-avatar-lg {
-  width: 60px;
-  height: 60px;
-  background: var(--pop-purple);
-  color: white;
-  border: var(--border-thick);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
+.m-head { display: flex; align-items: center; gap: 15px; }
+.m-avatar { 
+  width: 50px; height: 50px; 
+  background: var(--neo-purple); 
+  border: 2px solid var(--neo-black); 
+  color: white; 
+  border-radius: 50%; 
+  display: flex; justify-content: center; align-items: center; font-size: 1.5rem;
 }
 
-.m-buy-credits {
-  width: 100%;
-  background: var(--nb-black);
-  color: var(--pop-green);
-}
-
-/* Mobile Grid Layout */
-.m-grid {
+.m-btn-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 15px;
 }
 
-.m-full-width {
-  grid-column: 1 / -1;
-  height: 56px; /* Taller for fingers */
-  font-size: 1rem;
+.m-btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 1.1rem;
+  justify-content: center;
 }
 
-/* Animations */
-@keyframes wiggly {
-  0% { transform: rotate(0deg); }
-  2% { transform: rotate(-5deg); }
-  4% { transform: rotate(5deg); }
-  6% { transform: rotate(0deg); }
-  100% { transform: rotate(0deg); }
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .desktop-controls { display: none; }
+  .mobile-toggle { display: flex; }
 }
