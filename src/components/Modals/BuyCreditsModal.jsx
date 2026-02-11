@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './BuyCreditsModal.css'
-
+import { API_URL } from '../../services/api';
 const CREDIT_PACKAGES = [
   {
     id: 'starter',
