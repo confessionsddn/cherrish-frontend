@@ -1,6 +1,6 @@
 import React from 'react'
 import './GiftModal.css' // Ensure this file contains the Neo-Brutalist CSS
-
+import { API_URL } from '../../services/api';
 const GIFT_ITEMS = [
   // --- EFFECTS (treated as Premium Awards) ---
   {
