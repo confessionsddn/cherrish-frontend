@@ -179,8 +179,8 @@ function App() {
         formData.append('voice_duration', confession.voice_duration || 0)
       }
       
-const response = await fetch(`${API_URL}/api/confessions`, {
-          method: 'POST',
+      const response = await fetch(`${API_URL}/api/confessions`, {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         },
@@ -299,7 +299,7 @@ const response = await fetch(`${API_URL}/api/confessions`, {
   
   const handleSendGift = async (giftType, price) => {
     try {
- const response = await fetch(`${API_URL}/api/gifts/send`, {
+      const response = await fetch(`${API_URL}/api/gifts/send`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -307,7 +307,7 @@ const response = await fetch(`${API_URL}/api/confessions`, {
         },
         body: JSON.stringify({
           gift_id: giftType,
-          receiver_id: selectedConfessionId, // This should be the user ID, not confession ID
+          receiver_id: selectedConfessionId,
           confession_id: selectedConfessionId
         })
       })
@@ -369,20 +369,23 @@ const response = await fetch(`${API_URL}/api/confessions`, {
   // EFFECTS
   // ============================================
   
-  // OAuth callback handler
+  // OAuth callback handler - MUST BE FIRST!
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const token = params.get('token')
     
     if (currentPath === '/auth/callback' && token) {
+      console.log('✅ OAuth token received')
       localStorage.setItem('auth_token', token)
+      
+      // Small delay to ensure storage is written
       setTimeout(() => {
         window.location.href = '/'
       }, 100)
     }
   }, [currentPath])
 
-  // Check auth on mount
+  // Check auth on mount (skip for certain routes)
   useEffect(() => {
     if (currentPath === '/auth/callback' || currentPath === '/access-code') {
       setLoading(false)
@@ -407,7 +410,7 @@ const response = await fetch(`${API_URL}/api/confessions`, {
   // ROUTING
   // ============================================
   
-  // OAuth callback
+  // OAuth callback - MUST HANDLE FIRST
   if (currentPath === '/auth/callback') {
     return (
       <div style={{ 
@@ -417,9 +420,14 @@ const response = await fetch(`${API_URL}/api/confessions`, {
         height: '100vh', 
         fontSize: '1.5rem', 
         fontWeight: 'bold',
-        fontFamily: 'Dela Gothic One, cursive'
+        fontFamily: 'Dela Gothic One, cursive',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white'
       }}>
-        LOGGING IN...
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>✅</div>
+          <div>LOGGING IN...</div>
+        </div>
       </div>
     )
   }
