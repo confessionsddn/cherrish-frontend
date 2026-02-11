@@ -26,6 +26,57 @@ import {
   BrutalNotification 
 } from './components/Animations/AnimationComponents'
 
+// ============================================
+// HASH ROUTING HANDLER (for OAuth callback)
+// ============================================
+function HashRouter() {
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      
+      // Handle #/auth/callback?token=...
+      if (hash.includes('#/auth/callback')) {
+        const params = new URLSearchParams(hash.split('?')[1]);
+        const token = params.get('token');
+        
+        if (token) {
+          console.log('✅ Token received via hash routing');
+          localStorage.setItem('auth_token', token);
+          
+          // Clear hash and redirect to home
+          window.location.hash = '';
+          window.location.href = '/';
+        }
+      }
+      
+      // Handle #/access-code?data=...
+      if (hash.includes('#/access-code')) {
+        const params = new URLSearchParams(hash.split('?')[1]);
+        const data = params.get('data');
+        
+        if (data) {
+          console.log('✅ Access code data received via hash');
+          // Clear hash and redirect
+          window.location.hash = '';
+          window.location.href = `/access-code?data=${data}`;
+        }
+      }
+    };
+    
+    // Check on mount
+    handleHashChange();
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+  
+  return null;
+}
+
 
 function App() {
   // ============================================
@@ -460,6 +511,7 @@ function App() {
     }
     return (
       <>
+        
         <Header 
           credits={userCredits}
           onThemeToggle={toggleTheme}
@@ -577,6 +629,7 @@ function App() {
 
   return (
     <>
+       <HashRouter />
       {/* Global animations */}
       <ConfettiContainer />
       <MoodTransitionOverlay />
