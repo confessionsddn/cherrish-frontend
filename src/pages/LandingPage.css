@@ -88,6 +88,25 @@ body {
   text-align: center;
 }
 
+.landing-legal-header {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 12px;
+  border-bottom: var(--border-hard);
+}
+
+.landing-legal-btn {
+  border: 2px solid var(--neo-black);
+  background: #fff;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 6px 10px;
+  cursor: pointer;
+}
 /* Marquee Bar */
 .marquee-container {
   width: 100%;
@@ -293,4 +312,5 @@ body {
   .neo-feature-card h3 { font-size: 0.7rem; }
   .neo-feature-card i { font-size: 1.4rem; }
   .btn-label { font-size: 1rem; }
+}
 }
