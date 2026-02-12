@@ -4,6 +4,9 @@ import LandingPage from './pages/LandingPage'
 import AccessCodePage from './pages/AccessCodePage'
 import AdminPanel from './pages/AdminPanel'
 import AdminChatPage from './pages/AdminChatPage'
+import ContactUsPage from './pages/ContactUsPage'
+import TermsAndConditionsPage from './pages/TermsAndConditionsPage'
+import RefundsCancellationPage from './pages/RefundsCancellationPage'
 import BanOverlay from './components/BanOverlay/BanOverlay'
 import Header from './components/Header/Header'
 import ConfessionForm from './components/ConfessionForm/ConfessionForm'
@@ -117,8 +120,7 @@ function App() {
   // COMPUTED STATE
   // ============================================
   const isBanned = isAuthenticated && user && user.is_banned
-  const currentPath = window.location.pathname
-
+const [currentPath, setCurrentPath] = useState(window.location.pathname)
   // ============================================
   // AUTH FUNCTIONS
   // ============================================
@@ -436,6 +438,11 @@ function App() {
     }
   }, [currentPath])
 
+  useEffect(() => {
+    const syncPath = () => setCurrentPath(window.location.pathname)
+    window.addEventListener('popstate', syncPath)
+    return () => window.removeEventListener('popstate', syncPath)
+  }, [])
   // Check auth on mount (skip for certain routes)
   useEffect(() => {
     if (currentPath === '/auth/callback' || currentPath === '/access-code') {
@@ -488,6 +495,18 @@ function App() {
     return <AccessCodePage />
   }
 
+  // Mandatory legal pages
+  if (currentPath === '/contact-us') {
+    return <ContactUsPage />
+  }
+
+  if (currentPath === '/terms-and-conditions') {
+    return <TermsAndConditionsPage />
+  }
+
+  if (currentPath === '/refunds-and-cancellation-policy') {
+    return <RefundsCancellationPage />
+  }
   // Admin panel
   if (currentPath === '/admin') {
     if (loading) {
