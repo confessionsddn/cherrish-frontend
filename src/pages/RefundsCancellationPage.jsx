@@ -27,7 +27,7 @@ export default function RefundsCancellationPage() {
 
           <h2>Requesting Help</h2>
           <p>
-            For billing questions, contact billing@cherrish.app with your transaction details and account email.
+            For billing questions, contact itmconfessionddn@gmail.com with your transaction details and account email.
           </p>
         </section>
       </main>
