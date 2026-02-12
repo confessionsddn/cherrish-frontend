@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './LandingPage.css'
 
-// API URL Configuration
+// API_URL Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export default function LandingPage() {
