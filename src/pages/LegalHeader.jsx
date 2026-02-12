@@ -1,4 +1,4 @@
-import './LegalPages.css'
+import './LegalHeaders.css'
 
 const LEGAL_LINKS = [
   { path: '/contact-us', label: 'Contact Us' },
