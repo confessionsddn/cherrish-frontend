@@ -35,7 +35,7 @@ export default function Header({
   };
 
   const handleAdminChatClick = () => {
-    window.location.href = '/admin-chat';
+navigateTo('/admin-chat');
   };
 
   // Fetch unread count
@@ -92,8 +92,8 @@ export default function Header({
           <div className="header-left">
             <button 
               className="logo-btn"
-              onClick={() => window.location.href = '/'}
-              aria-label="Home"
+            navigateTo('/admin-chat');
+            aria-label="Home"
             >
               <div className="logo-icon">
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -103,8 +103,9 @@ export default function Header({
                   <path d="M16 18L20 22L16 26L12 22L16 18Z" fill="currentColor"/>
                 </svg>
               </div>
-              <span className="logo-text">cherrish</span>
-            </button>
+                <span className="logo-text">CHERRISH</span>
+              <span className="logo-subtext">SOCIAL PLATFORM</span>   
+          </button>
           </div>
 
           {/* CENTER: NAVIGATION */}
@@ -112,8 +113,8 @@ export default function Header({
           <nav className="header-nav">
             <button 
               className="nav-link"
-              onClick={() => window.location.href = '/community'}
-            >
+              onClick={() => navigateTo('/community')}            
+              >
               <i className="fas fa-users"></i>
               <span>Community</span>
             </button>
@@ -132,8 +133,8 @@ export default function Header({
             {user.is_admin && (
               <button 
                 className="nav-link nav-link-admin"
-                onClick={() => window.location.href = '/admin'}
-              >
+                onClick={() => navigateTo('/admin')}
+                >
                 <i className="fas fa-shield-halved"></i>
                 <span>Admin</span>
               </button>
@@ -261,8 +262,8 @@ export default function Header({
                   {user.is_admin && (
                     <button 
                       className="dropdown-item"
-                      onClick={() => window.location.href = '/admin/community'}
-                    >
+                      onClick={() => navigateTo('/admin/community')}       
+                      >
                       <i className="fas fa-poll"></i>
                       <span>Community Admin</span>
                     </button>
@@ -341,7 +342,7 @@ export default function Header({
                   className="mobile-nav-item"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
-                    window.location.href = '/community';
+                    navigateTo('/community');       
                   }}
                 >
                   <i className="fas fa-users"></i>
@@ -380,7 +381,7 @@ export default function Header({
                       className="mobile-nav-item"
                       onClick={() => {
                         setIsMobileMenuOpen(false);
-                        window.location.href = '/admin';
+                        navigateTo('/admin');                    
                       }}
                     >
                       <i className="fas fa-shield-halved"></i>
@@ -391,7 +392,7 @@ export default function Header({
                       className="mobile-nav-item"
                       onClick={() => {
                         setIsMobileMenuOpen(false);
-                        window.location.href = '/admin/community';
+                        navigateTo('/admin/community');
                       }}
                     >
                       <i className="fas fa-poll"></i>
