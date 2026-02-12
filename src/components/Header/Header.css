@@ -36,32 +36,19 @@ font-family: 'Chillax', sans-serif;
 
 .logo-btn {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 12px;
   transition: all 0.2s ease;
 }
 
 .logo-btn:hover {
   background: #F5F5F5;
-  transform: translateY(-2px);
-}
-
-.logo-icon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
-  border: 3px solid #000000;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FFFFFF;
-  box-shadow: 3px 3px 0 #000000;
 }
 
 .logo-text {
@@ -70,6 +57,15 @@ font-family: 'Chillax', sans-serif;
   color: #000000;
   letter-spacing: -0.5px;
   text-transform: lowercase;
+  line-height: 1;
+}
+
+.logo-subtext {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #555;
+  line-height: 1;
 }
 
 /* ============================================
@@ -863,12 +859,11 @@ font-family: 'Chillax', sans-serif;
     font-size: 20px;
   }
 
-  .logo-icon {
-    width: 36px;
-    height: 36px;
+  .logo-subtext {
+    font-size: 10px;
   }
 
-  .header-nav,
+  
    .header-nav-wrap,
   .credits-btn,
   .premium-btn,
@@ -912,6 +907,9 @@ font-family: 'Chillax', sans-serif;
     font-size: 18px;
   }
 
+  .logo-subtext {
+    font-size: 9px;
+  }
   .user-info {
     display: none;
   }
