@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './LandingPage.css'
-
+import { navigateTo } from '../utils/navigation'
 // API_URL Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -95,10 +95,9 @@ export default function LandingPage() {
 
         {/* Logo Section */}
         <div className="neo-header">
-          <div className="neo-logo-box">
-            <i className="fas fa-heart-crack"></i>
-          </div>
+          
           <h1 className="neo-title">Cherrish</h1>
+          <p className="neo-subtitle">SOCIAL PLATFORM</p>
           <div className="neo-badge">THE #1 ANONYMOUS NETWORK</div>
         </div>
 
