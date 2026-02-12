@@ -306,11 +306,33 @@ body {
 
 /* Mobile */
 @media (max-width: 600px) {
-  .neo-landing-card { width: 95%; }
-  .neo-title { font-size: 2.8rem; }
-  .neo-features { gap: 8px; padding: 20px 10px; }
-  .neo-feature-card h3 { font-size: 0.7rem; }
-  .neo-feature-card i { font-size: 1.4rem; }
-  .btn-label { font-size: 1rem; }
-}
+ .neo-landing-card {
+    width: 95%;
+  }
+
+  .landing-legal-btn {
+    font-size: 0.64rem;
+    padding: 5px 8px;
+  }
+
+  .neo-title {
+    font-size: 2.8rem;
+  }
+
+  .neo-features {
+    gap: 8px;
+    padding: 20px 10px;
+  }
+
+  .neo-feature-card h3 {
+    font-size: 0.7rem;
+  }
+
+  .neo-feature-card i {
+    font-size: 1.4rem;
+  }
+
+  .btn-label {
+    font-size: 1rem;
+  }
 }
