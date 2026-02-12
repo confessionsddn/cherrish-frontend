@@ -14,8 +14,8 @@ export default function ContactUsPage() {
 
           <h2>Support Channels</h2>
           <ul>
-            <li>Email: support@cherrish.app</li>
-            <li>Safety reports: safety@cherrish.app</li>
+            <li>Email: itmconfessionddn@gmail.com</li>
+            <li>Safety reports: itmconfessionddn@gmail.com</li>
             <li>Average response time: 24 to 48 working hours</li>
           </ul>
 
