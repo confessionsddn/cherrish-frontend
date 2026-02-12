@@ -6,7 +6,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export default function LandingPage() {
   const [showAnimation, setShowAnimation] = useState(false)
-
+ const legalLinks = [
+    { path: '/contact-us', label: 'Contact Us' },
+    { path: '/terms-and-conditions', label: 'Terms & Conditions' },
+    { path: '/refunds-and-cancellation-policy', label: 'Refunds & Cancellation' }
+  ]
   const handleGoogleLogin = () => {
     setShowAnimation(true)
     setTimeout(() => {
@@ -69,7 +73,17 @@ export default function LandingPage() {
       </div>
 
       <div className="neo-landing-card pop-in">
-        
+         <div className="landing-legal-header">
+          {legalLinks.map((link) => (
+            <button
+              key={link.path}
+              className="landing-legal-btn"
+              onClick={() => (window.location.href = link.path)}
+            >
+              {link.label}
+            </button>
+          ))}
+        </div>
         {/* Marquee Banner */}
         <div className="marquee-container">
           <div className="marquee-content">
