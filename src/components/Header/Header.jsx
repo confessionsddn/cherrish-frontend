@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
 import { API_URL } from '../../services/api';
+import { navigateTo } from '../../utils/navigation';
 
 const LEGAL_LINKS = [
   { path: '/contact-us', label: 'Contact' },
   { path: '/terms-and-conditions', label: 'Terms' },
   { path: '/refunds-and-cancellation-policy', label: 'Refunds' }
 ];
+
 export default function Header({
   credits,
   onThemeToggle,
@@ -35,7 +37,7 @@ export default function Header({
   };
 
   const handleAdminChatClick = () => {
-navigateTo('/admin-chat');
+    navigateTo('/admin-chat');
   };
 
   // Fetch unread count
@@ -90,31 +92,23 @@ navigateTo('/admin-chat');
           
           {/* LEFT: LOGO */}
           <div className="header-left">
-            <button 
+            <button
               className="logo-btn"
-            navigateTo('/admin-chat');
-            aria-label="Home"
+              onClick={() => navigateTo('/')}
+              aria-label="Home"
             >
-              <div className="logo-icon">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                  <path d="M16 6L20 10L16 14L12 10L16 6Z" fill="currentColor"/>
-                  <path d="M8 12L12 16L8 20L4 16L8 12Z" fill="currentColor"/>
-                  <path d="M24 12L28 16L24 20L20 16L24 12Z" fill="currentColor"/>
-                  <path d="M16 18L20 22L16 26L12 22L16 18Z" fill="currentColor"/>
-                </svg>
-              </div>
-                <span className="logo-text">CHERRISH</span>
-              <span className="logo-subtext">SOCIAL PLATFORM</span>   
-          </button>
+              <span className="logo-text">CHERRISH</span>
+              <span className="logo-subtext">SOCIAL PLATFORM</span>
+            </button>
           </div>
 
           {/* CENTER: NAVIGATION */}
-                    <div className="header-nav-wrap">
+          <div className="header-nav-wrap">
           <nav className="header-nav">
             <button 
               className="nav-link"
-              onClick={() => navigateTo('/community')}            
-              >
+              onClick={() => navigateTo('/community')}
+            >
               <i className="fas fa-users"></i>
               <span>Community</span>
             </button>
@@ -134,18 +128,18 @@ navigateTo('/admin-chat');
               <button 
                 className="nav-link nav-link-admin"
                 onClick={() => navigateTo('/admin')}
-                >
+              >
                 <i className="fas fa-shield-halved"></i>
                 <span>Admin</span>
               </button>
             )}
-          </nav> 
-                      <nav className="header-legal-nav" aria-label="Legal pages">
+          </nav>
+          <nav className="header-legal-nav" aria-label="Legal pages">
             {LEGAL_LINKS.map((link) => (
               <button
                 key={link.path}
                 className="nav-link-small"
-                onClick={() => (window.location.href = link.path)}
+                onClick={() => navigateTo(link.path)}
               >
                 {link.label}
               </button>
@@ -262,8 +256,8 @@ navigateTo('/admin-chat');
                   {user.is_admin && (
                     <button 
                       className="dropdown-item"
-                      onClick={() => navigateTo('/admin/community')}       
-                      >
+                      onClick={() => navigateTo('/admin/community')}
+                    >
                       <i className="fas fa-poll"></i>
                       <span>Community Admin</span>
                     </button>
@@ -342,7 +336,7 @@ navigateTo('/admin-chat');
                   className="mobile-nav-item"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
-                    navigateTo('/community');       
+                    navigateTo('/community');
                   }}
                 >
                   <i className="fas fa-users"></i>
@@ -362,26 +356,28 @@ navigateTo('/admin-chat');
                     <span className="mobile-badge">{unreadCount}</span>
                   )}
                 </button>
+
                 {LEGAL_LINKS.map((link) => (
                   <button
                     key={link.path}
                     className="mobile-nav-item legal-item"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      window.location.href = link.path;
+                      navigateTo(link.path);
                     }}
                   >
                     <i className="fas fa-file-lines"></i>
                     <span>{link.label}</span>
                   </button>
-                ))} 
+                ))}
+
                 {user.is_admin && (
                   <>
                     <button 
                       className="mobile-nav-item"
                       onClick={() => {
                         setIsMobileMenuOpen(false);
-                        navigateTo('/admin');                    
+                        navigateTo('/admin');
                       }}
                     >
                       <i className="fas fa-shield-halved"></i>
