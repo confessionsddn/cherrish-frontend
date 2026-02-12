@@ -4,6 +4,11 @@ import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
 import { API_URL } from '../../services/api';
 
+const LEGAL_LINKS = [
+  { path: '/contact-us', label: 'Contact' },
+  { path: '/terms-and-conditions', label: 'Terms' },
+  { path: '/refunds-and-cancellation-policy', label: 'Refunds' }
+];
 export default function Header({
   credits,
   onThemeToggle,
@@ -103,6 +108,7 @@ export default function Header({
           </div>
 
           {/* CENTER: NAVIGATION */}
+                    <div className="header-nav-wrap">
           <nav className="header-nav">
             <button 
               className="nav-link"
@@ -132,7 +138,19 @@ export default function Header({
                 <span>Admin</span>
               </button>
             )}
+          </nav> 
+                      <nav className="header-legal-nav" aria-label="Legal pages">
+            {LEGAL_LINKS.map((link) => (
+              <button
+                key={link.path}
+                className="nav-link-small"
+                onClick={() => (window.location.href = link.path)}
+              >
+                {link.label}
+              </button>
+            ))}
           </nav>
+          </div>
 
           {/* RIGHT: ACTIONS */}
           <div className="header-right">
@@ -343,7 +361,19 @@ export default function Header({
                     <span className="mobile-badge">{unreadCount}</span>
                   )}
                 </button>
-
+                {LEGAL_LINKS.map((link) => (
+                  <button
+                    key={link.path}
+                    className="mobile-nav-item legal-item"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      window.location.href = link.path;
+                    }}
+                  >
+                    <i className="fas fa-file-lines"></i>
+                    <span>{link.label}</span>
+                  </button>
+                ))} 
                 {user.is_admin && (
                   <>
                     <button 
