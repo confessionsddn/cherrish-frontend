@@ -3,15 +3,20 @@
 import { useState } from 'react'
 import './PremiumSubscriptionModal.css'
 import { API_URL } from '../../services/api';
+const PREMIUM_LINK = 'https://rzp.io/l/bbbbbbbb';
+
+const handleBuyPremium = () => {
+  window.open(PREMIUM_LINK, '_blank');
+  showNotification('Complete payment to activate Premium!', 'info');
+};
 const AURA_FEATURES = [
   { icon: '🎨', title: 'Unlimited Confessions', desc: 'No credit cost ever.' },
   { icon: '🎤', title: 'Daily Free Voice Note', desc: '30-sec recording.' },
   { icon: '⭐', title: '10 Spotlight Boosts', desc: 'Refreshed per month.' },
-  { icon: '✏️', title: 'Free Daily Edit', desc: 'Within 5 mins of posting.' },
   { icon: '👤', title: 'Free Username Change', desc: 'One-time change allowed.' },
   { icon: '💰', title: '150 Bonus Credits', desc: 'When free tier runs out.' },
   { icon: '👑', title: 'Premium Badge', desc: 'Displayed on all posts.' },
-  { icon: '👀', title: 'Reveal Reactors', desc: 'See who reacted (with usernames).' }
+  // { icon: '👀', title: 'Reveal Reactors', desc: 'See who reacted (with usernames).' }
 ]
 
 export default function PremiumSubscriptionModal({ onClose }) {
