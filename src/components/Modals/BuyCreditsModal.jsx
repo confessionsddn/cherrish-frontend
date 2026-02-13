@@ -1,20 +1,15 @@
 import { useState } from 'react'
 import './BuyCreditsModal.css'
 import { API_URL } from '../../services/api';
+
+// ✅ REPLACE THESE WITH YOUR ACTUAL RAZORPAY PAYMENT LINK URLs
 const PAYMENT_LINKS = {
-  starter: 'https://rzp.io/l/xxxxxxxx',
-  popular: 'https://rzp.io/l/yyyyyyyy',
-  premium: 'https://rzp.io/l/zzzzzzzz',
-  elite: 'https://rzp.io/l/aaaaaaaa'
+  starter: 'https://rzp.io/rzp/L3kw1Q20',   // Replace with your ₹29 link
+  popular: 'hhttps://rzp.io/rzp/I5RAYnTk',   // Replace with your ₹69 link
+  best: 'https://rzp.io/rzp/uMqm09o',      // Replace with your ₹139 link
+  elite: 'https://rzp.io/rzp/Am55h8W'      // Replace with your ₹249 link
 };
 
-const handleBuyCredits = (packageType) => {
-  // Open payment link in new tab
-  window.open(PAYMENT_LINKS[packageType], '_blank');
-  
-  // Show message
-  showNotification('Complete payment in new tab. Credits will be added automatically!', 'info');
-};
 const CREDIT_PACKAGES = [
   {
     id: 'starter',
@@ -63,94 +58,40 @@ const CREDIT_PACKAGES = [
 export default function BuyCreditsModal({ onClose, currentCredits }) {
   const [processing, setProcessing] = useState(false)
 
-const handlePurchase = async (pkg) => {
-  setProcessing(true)
-  console.log('🛒 Starting purchase for:', pkg.name)
-
-  try {
-    const res = await fetch(`${API_URL}/api/payments/create-order`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ package_type: pkg.id })
-    })
-
-    const data = await res.json()
-    console.log('📦 Order response:', data)
-
-    if (!data.success) {
-      alert('❌ Failed: ' + (data.error || 'Unknown error'))
-      setProcessing(false)
-      return
+  // ✅ UPDATED: Use payment links instead of Razorpay SDK
+  const handlePurchase = (pkg) => {
+    const paymentLink = PAYMENT_LINKS[pkg.id];
+    
+    if (!paymentLink || paymentLink === 'https://rzp.io/l/xxxxxxxx') {
+      alert('❌ Payment link not configured! Please set up your Razorpay payment links first.');
+      return;
     }
-
-    if (typeof window.Razorpay === 'undefined') {
-      alert('❌ Razorpay not loaded! Refresh page.')
-      setProcessing(false)
-      return
-    }
-
-    const options = {
-      key: data.key,
-      amount: data.amount,
-      currency: data.currency,
-      name: 'LOVECONFESS',
-      description: `${pkg.name} - ${pkg.credits + pkg.bonus} Credits`,
-      order_id: data.order_id,
-      handler: async function (response) {
-        try {
-          const verifyRes = await fetch(`${API_URL}/api/payments/verify-payment`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature
-            })
-          })
-
-          const verifyData = await verifyRes.json()
-
-          if (verifyData.success) {
-            alert(`✅ ${verifyData.credits_added} credits added!`)
-            window.location.reload()
-          } else {
-            alert('❌ Verification failed')
-          }
-        } catch (error) {
-          alert('❌ Verification error')
-        }
-      },
-      theme: { color: '#FF69B4' },
-      modal: {
-        ondismiss: function() {
-          setProcessing(false)
-        }
-      }
-    }
-
-    const rzp = new window.Razorpay(options)
-    rzp.open()
-
-  } catch (error) {
-    console.error('❌ Error:', error)
-    alert('❌ Failed: ' + error.message)
-    setProcessing(false)
+    
+    // Store pending payment info (optional - for tracking)
+    localStorage.setItem('pending_payment', JSON.stringify({
+      type: 'credits',
+      package: pkg.id,
+      packageName: pkg.name,
+      credits: pkg.credits + pkg.bonus,
+      price: pkg.price,
+      timestamp: Date.now()
+    }));
+    
+    // Open payment link in new tab
+    window.open(paymentLink, '_blank');
+    
+    // Show notification
+    alert(`💳 Opening payment page...\n\nComplete the payment to receive ${pkg.credits + pkg.bonus} credits!\n\nCredits will be added automatically after successful payment.`);
+    
+    // Close modal
+    onClose();
   }
-}
-
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="neo-modal-container wide-modal" onClick={(e) => e.stopPropagation()}>
         
         {/* HEADER SECTION */}
-      {/* HEADER SECTION */}
         <div className="neo-modal-header brand-gradient relative-header">
           
           {/* 1. HANGING STICKER (Absolute Positioned) */}
@@ -215,11 +156,11 @@ const handlePurchase = async (pkg) => {
                     <div className="price-tag">₹{pkg.price}</div>
 
                     <button 
-                    className="neo-buy-btn buy-credits-btn"
-                    onClick={() => handlePurchase(pkg)}
-                    disabled={processing}
+                      className="neo-buy-btn buy-credits-btn"
+                      onClick={() => handlePurchase(pkg)}
+                      disabled={processing}
                     >
-                    {processing ? '...' : 'BUY NOW ⚡'}
+                      {processing ? '...' : 'BUY NOW ⚡'}
                     </button>
 
                     <div className="package-value">
