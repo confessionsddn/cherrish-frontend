@@ -2,6 +2,16 @@ import { useState, useEffect } from 'react'
 import './BanOverlay.css'
 
 export default function BanOverlay({ user, onUnban }) {
+  const BAN_PAYMENT_LINKS = {
+  '3d': 'https://rzp.io/l/cccccccc',
+  '7d': 'https://rzp.io/l/dddddddd',
+  'permanent': 'https://rzp.io/l/eeeeeeee'
+};
+
+const handleUnban = () => {
+  const duration = user.ban_duration || 'permanent';
+  window.open(BAN_PAYMENT_LINKS[duration], '_blank');
+};
   const [timeLeft, setTimeLeft] = useState('')
   const [banDuration, setBanDuration] = useState('permanent')
 
