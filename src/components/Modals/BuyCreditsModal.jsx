@@ -1,6 +1,20 @@
 import { useState } from 'react'
 import './BuyCreditsModal.css'
 import { API_URL } from '../../services/api';
+const PAYMENT_LINKS = {
+  starter: 'https://rzp.io/l/xxxxxxxx',
+  popular: 'https://rzp.io/l/yyyyyyyy',
+  premium: 'https://rzp.io/l/zzzzzzzz',
+  elite: 'https://rzp.io/l/aaaaaaaa'
+};
+
+const handleBuyCredits = (packageType) => {
+  // Open payment link in new tab
+  window.open(PAYMENT_LINKS[packageType], '_blank');
+  
+  // Show message
+  showNotification('Complete payment in new tab. Credits will be added automatically!', 'info');
+};
 const CREDIT_PACKAGES = [
   {
     id: 'starter',
