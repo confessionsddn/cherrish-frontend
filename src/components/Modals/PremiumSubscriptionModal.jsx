@@ -1,14 +1,10 @@
-//PremiumSubscriptionModal.jsx
-
 import { useState } from 'react'
 import './PremiumSubscriptionModal.css'
 import { API_URL } from '../../services/api';
-const PREMIUM_LINK = 'https://rzp.io/l/bbbbbbbb';
 
-const handleBuyPremium = () => {
-  window.open(PREMIUM_LINK, '_blank');
-  showNotification('Complete payment to activate Premium!', 'info');
-};
+// ✅ REPLACE WITH YOUR ACTUAL PREMIUM PAYMENT LINK
+const PREMIUM_PAYMENT_LINK = 'https://rzp.io/rzp/gRbUsl7'; // Replace with your ₹99 link
+
 const AURA_FEATURES = [
   { icon: '🎨', title: 'Unlimited Confessions', desc: 'No credit cost ever.' },
   { icon: '🎤', title: 'Daily Free Voice Note', desc: '30-sec recording.' },
@@ -16,103 +12,35 @@ const AURA_FEATURES = [
   { icon: '👤', title: 'Free Username Change', desc: 'One-time change allowed.' },
   { icon: '💰', title: '150 Bonus Credits', desc: 'When free tier runs out.' },
   { icon: '👑', title: 'Premium Badge', desc: 'Displayed on all posts.' },
-  // { icon: '👀', title: 'Reveal Reactors', desc: 'See who reacted (with usernames).' }
 ]
 
 export default function PremiumSubscriptionModal({ onClose }) {
   const [processing, setProcessing] = useState(false)
 
- const handleSubscribe = async () => {
-  setProcessing(true)
-  console.log('👑 Starting premium subscription...')
-
-  try {
-    const res = await fetch(`${API_URL}/api/payments/create-subscription`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-        'Content-Type': 'application/json'
-      }
-    })
-
-    const data = await res.json()
-    console.log('📦 Subscription order:', data)
-
-    if (!data.success) {
-      alert('❌ Failed to create subscription: ' + (data.error || 'Unknown error'))
-      setProcessing(false)
-      return
+  // ✅ UPDATED: Use payment link instead of Razorpay SDK
+  const handleSubscribe = () => {
+    if (!PREMIUM_PAYMENT_LINK || PREMIUM_PAYMENT_LINK === 'https://rzp.io/l/bbbbbbbb') {
+      alert('❌ Premium payment link not configured! Please set up your Razorpay payment link first.');
+      return;
     }
-
-    if (typeof window.Razorpay === 'undefined') {
-      alert('❌ Razorpay not loaded! Refresh the page.')
-      setProcessing(false)
-      return
-    }
-
-    const options = {
-      key: data.key,
-      amount: data.amount,
-      currency: data.currency,
-      name: 'LOVECONFESS',
-      description: 'Premium Monthly Subscription - ₹99',
-      order_id: data.order_id,
-      handler: async function (response) {
-        console.log('✅ Premium payment successful')
-        
-        try {
-          const verifyRes = await fetch(`${API_URL}/api/payments/verify-subscription`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature
-            })
-          })
-
-          const verifyData = await verifyRes.json()
-
-          if (verifyData.success) {
-            alert('🎉 PREMIUM ACTIVATED! Welcome to the premium club!')
-            window.location.reload()
-          } else {
-            alert('❌ Verification failed: ' + verifyData.error)
-          }
-        } catch (error) {
-          console.error('❌ Verification error:', error)
-          alert('❌ Failed to verify subscription')
-        }
-      },
-      theme: { color: '#FFD700' },
-      modal: {
-        ondismiss: function() {
-          console.log('💨 Subscription cancelled')
-          setProcessing(false)
-        }
-      }
-    }
-
-    const rzp = new window.Razorpay(options)
     
-    rzp.on('payment.failed', function (response) {
-      console.error('❌ Payment failed:', response.error)
-      alert('❌ Payment failed: ' + response.error.description)
-      setProcessing(false)
-    })
-
-    rzp.open()
-
-  } catch (error) {
-    console.error('❌ Subscribe error:', error)
-    alert('❌ Failed to subscribe: ' + error.message)
-    setProcessing(false)
+    // Store pending payment info (optional - for tracking)
+    localStorage.setItem('pending_payment', JSON.stringify({
+      type: 'premium',
+      plan: 'monthly',
+      price: 99,
+      timestamp: Date.now()
+    }));
+    
+    // Open payment link in new tab
+    window.open(PREMIUM_PAYMENT_LINK, '_blank');
+    
+    // Show notification
+    alert(`👑 Opening payment page...\n\nComplete the payment to activate Premium!\n\nYour premium benefits will be activated automatically after successful payment.`);
+    
+    // Close modal
+    onClose();
   }
-}
-
 
   return (
     <div className="aura-overlay" onClick={onClose}>
@@ -153,7 +81,7 @@ export default function PremiumSubscriptionModal({ onClose }) {
                 </div>
                 <div className="final-price-row">
                     <span className="current-price">₹99</span>
-                    <span className="period"></span>
+                    <span className="period">/month</span>
                 </div>
             </div>
         </div>
