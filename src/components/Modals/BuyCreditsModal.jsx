@@ -4,12 +4,13 @@ import { API_URL } from '../../services/api';
 
 // ✅ REPLACE THESE WITH YOUR ACTUAL RAZORPAY PAYMENT LINK URLs
 const PAYMENT_LINKS = {
-  starter: 'https://rzp.io/rzp/L3kw1Q20',   // Replace with your ₹29 link
+  starter: 'https://rzp.io/rzp/763naKvr',   // Replace with your ₹29 link
   popular: 'hhttps://rzp.io/rzp/I5RAYnTk',   // Replace with your ₹69 link
   best: 'https://rzp.io/rzp/uMqm09o',      // Replace with your ₹139 link
   elite: 'https://rzp.io/rzp/Am55h8W'      // Replace with your ₹249 link
 };
 
+//https://rzp.io/rzp/L3kw1Q20
 const CREDIT_PACKAGES = [
   {
     id: 'starter',
