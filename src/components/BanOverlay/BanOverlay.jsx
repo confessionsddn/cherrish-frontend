@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react'
 import './BanOverlay.css'
 
-export default function BanOverlay({ user, onUnban }) {
-  const BAN_PAYMENT_LINKS = {
-  '3d': 'https://rzp.io/l/cccccccc',
-  '7d': 'https://rzp.io/l/dddddddd',
-  'permanent': 'https://rzp.io/l/eeeeeeee'
+// ✅ REPLACE WITH YOUR ACTUAL BAN PAYMENT LINKS
+const BAN_PAYMENT_LINKS = {
+  '3': 'https://rzp.io/rzp/EbkgtG4w',      // Replace with your ₹30 (3 days) link
+  '7': 'https://rzp.io/rzp/Cqp1w8kT',      // Replace with your ₹70 (7 days) link
+  'permanent': 'https://rzp.io/rzp/Lo1ElmLf' // Replace with your ₹300 (permanent) link
 };
 
-const handleUnban = () => {
-  const duration = user.ban_duration || 'permanent';
-  window.open(BAN_PAYMENT_LINKS[duration], '_blank');
-};
+export default function BanOverlay({ user, onUnban }) {
   const [timeLeft, setTimeLeft] = useState('')
   const [banDuration, setBanDuration] = useState('permanent')
 
@@ -56,9 +53,9 @@ const handleUnban = () => {
 
       // Determine duration category
       if (totalDays <= 3) {
-        setBanDuration(3)
+        setBanDuration('3')
       } else if (totalDays <= 7) {
-        setBanDuration(7)
+        setBanDuration('7')
       } else {
         setBanDuration('permanent')
       }
@@ -75,22 +72,43 @@ const handleUnban = () => {
     console.log('💰 Ban Duration:', banDuration)
     
     if (banDuration === 'expired') return 0
-    if (banDuration === 3) return 30
-    if (banDuration === 7) return 70
+    if (banDuration === '3') return 30
+    if (banDuration === '7') return 70
     return 300
   }
 
-  const handlePayment = async () => {
+  // ✅ UPDATED: Use payment links
+  const handlePayment = () => {
     const amount = getUnbanPrice()
     
-    console.log('💳 Payment initiated:', amount)
+    console.log('💳 Payment initiated:', amount, 'Duration:', banDuration)
     
     if (amount === 0) {
       alert('Ban has expired! Please refresh the page.')
       return
     }
     
-    alert(`Initiating payment of ₹${amount} for ${banDuration === 3 ? '3 days' : banDuration === 7 ? '7 days' : 'permanent'} ban`)
+    // Get payment link based on duration
+    const paymentLink = BAN_PAYMENT_LINKS[banDuration];
+    
+    if (!paymentLink || paymentLink === 'https://rzp.io/l/cccccccc') {
+      alert('❌ Unban payment link not configured! Please contact admin.');
+      return;
+    }
+    
+    // Store pending payment info (optional - for tracking)
+    localStorage.setItem('pending_payment', JSON.stringify({
+      type: 'unban',
+      duration: banDuration,
+      price: amount,
+      timestamp: Date.now()
+    }));
+    
+    // Open payment link in new tab
+    window.open(paymentLink, '_blank');
+    
+    // Show notification
+    alert(`💳 Opening payment page...\n\nComplete the payment of ₹${amount} to unban your account!\n\nYou will be unbanned automatically after successful payment.`);
   }
 
   useEffect(() => {
@@ -103,10 +121,12 @@ const handleUnban = () => {
     }
   }, [])
 
-const handleEmergencyLogout = () => {
-  localStorage.removeItem('auth_token')
-  window.location.href = '/'
-}
+  const handleEmergencyLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem('auth_token')
+      window.location.href = '/'
+    }
+  }
 
   return (
     <div className="ban-overlay">
@@ -186,25 +206,26 @@ const handleEmergencyLogout = () => {
         <div className="card-footer-strip">
           <p>⚠️ VIOLATION DETECTED • ACCESS REVOKED • PAY TO RESTORE</p>
         </div>
-         <button 
-        onClick={handleEmergencyLogout}
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          background: '#FF0000',
-          color: '#FFF',
-          border: '3px solid #000',
-          padding: '8px 15px',
-          cursor: 'pointer',
-          fontWeight: '900',
-          fontSize: '0.8rem',
-          boxShadow: '4px 4px 0 #000',
-          zIndex: 999
-        }}
-      >
-        🚪 EMERGENCY LOGOUT
-      </button>
+        
+        <button 
+          onClick={handleEmergencyLogout}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            background: '#FF0000',
+            color: '#FFF',
+            border: '3px solid #000',
+            padding: '8px 15px',
+            cursor: 'pointer',
+            fontWeight: '900',
+            fontSize: '0.8rem',
+            boxShadow: '4px 4px 0 #000',
+            zIndex: 999
+          }}
+        >
+          🚪 EMERGENCY LOGOUT
+        </button>
       </div>
     </div>
   )
