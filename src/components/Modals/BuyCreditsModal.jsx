@@ -2,15 +2,6 @@ import { useState } from 'react'
 import './BuyCreditsModal.css'
 import { API_URL } from '../../services/api';
 
-// ✅ REPLACE THESE WITH YOUR ACTUAL RAZORPAY PAYMENT LINK URLs
-const PAYMENT_LINKS = {
-  starter: 'https://rzp.io/rzp/763naKvr',   // Replace with your ₹29 link
-  popular: 'hhttps://rzp.io/rzp/I5RAYnTk',   // Replace with your ₹69 link
-  best: 'https://rzp.io/rzp/uMqm09o',      // Replace with your ₹139 link
-  elite: 'https://rzp.io/rzp/Am55h8W'      // Replace with your ₹249 link
-};
-
-//https://rzp.io/rzp/L3kw1Q20
 const CREDIT_PACKAGES = [
   {
     id: 'starter',
@@ -59,33 +50,125 @@ const CREDIT_PACKAGES = [
 export default function BuyCreditsModal({ onClose, currentCredits }) {
   const [processing, setProcessing] = useState(false)
 
-  // ✅ UPDATED: Use payment links instead of Razorpay SDK
-  const handlePurchase = (pkg) => {
-    const paymentLink = PAYMENT_LINKS[pkg.id];
-    
-    if (!paymentLink || paymentLink === 'https://rzp.io/l/xxxxxxxx') {
-      alert('❌ Payment link not configured! Please set up your Razorpay payment links first.');
-      return;
+  const handlePurchase = async (pkg) => {
+    setProcessing(true)
+    console.log('🛒 Starting purchase for:', pkg.name)
+
+    try {
+      // Step 1: Create Razorpay order
+      const res = await fetch(`${API_URL}/api/payments/create-order`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ package_type: pkg.id })
+      })
+
+      const data = await res.json()
+      console.log('📦 Order created:', data)
+
+      if (!data.success) {
+        alert('❌ Failed: ' + (data.error || 'Unknown error'))
+        setProcessing(false)
+        return
+      }
+
+      // Step 2: Check if Razorpay is loaded
+      if (typeof window.Razorpay === 'undefined') {
+        alert('❌ Razorpay not loaded! Please refresh the page.')
+        setProcessing(false)
+        return
+      }
+
+      // Step 3: Configure Razorpay options
+      const options = {
+        key: data.key,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'Cherrish',
+        description: `${pkg.name} - ${pkg.credits + pkg.bonus} Credits`,
+        order_id: data.order_id,
+        
+        // Success handler
+        handler: async function (response) {
+          console.log('✅ Payment successful:', response)
+          
+          try {
+            // Verify payment on backend
+            const verifyRes = await fetch(`${API_URL}/api/payments/verify-payment`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            })
+
+            const verifyData = await verifyRes.json()
+
+            if (verifyData.success) {
+              // Success! Close modal and redirect
+              alert(`✅ SUCCESS!\n\n${verifyData.credits_added} credits added!\n\nNew Balance: ${verifyData.total_credits} credits`)
+              
+              // Close modal
+              onClose()
+              
+              // Redirect to home to refresh credits
+              window.location.href = '/'
+            } else {
+              alert('❌ Verification failed: ' + verifyData.error)
+              setProcessing(false)
+            }
+          } catch (error) {
+            console.error('❌ Verification error:', error)
+            alert('❌ Payment verification failed. Contact support.')
+            setProcessing(false)
+          }
+        },
+        
+        // Prefill user info (optional)
+        prefill: {
+          name: '',
+          email: '',
+          contact: ''
+        },
+        
+        // Theme
+        theme: { 
+          color: '#FF69B4' 
+        },
+        
+        // Modal settings
+        modal: {
+          ondismiss: function() {
+            console.log('💨 Payment cancelled by user')
+            setProcessing(false)
+          }
+        }
+      }
+
+      // Step 4: Open Razorpay checkout
+      const rzp = new window.Razorpay(options)
+      
+      // Handle payment failure
+      rzp.on('payment.failed', function (response) {
+        console.error('❌ Payment failed:', response.error)
+        alert(`❌ Payment Failed!\n\n${response.error.description}`)
+        setProcessing(false)
+      })
+      
+      rzp.open()
+
+    } catch (error) {
+      console.error('❌ Purchase error:', error)
+      alert('❌ Failed to create order: ' + error.message)
+      setProcessing(false)
     }
-    
-    // Store pending payment info (optional - for tracking)
-    localStorage.setItem('pending_payment', JSON.stringify({
-      type: 'credits',
-      package: pkg.id,
-      packageName: pkg.name,
-      credits: pkg.credits + pkg.bonus,
-      price: pkg.price,
-      timestamp: Date.now()
-    }));
-    
-    // Open payment link in new tab
-    window.open(paymentLink, '_blank');
-    
-    // Show notification
-    alert(`💳 Opening payment page...\n\nComplete the payment to receive ${pkg.credits + pkg.bonus} credits!\n\nCredits will be added automatically after successful payment.`);
-    
-    // Close modal
-    onClose();
   }
 
   return (
@@ -95,19 +178,19 @@ export default function BuyCreditsModal({ onClose, currentCredits }) {
         {/* HEADER SECTION */}
         <div className="neo-modal-header brand-gradient relative-header">
           
-          {/* 1. HANGING STICKER (Absolute Positioned) */}
+          {/* STICKER */}
           <div className="starburst-sticker">
             <div className="starburst-shape"></div>
             <span className="starburst-text">SALE!</span>
           </div>
 
-          {/* 2. CENTERED TITLE STACK */}
+          {/* TITLE */}
           <div className="header-content-punchy">
             <h2><i className="fas fa-coins"></i> STORE </h2>
             <div className="subtitle-badge">UNLOCK PREMIUM POWERS INSTANTLY!</div>
           </div>
 
-          {/* 3. CLOSE BUTTON (Absolute Positioned) */}
+          {/* CLOSE BUTTON */}
           <button className="neo-close-btn absolute-close" onClick={onClose}>
             <i className="fas fa-times"></i>
           </button>
@@ -144,12 +227,12 @@ export default function BuyCreditsModal({ onClose, currentCredits }) {
                 
                 <div className="package-mid-group">
                     <div className="package-credits-box">
-                    <span className="base-amt">{pkg.credits}</span>
-                    {pkg.bonus > 0 && <span className="bonus-amt">+{pkg.bonus} FREE</span>}
+                      <span className="base-amt">{pkg.credits}</span>
+                      {pkg.bonus > 0 && <span className="bonus-amt">+{pkg.bonus} FREE</span>}
                     </div>
 
                     <div className="total-label">
-                    = {pkg.credits + pkg.bonus} CREDITS
+                      = {pkg.credits + pkg.bonus} CREDITS
                     </div>
                 </div>
 
@@ -161,11 +244,11 @@ export default function BuyCreditsModal({ onClose, currentCredits }) {
                       onClick={() => handlePurchase(pkg)}
                       disabled={processing}
                     >
-                      {processing ? '...' : 'BUY NOW ⚡'}
+                      {processing ? 'PROCESSING...' : 'BUY NOW ⚡'}
                     </button>
 
                     <div className="package-value">
-                    ONLY ₹{(pkg.price / (pkg.credits + pkg.bonus)).toFixed(2)} / credit
+                      ONLY ₹{(pkg.price / (pkg.credits + pkg.bonus)).toFixed(2)} / credit
                     </div>
                 </div>
               </div>
@@ -176,7 +259,7 @@ export default function BuyCreditsModal({ onClose, currentCredits }) {
           <div className="trust-badges">
             <span><i className="fas fa-lock"></i> 256-BIT SECURE</span>
             <span><i className="fas fa-bolt"></i> INSTANT DELIVERY</span>
-            <span><i className="fas fa-thumbs-up"></i> NO REFUNDS</span>
+            <span><i className="fas fa-undo"></i> BUY AGAIN ANYTIME</span>
           </div>
 
         </div>
