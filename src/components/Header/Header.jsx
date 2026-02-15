@@ -52,18 +52,23 @@ export default function Header({
 
   return (
     <>
+      {/* FONTS INJECTION */}
+      <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500&display=swap" rel="stylesheet" />
+      <link href="https://api.fontshare.com/v2/css?f[]=archivo@400,600,700&display=swap" rel="stylesheet" />
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
       <header className="neo-header">
         <div className="neo-container">
           
-          {/* 1. LEFT: LOGO */}
-          <div className="logo-section">
-            <h1 className="brand-text" onClick={() => window.location.href = '/'}>
+          {/* 1. LEFT: LOGO (Clash Display, Smaller, Extreme Left) */}
+          <div className="header-left">
+            <h1 className="brand-logo" onClick={() => window.location.href = '/'}>
               cherrish
             </h1>
           </div>
 
           {/* 2. CENTER: DESKTOP NAV (Hidden on Mobile) */}
-          <nav className="desktop-nav">
+          <nav className="header-center desktop-nav">
             <button className="neo-btn" onClick={() => window.location.href = '/community'}>
               COMMUNITY
             </button>
@@ -80,50 +85,61 @@ export default function Header({
             )}
           </nav>
 
-          {/* 3. RIGHT: ACTIONS */}
-          <div className="right-actions">
+          {/* 3. RIGHT: ACTIONS (Extreme Right) */}
+          <div className="header-right">
             
-            {/* CREDITS (Visible everywhere) */}
-            <button className="neo-btn credits-btn" onClick={onBuyCreditsClick}>
-              <span className="coin-icon">●</span> 
+            {/* CREDITS (Pill Shaped, No Dot) */}
+            <button className="credits-pill" onClick={onBuyCreditsClick}>
               <span className="amt">{credits}</span>
-              <div className="plus-icon">+</div>
+              <div className="plus-circle">+</div>
             </button>
 
-            {/* DESKTOP ONLY EXTRAS */}
+            {/* DESKTOP EXTRAS */}
             <div className="desktop-extras">
+              {!user.is_premium && (
+                 <button className="neo-btn premium-btn" onClick={onPremiumClick}>
+                   GET PREMIUM
+                 </button>
+              )}
+
               <button className="neo-btn icon-btn" onClick={onThemeToggle}>
                 {theme === 'light' ? '☾' : '☼'}
               </button>
 
-              <div className="user-pill" onClick={() => setShowUsernameModal(true)}>
-                 <span className="avatar-circle">{user.username[0].toUpperCase()}</span>
-                 <span className="username-text">{user.username}</span>
+              <div className="user-text-only" onClick={() => setShowUsernameModal(true)}>
+                 <span className="u-name">@{user.username}</span>
+                 <span className="u-num">#{user.user_number || '1'}</span>
+                 {user.is_premium && <i className="fas fa-crown black-crown"></i>}
               </div>
+
+              <button className="neo-btn logout-desktop" onClick={handleLogout}>
+                <i className="fas fa-sign-out-alt"></i>
+              </button>
             </div>
 
-            {/* MOBILE ONLY HAMBURGER */}
+            {/* MOBILE HAMBURGER (No Border, 3 Lines) */}
             <button 
-              className={`neo-btn hamburger ${isMobileMenuOpen ? 'active' : ''}`} 
+              className={`hamburger-clean ${isMobileMenuOpen ? 'active' : ''}`} 
               onClick={toggleMobileMenu}
             >
-              <div className="bar top"></div>
-              <div className="bar middle"></div>
-              <div className="bar bottom"></div>
+              <div className="line"></div>
+              <div className="line"></div>
+              <div className="line"></div>
             </button>
           </div>
         </div>
       </header>
 
-      {/* MOBILE MENU DRAWER */}
+      {/* MOBILE MENU OVERLAY */}
       {isMobileMenuOpen && (
         <div className="mobile-overlay" onClick={toggleMobileMenu}>
           <div className="mobile-drawer" onClick={(e) => e.stopPropagation()}>
             
             <div className="drawer-header">
                <div className="drawer-user-info">
-                  <div className="drawer-avatar">{user.username[0]}</div>
-                  <span>@{user.username} {user.is_premium && '👑'}</span>
+                  <span>@{user.username}</span>
+                  <span className="batch-badge">#{user.user_number || '1'}</span>
+                  {user.is_premium && <i className="fas fa-crown black-crown-lg"></i>}
                </div>
                <button className="close-btn" onClick={toggleMobileMenu}>✕</button>
             </div>
@@ -131,37 +147,36 @@ export default function Header({
             <div className="drawer-content">
               
               <div className="section-label">SOCIAL</div>
-              <button onClick={() => { toggleMobileMenu(); window.location.href = '/community'; }} className="neo-btn drawer-item">
+              <button onClick={() => { toggleMobileMenu(); window.location.href = '/community'; }} className="drawer-item">
                 COMMUNITY HUB <i className="fas fa-users"></i>
               </button>
 
-              <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin-chat'; }} className="neo-btn drawer-item">
+              <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin-chat'; }} className="drawer-item">
                 SUPPORT CHAT <i className="fas fa-headset"></i>
                 {unreadCount > 0 && <span className="drawer-badge">{unreadCount}</span>}
               </button>
 
               {user.is_admin && (
-                <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin'; }} className="neo-btn drawer-item admin-item">
-                  ADMIN PANEL <i className="fas fa-shield"></i>
+                <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin'; }} className="drawer-item admin-item">
+                  ADMIN PANEL <i className="fas fa-shield-alt"></i>
                 </button>
               )}
 
               <div className="section-label">ACCOUNT</div>
               
               {!user.is_premium && (
-                <button onClick={() => { toggleMobileMenu(); onPremiumClick(); }} className="neo-btn drawer-item premium-item">
-                  GET PREMIUM <span>⭐</span>
+                <button onClick={() => { toggleMobileMenu(); onPremiumClick(); }} className="drawer-item premium-item">
+                  GET PREMIUM <i className="fas fa-star"></i>
                 </button>
               )}
 
               {!user.username_changed && (
-                <button onClick={() => { toggleMobileMenu(); setShowUsernameModal(true); }} className="neo-btn drawer-item">
+                <button onClick={() => { toggleMobileMenu(); setShowUsernameModal(true); }} className="drawer-item">
                   CHANGE USERNAME
-                  <span className="tag-free">{user.is_premium ? 'FREE' : '200₹'}</span>
                 </button>
               )}
 
-              <button onClick={() => { toggleMobileMenu(); onThemeToggle(); }} className="neo-btn drawer-item">
+              <button onClick={() => { toggleMobileMenu(); onThemeToggle(); }} className="drawer-item">
                 SWITCH THEME <span className="theme-icon">{theme === 'light' ? '☾' : '☼'}</span>
               </button>
 
@@ -171,7 +186,8 @@ export default function Header({
                 <a href="/refunds-and-cancellation-policy">Refunds</a>
               </div>
 
-              <button onClick={handleLogout} className="neo-btn logout-btn">
+              {/* CHERRY RED LOGOUT BUTTON */}
+              <button onClick={handleLogout} className="logout-btn-mobile">
                 LOGOUT <i className="fas fa-sign-out-alt"></i>
               </button>
             </div>
