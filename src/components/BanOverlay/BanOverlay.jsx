@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
 import './BanOverlay.css'
-import { API_URL } from '../../services/api';
+
+// ✅ REPLACE WITH YOUR ACTUAL BAN PAYMENT LINKS
+const BAN_PAYMENT_LINKS = {
+  '3': 'https://rzp.io/rzp/1aBOkpUK',      // Replace with your ₹30 (3 days) link
+  '7': 'https://rzp.io/rzp/JpAW4rrx',      // Replace with your ₹70 (7 days) link
+  'permanent': 'https://rzp.io/rzp/SPFprk1N' // Replace with your ₹300 (permanent) link
+};
 
 export default function BanOverlay({ user, onUnban }) {
   const [timeLeft, setTimeLeft] = useState('')
   const [banDuration, setBanDuration] = useState('permanent')
-  const [processing, setProcessing] = useState(false)
 
   // Debug: Log user data
   useEffect(() => {
@@ -72,10 +77,8 @@ export default function BanOverlay({ user, onUnban }) {
     return 300
   }
 
-  // ✅ RAZORPAY SDK PAYMENT (NO LINKS!)
-  const handlePayment = async () => {
-    if (processing) return;
-    
+  // ✅ UPDATED: Use payment links
+  const handlePayment = () => {
     const amount = getUnbanPrice()
     
     console.log('💳 Payment initiated:', amount, 'Duration:', banDuration)
@@ -85,88 +88,27 @@ export default function BanOverlay({ user, onUnban }) {
       return
     }
     
-    setProcessing(true)
-
-    try {
-      // Create unban order
-      const response = await fetch(`${API_URL}/api/payments/create-unban-order`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ban_duration: banDuration })
-      })
-
-      const data = await response.json()
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to create unban order')
-      }
-
-      if (typeof window.Razorpay === 'undefined') {
-        throw new Error('Payment system not loaded')
-      }
-
-      const options = {
-        key: data.key,
-        amount: data.amount,
-        currency: data.currency,
-        name: 'Cherrish',
-        description: `Unban Account - ${banDuration === '3' ? '3 Days' : banDuration === '7' ? '7 Days' : 'Permanent'}`,
-        order_id: data.order_id,
-        
-        handler: async function (paymentResponse) {
-          try {
-            const verifyRes = await fetch(`${API_URL}/api/payments/verify-unban-payment`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                razorpay_order_id: paymentResponse.razorpay_order_id,
-                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                razorpay_signature: paymentResponse.razorpay_signature
-              })
-            })
-
-            const verifyData = await verifyRes.json()
-
-            if (verifyData.success) {
-              alert('✅ ACCOUNT UNBANNED!\n\nYou can now access Cherrish.')
-              window.location.reload()
-            } else {
-              throw new Error(verifyData.error || 'Verification failed')
-            }
-          } catch (error) {
-            alert('Payment verification failed. Contact support.')
-            setProcessing(false)
-          }
-        },
-        
-        theme: { color: '#FF4757' },
-        
-        modal: {
-          ondismiss: function() {
-            setProcessing(false)
-          }
-        }
-      }
-
-      const rzp = new window.Razorpay(options)
-      
-      rzp.on('payment.failed', function (response) {
-        alert(`Payment failed: ${response.error.description}`)
-        setProcessing(false)
-      })
-      
-      rzp.open()
-
-    } catch (error) {
-      alert(error.message)
-      setProcessing(false)
+    // Get payment link based on duration
+    const paymentLink = BAN_PAYMENT_LINKS[banDuration];
+    
+    if (!paymentLink || paymentLink === 'https://rzp.io/l/cccccccc') {
+      alert('❌ Unban payment link not configured! Please contact admin.');
+      return;
     }
+    
+    // Store pending payment info (optional - for tracking)
+    localStorage.setItem('pending_payment', JSON.stringify({
+      type: 'unban',
+      duration: banDuration,
+      price: amount,
+      timestamp: Date.now()
+    }));
+    
+    // Open payment link in new tab
+    window.open(paymentLink, '_blank');
+    
+    // Show notification
+    alert(`💳 Opening payment page...\n\nComplete the payment of ₹${amount} to unban your account!\n\nYou will be unbanned automatically after successful payment.`);
   }
 
   useEffect(() => {
@@ -237,18 +179,14 @@ export default function BanOverlay({ user, onUnban }) {
               <p>Pay the fine to restore access immediately.</p>
             </div>
 
-            <button 
-              className="brutal-pay-btn-large" 
-              onClick={handlePayment}
-              disabled={processing}
-            >
+            <button className="brutal-pay-btn-large" onClick={handlePayment}>
               <div className="btn-left">
                 <span className="label">FINE AMOUNT</span>
                 <span className="price">₹{getUnbanPrice()}</span>
               </div>
               <div className="btn-right">
-                <span>{processing ? 'PROCESSING...' : 'PAY NOW'}</span>
-                {!processing && <i className="fas fa-arrow-right"></i>}
+                <span>PAY NOW</span>
+                <i className="fas fa-arrow-right"></i>
               </div>
             </button>
 
