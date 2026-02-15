@@ -1,468 +1,374 @@
-/* NEO-BRUTALISM VARIABLES */
+/* IMPORT CHILLAX FONT */
+@import url('https://api.fontshare.com/v2/css?f[]=telma@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@700;800;900&display=swap');
 :root {
-  --nb-black: #1a1a1a;
-  --nb-white: #ffffff;
-  --nb-border: 3px solid var(--nb-black);
-  --nb-shadow: 4px 4px 0px var(--nb-black);
-  --nb-shadow-hover: 2px 2px 0px var(--nb-black);
+  --c-ink: #141414;
+  --c-paper: #FFF8F0;
+  --c-cherry: #FF0035;
+  --c-blue: #3A86FF;
+  --c-purple: #8338EC;
+  --c-gold: #FFBE0B;
+  --c-white: #FFFFFF;
   
-  /* Punchy Colors (Not Highlighter) */
-  --nb-yellow: #FFCB2B;  /* Credits */
-  --nb-purple: #A78BFA;  /* Branding */
-  --nb-pink:   #F472B6;  /* Premium */
-  --nb-blue:   #60A5FA;  /* Actions */
-  --nb-red:    #F87171;  /* Danger */
-  --nb-bg:     #F3F4F6;  /* Off-white bg */
+  /* Interaction Logic */
+  --shadow-rest: 2px 2px 0 var(--c-ink);
+  --shadow-hover: 5px 5px 0 var(--c-ink);
+  --shadow-active: 0px 0px 0 var(--c-ink);
+  
+  --trans-rest: translate(0, 0);
+  --trans-hover: translate(-3px, -3px);
+  --trans-active: translate(2px, 2px);
 }
 
-/* BASE STYLES */
-.nb-header {
+/* RESET & BASE */
+.neo-header {
   position: sticky;
   top: 0;
-  z-index: 1000;
-  background: var(--nb-white);
-  border-bottom: var(--nb-border);
-  font-family: 'Archivo Black', 'Montserrat', sans-serif; /* Recommended font */
-  padding: 12px 0;
+  z-index: 9999;
+  background: var(--c-white);
+  border-bottom: 3px solid var(--c-ink);
+  padding: 10px 0;
+  font-family: 'Public Sans', sans-serif;
 }
 
-.nb-container {
-  max-width: 1400px;
+.neo-container {
+  max-width: 1600px;
   margin: 0 auto;
   padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 50px;
 }
 
-/* 1. LOGO */
-.nb-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: none;
-  border: none;
+/* --- 1. LOGO --- */
+.logo-wrapper {
   cursor: pointer;
-  padding: 0;
+  user-select: none;
 }
 
-.logo-box {
-  width: 40px;
-  height: 40px;
-  background: var(--nb-black);
-  color: var(--nb-white);
-  font-size: 24px;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px; /* Slight radius */
+.brand-text {
+font-family: 'Telma', cursive;  
+  font-size: 28px;
+  margin: 0;
+  color: var(--c-ink);
+  letter-spacing: -0.5px;
+  text-transform: lowercase; /* Stylistic choice for Chillax */
 }
 
-.logo-text {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--nb-black);
-  letter-spacing: -1px;
-}
-
-/* 2. DESKTOP NAV */
-.nb-desktop-nav {
-  display: none; /* Mobile First */
-  gap: 16px;
-}
-
-.nb-nav-item {
-  background: var(--nb-white);
-  border: var(--nb-border);
-  box-shadow: var(--nb-shadow);
-  padding: 8px 16px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.1s;
-  position: relative;
-}
-
-.nb-nav-item:hover {
-  transform: translate(2px, 2px);
-  box-shadow: var(--nb-shadow-hover);
-  background: #E0F2FE;
-}
-
-.nb-nav-item.admin {
-  background: #FCE7F3;
-}
-
-.nb-badge {
+/* --- 2. DESKTOP NAV --- */
+.desktop-nav {
+  display: none; /* Mobile First: Hidden */
+  gap: 12px;
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--nb-red);
-  color: var(--nb-white);
-  border: 2px solid var(--nb-black);
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-/* 3. ACTIONS & CREDITS */
-.nb-actions {
+/* THE "CONTROLLER" BUTTON STYLE */
+.neo-btn {
+  background: var(--c-white);
+  border: 2px solid var(--c-ink);
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--c-ink);
+  cursor: pointer;
+  
+  /* STATE: REST (Slightly pressed) */
+  box-shadow: var(--shadow-rest);
+  transform: var(--trans-rest);
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* STATE: HOVER (POP UP) */
+.neo-btn:hover {
+  box-shadow: var(--shadow-hover);
+  transform: var(--trans-hover);
+  background: var(--c-paper);
+}
+
+/* STATE: ACTIVE (PRESSED FLAT) */
+.neo-btn:active {
+  box-shadow: var(--shadow-active);
+  transform: var(--trans-active);
+}
+
+.admin-btn {
+  background: #E0AAFF; /* Light Purple */
+}
+
+.neo-badge {
+  margin-left: 6px;
+  background: var(--c-cherry);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  border: 1px solid var(--c-ink);
+}
+
+/* --- 3. RIGHT ACTIONS --- */
+.right-actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* The Mobile-First Credits Button */
-.nb-credits-btn {
+/* CREDITS (The Impulse Buy) */
+.credits-wrapper {
+  display: flex;
+  align-items: stretch;
+  background: var(--c-paper);
+  border: 2px solid var(--c-ink);
+  border-radius: 50px; /* Fully rounded pill */
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: var(--shadow-rest);
+  transition: all 0.15s ease;
+}
+
+.credits-wrapper:hover {
+  box-shadow: var(--shadow-hover);
+  transform: var(--trans-hover);
+}
+
+.credits-wrapper:active {
+  box-shadow: var(--shadow-active);
+  transform: var(--trans-active);
+}
+
+.credits-count {
+  padding: 8px 12px 8px 16px;
+  font-weight: 900;
+  font-size: 15px;
   display: flex;
   align-items: center;
-  background: var(--nb-white);
-  border: var(--nb-border);
-  box-shadow: var(--nb-shadow);
-  border-radius: 50px; /* Pill shape */
-  padding: 4px 4px 4px 12px; /* Less padding right for the plus button */
-  cursor: pointer;
-  transition: all 0.1s;
-  gap: 8px;
+  gap: 6px;
 }
 
-.nb-credits-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: var(--nb-shadow-hover);
-}
-
-.coin-icon {
-  color: #D97706;
-  font-size: 14px;
-}
-
-.credit-amount {
-  font-weight: 800;
-  font-size: 15px;
-  color: var(--nb-black);
-  min-width: 20px;
-  text-align: center;
+.coin-symbol {
+  color: var(--c-gold);
+  font-size: 18px; /* Simple text circle instead of icon */
 }
 
 .plus-btn {
-  background: var(--nb-yellow);
-  border: 2px solid var(--nb-black);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  background: var(--c-gold);
+  border: none;
+  border-left: 2px solid var(--c-ink);
+  width: 40px;
+  font-size: 20px;
+  font-weight: 400;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  color: var(--nb-black);
+  color: var(--c-ink);
 }
 
-/* HAMBURGER MENU */
-.nb-hamburger {
-  width: 48px;
-  height: 48px;
-  background: var(--nb-purple);
-  border: var(--nb-border);
-  box-shadow: var(--nb-shadow);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  transition: all 0.1s;
-  border-radius: 8px;
-}
-
-.nb-hamburger:active {
-  transform: translate(2px, 2px);
-  box-shadow: var(--nb-shadow-hover);
-}
-
-.nb-hamburger span {
-  width: 24px;
-  height: 3px;
-  background: var(--nb-black);
-  transition: 0.3s;
-}
-
-/* Hamburger Animation state */
-.nb-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
-.nb-hamburger.open span:nth-child(2) { opacity: 0; }
-.nb-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
-
-/* DESKTOP EXTRAS (Hidden on mobile) */
-.nb-desktop-extras {
-  display: none;
+/* DESKTOP EXTRAS */
+.desktop-extras {
+  display: none; /* Hidden on mobile */
   align-items: center;
   gap: 12px;
 }
 
-.nb-premium-btn {
-  background: var(--nb-pink);
-  border: var(--nb-border);
-  box-shadow: var(--nb-shadow);
-  padding: 8px 16px;
-  font-weight: 900;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  transition: 0.1s;
+.premium-btn {
+  background: var(--c-gold) !important;
 }
 
-.nb-premium-btn:hover {
-  transform: translate(2px, 2px);
-  box-shadow: var(--nb-shadow-hover);
-}
-
-.nb-icon-btn {
-  width: 44px;
-  height: 44px;
-  background: var(--nb-white);
-  border: var(--nb-border);
-  box-shadow: var(--nb-shadow);
-  cursor: pointer;
-  font-size: 18px;
-  transition: 0.1s;
-}
-
-.nb-icon-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: var(--nb-shadow-hover);
-}
-
-.nb-user-profile {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--nb-bg);
-  border: var(--nb-border);
-  padding: 4px 12px 4px 4px;
-  border-radius: 50px;
-}
-
-.nb-avatar {
-  width: 32px;
-  height: 32px;
-  background: var(--nb-black);
-  color: var(--nb-white);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.nb-username {
-  font-weight: 700;
-  font-size: 14px;
-}
-
-/* =========================================
-   MOBILE MENU OVERLAY
-   ========================================= */
-.nb-mobile-menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(2px);
-  z-index: 2000;
-  opacity: 0;
-  animation: fadeIn 0.2s forwards;
-}
-
-.nb-mobile-menu {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 85%;
-  max-width: 350px;
-  height: 100%;
-  background: var(--nb-white);
-  border-left: 4px solid var(--nb-black);
-  display: flex;
-  flex-direction: column;
-  transform: translateX(100%);
-  animation: slideIn 0.3s cubic-bezier(0, 1.2, 0.9, 1) forwards; /* Bouncy entry */
-}
-
-/* Header inside menu */
-.nb-menu-header {
-  padding: 24px;
-  border-bottom: var(--nb-border);
-  background: var(--nb-purple);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nb-menu-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nb-menu-avatar {
-  width: 48px;
-  height: 48px;
-  background: var(--nb-black);
-  color: var(--nb-white);
-  border: 2px solid var(--nb-white);
-  border-radius: 8px;
+.icon-btn {
+  padding: 0;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  font-weight: 900;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
 }
 
-.nb-menu-details h3 {
-  margin: 0;
-  font-size: 18px;
+.user-tag {
   font-weight: 800;
-  color: var(--nb-black);
+  font-size: 14px;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  cursor: pointer;
+  padding: 8px;
 }
 
-.user-id {
-  font-size: 12px;
-  font-weight: 600;
-  color: #333;
-  background: rgba(255,255,255,0.3);
-  padding: 2px 6px;
-  border-radius: 4px;
+.user-tag:hover {
+  background: var(--c-gold);
+  color: var(--c-ink);
+  text-decoration: none;
 }
 
-.nb-close-btn {
-  background: none;
-  border: none;
+/* --- HAMBURGER --- */
+.hamburger {
+  width: 42px;
+  height: 42px;
+  background: var(--c-white);
+  border: 2px solid var(--c-ink);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-rest);
+  transition: all 0.1s;
+}
+
+.hamburger:active {
+  box-shadow: var(--shadow-active);
+  transform: translate(2px, 2px);
+}
+
+.bar {
+  width: 24px;
+  height: 3px;
+  background: var(--c-ink);
+  transition: 0.3s;
+}
+
+/* Hamburger Active State */
+.hamburger.active .top { transform: rotate(45deg) translate(5px, 6px); }
+.hamburger.active .middle { opacity: 0; }
+.hamburger.active .bottom { transform: rotate(-45deg) translate(5px, -7px); }
+
+/* --- MOBILE DRAWER --- */
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 9998;
+}
+
+.mobile-drawer {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: calc(100% - 24px);
+  max-width: 400px;
+  background: var(--c-white);
+  border: 3px solid var(--c-ink);
+  border-radius: 16px;
+  box-shadow: 8px 8px 0 var(--c-ink);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: drawerPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes drawerPop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.drawer-header {
+  background: var(--c-ink);
+  color: var(--c-white);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer-user {
+  font-weight: 800;
+  font-size: 18px;
+  font-family: 'Chillax', sans-serif;
+}
+
+.drawer-close {
   font-size: 24px;
   cursor: pointer;
+  font-weight: bold;
 }
 
-/* Menu Items */
-.nb-menu-list {
-  padding: 20px;
-  overflow-y: auto;
-  flex: 1;
+.drawer-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.menu-group {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.nb-menu-item {
+.drawer-btn {
+  width: 100%;
+  padding: 16px;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 16px;
+  border: 2px solid var(--c-ink);
+  border-radius: 12px;
+  background: var(--c-white);
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--c-ink);
+  transition: 0.1s;
+  text-align: left;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  padding: 16px;
-  background: var(--nb-white);
-  border: var(--nb-border);
-  box-shadow: var(--nb-shadow);
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
-  text-align: left;
-  transition: 0.1s;
 }
 
-.nb-menu-item:active {
-  transform: translate(2px, 2px);
-  box-shadow: var(--nb-shadow-hover);
+.drawer-btn:active {
+  box-shadow: 0 0 0 var(--c-ink);
+  transform: translate(4px, 4px);
 }
 
-.nb-menu-item i {
-  font-size: 18px;
+/* Colors for drawer buttons */
+.drawer-btn.blue { background: #D0E1FF; }
+.drawer-btn.purple { background: #E0AAFF; }
+.drawer-btn.gold { background: var(--c-gold); }
+.drawer-btn.white { background: #FFF; }
+
+.drawer-btn.logout-btn {
+  background: var(--c-cherry);
+  color: var(--c-ink); /* Black text on red as requested */
+  margin-top: 10px;
 }
 
-/* Highlighted Menu Items */
-.premium-highlight {
-  background: var(--nb-pink);
-}
-
-.admin-highlight {
-  background: #E5E7EB;
-}
-
-.logout {
-  margin-top: auto; /* Push to bottom */
-  background: #FEE2E2;
-  color: var(--nb-red);
-  border-color: var(--nb-red);
-  box-shadow: 4px 4px 0 var(--nb-red);
-}
-
-.logout:active {
-  box-shadow: 2px 2px 0 var(--nb-red);
-}
-
-.tag {
-  background: var(--nb-yellow);
-  font-size: 11px;
-  padding: 4px 8px;
-  border: 2px solid var(--nb-black);
+.price-tag {
+  background: var(--c-gold);
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid var(--c-ink);
   border-radius: 4px;
 }
 
-.nb-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: red;
-  border-radius: 50%;
-  position: absolute;
-  top: 0;
-  right: -2px;
-}
-
-.icon-wrapper {
-  position: relative;
-}
-
-.nb-divider {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #666;
-  font-weight: 800;
-  margin: 10px 0 4px 0;
-}
-
-.nb-legal-row {
+.legal-links {
   display: flex;
-  justify-content: space-around;
-  margin-top: 10px;
+  justify-content: space-between;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  padding: 0 10px;
 }
 
-.nb-legal-row a {
-  color: #666;
+.legal-links a {
+  color: #888;
   text-decoration: underline;
 }
 
-/* ANIMATIONS */
-@keyframes fadeIn { to { opacity: 1; } }
-@keyframes slideIn { to { transform: translateX(0); } }
-
-/* RESPONSIVE MEDIA QUERIES */
-@media (min-width: 769px) {
-  .nb-desktop-nav, .nb-desktop-extras {
+/* --- RESPONSIVE BREAKPOINTS --- */
+@media (min-width: 900px) {
+  .desktop-nav, .desktop-extras {
     display: flex;
   }
-  .nb-hamburger {
+  
+  .hamburger {
     display: none;
   }
-  /* On desktop, we can make the credits button simpler if desired, 
-     but keeping the "plus" button style maintains the "Buy" affordance. */
-  .nb-credits-btn {
-     background: #FFFBEB; /* Slight yellow tint on desktop */
+  
+  .neo-container {
+    padding: 0 32px;
   }
 }
