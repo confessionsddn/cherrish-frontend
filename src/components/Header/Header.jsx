@@ -29,7 +29,7 @@ export default function Header({
     document.body.style.overflow = !isMobileMenuOpen ? 'hidden' : 'auto';
   };
 
-  // Fetch unread count logic remains same
+  // Fetch unread count
   useEffect(() => {
     if (!isAuthenticated) return;
     const fetchUnreadCount = async () => {
@@ -55,62 +55,56 @@ export default function Header({
       <header className="neo-header">
         <div className="neo-container">
           
-          {/* 1. LOGO (Text Only - Chillax Font) */}
-          <div className="logo-wrapper" onClick={() => window.location.href = '/'}>
-            <h1 className="brand-text">cherrish</h1>
+          {/* 1. LEFT: LOGO */}
+          <div className="logo-section">
+            <h1 className="brand-text" onClick={() => window.location.href = '/'}>
+              cherrish
+            </h1>
           </div>
 
-          {/* 2. DESKTOP NAVIGATION (Visible on Desktop) */}
+          {/* 2. CENTER: DESKTOP NAV (Hidden on Mobile) */}
           <nav className="desktop-nav">
-            <button className="neo-btn nav-btn" onClick={() => window.location.href = '/community'}>
+            <button className="neo-btn" onClick={() => window.location.href = '/community'}>
               COMMUNITY
             </button>
             
-            <button className="neo-btn nav-btn" onClick={() => window.location.href = '/admin-chat'}>
+            <button className="neo-btn" onClick={() => window.location.href = '/admin-chat'}>
               SUPPORT
               {unreadCount > 0 && <span className="neo-badge">{unreadCount}</span>}
             </button>
 
             {user.is_admin && (
-              <button className="neo-btn nav-btn admin-btn" onClick={() => window.location.href = '/admin'}>
+              <button className="neo-btn admin-btn" onClick={() => window.location.href = '/admin'}>
                 ADMIN
               </button>
             )}
           </nav>
 
-          {/* 3. RIGHT ACTIONS */}
+          {/* 3. RIGHT: ACTIONS */}
           <div className="right-actions">
             
-            {/* CREDITS PILL (Mobile & Desktop) */}
-            <div className="credits-wrapper" onClick={onBuyCreditsClick}>
-              <div className="credits-count">
-                <span className="coin-symbol">●</span> 
-                {credits}
-              </div>
-              <button className="plus-btn">+</button>
-            </div>
+            {/* CREDITS (Visible everywhere) */}
+            <button className="neo-btn credits-btn" onClick={onBuyCreditsClick}>
+              <span className="coin-icon">●</span> 
+              <span className="amt">{credits}</span>
+              <div className="plus-icon">+</div>
+            </button>
 
-            {/* DESKTOP EXTRAS (Theme, Profile, Premium) */}
+            {/* DESKTOP ONLY EXTRAS */}
             <div className="desktop-extras">
-              {!user.is_premium && (
-                <button className="neo-btn premium-btn" onClick={onPremiumClick}>
-                  GET PREMIUM
-                </button>
-              )}
-              
               <button className="neo-btn icon-btn" onClick={onThemeToggle}>
                 {theme === 'light' ? '☾' : '☼'}
               </button>
 
-              {/* No Icon, Just Username */}
-              <div className="user-tag" onClick={() => setShowUsernameModal(true)}>
-                 @{user.username}
+              <div className="user-pill" onClick={() => setShowUsernameModal(true)}>
+                 <span className="avatar-circle">{user.username[0].toUpperCase()}</span>
+                 <span className="username-text">{user.username}</span>
               </div>
             </div>
 
-            {/* HAMBURGER (Mobile Only) */}
+            {/* MOBILE ONLY HAMBURGER */}
             <button 
-              className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`} 
+              className={`neo-btn hamburger ${isMobileMenuOpen ? 'active' : ''}`} 
               onClick={toggleMobileMenu}
             >
               <div className="bar top"></div>
@@ -121,63 +115,64 @@ export default function Header({
         </div>
       </header>
 
-      {/* MOBILE MENU OVERLAY */}
+      {/* MOBILE MENU DRAWER */}
       {isMobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={toggleMobileMenu}>
+        <div className="mobile-overlay" onClick={toggleMobileMenu}>
           <div className="mobile-drawer" onClick={(e) => e.stopPropagation()}>
             
             <div className="drawer-header">
-               <span className="drawer-user">@{user.username}</span>
-               <div className="drawer-close" onClick={toggleMobileMenu}>✕</div>
+               <div className="drawer-user-info">
+                  <div className="drawer-avatar">{user.username[0]}</div>
+                  <span>@{user.username} {user.is_premium && '👑'}</span>
+               </div>
+               <button className="close-btn" onClick={toggleMobileMenu}>✕</button>
             </div>
 
             <div className="drawer-content">
               
-              <div className="menu-group">
-                <button onClick={() => { toggleMobileMenu(); window.location.href = '/community'; }} className="drawer-btn blue">
-                  COMMUNITY HUB
+              <div className="section-label">SOCIAL</div>
+              <button onClick={() => { toggleMobileMenu(); window.location.href = '/community'; }} className="neo-btn drawer-item">
+                COMMUNITY HUB <i className="fas fa-users"></i>
+              </button>
+
+              <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin-chat'; }} className="neo-btn drawer-item">
+                SUPPORT CHAT <i className="fas fa-headset"></i>
+                {unreadCount > 0 && <span className="drawer-badge">{unreadCount}</span>}
+              </button>
+
+              {user.is_admin && (
+                <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin'; }} className="neo-btn drawer-item admin-item">
+                  ADMIN PANEL <i className="fas fa-shield"></i>
                 </button>
+              )}
 
-                <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin-chat'; }} className="drawer-btn blue">
-                  SUPPORT CHAT
-                  {unreadCount > 0 && <span className="drawer-badge">{unreadCount}</span>}
+              <div className="section-label">ACCOUNT</div>
+              
+              {!user.is_premium && (
+                <button onClick={() => { toggleMobileMenu(); onPremiumClick(); }} className="neo-btn drawer-item premium-item">
+                  GET PREMIUM <span>⭐</span>
                 </button>
+              )}
 
-                {user.is_admin && (
-                  <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin'; }} className="drawer-btn purple">
-                    ADMIN PANEL
-                  </button>
-                )}
-              </div>
-
-              <div className="menu-group">
-                {!user.is_premium && (
-                  <button onClick={() => { toggleMobileMenu(); onPremiumClick(); }} className="drawer-btn gold">
-                    UPGRADE PREMIUM
-                  </button>
-                )}
-
-                {!user.username_changed && (
-                  <button onClick={() => { toggleMobileMenu(); setShowUsernameModal(true); }} className="drawer-btn white">
-                    CHANGE USERNAME
-                    <span className="price-tag">{user.is_premium ? 'FREE' : '200₹'}</span>
-                  </button>
-                )}
-
-                <button onClick={() => { toggleMobileMenu(); onThemeToggle(); }} className="drawer-btn white">
-                  SWITCH THEME ({theme === 'light' ? 'DARK' : 'LIGHT'})
+              {!user.username_changed && (
+                <button onClick={() => { toggleMobileMenu(); setShowUsernameModal(true); }} className="neo-btn drawer-item">
+                  CHANGE USERNAME
+                  <span className="tag-free">{user.is_premium ? 'FREE' : '200₹'}</span>
                 </button>
-              </div>
+              )}
 
-              <div className="legal-links">
+              <button onClick={() => { toggleMobileMenu(); onThemeToggle(); }} className="neo-btn drawer-item">
+                SWITCH THEME <span className="theme-icon">{theme === 'light' ? '☾' : '☼'}</span>
+              </button>
+
+              <div className="legal-row">
                 <a href="/terms-and-conditions">Terms</a>
                 <a href="/contact-us">Contact</a>
                 <a href="/refunds-and-cancellation-policy">Refunds</a>
               </div>
 
-              {/* CHERRY RED LOGOUT */}
-              <button onClick={handleLogout} className="drawer-btn logout-btn">
-                LOGOUT
+              <button onClick={handleLogout} className="neo-btn logout-btn">
+                LOGOUT <i className="fas fa-sign-out-alt"></i>
               </button>
             </div>
           </div>
