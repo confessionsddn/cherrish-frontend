@@ -1,32 +1,26 @@
-// MOBILE-FIRST Premium Modal - 60FPS BUTTER SMOOTH
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './PremiumSubscriptionModal.css'
 import { API_URL } from '../../services/api';
 
-const FEATURES = [
-  { icon: '🎨', title: 'Unlimited Confessions', desc: 'Post without credit costs' },
-  { icon: '🎤', title: 'Daily Voice Note', desc: '30-second recordings' },
-  { icon: '⭐', title: '10 Spotlight Boosts', desc: 'Pin to top monthly' },
-  { icon: '👤', title: 'Free Username Change', desc: 'One-time rename' },
-  { icon: '💰', title: '150 Bonus Credits', desc: 'Instant reward' },
-  { icon: '👑', title: 'Premium Badge', desc: 'Exclusive status' },
+const AURA_FEATURES = [
+  { icon: '🎨', title: 'Unlimited Confessions', desc: 'No credit cost ever.' },
+  { icon: '🎤', title: 'Daily Free Voice Note', desc: '30-sec recording.' },
+  { icon: '⭐', title: '10 Spotlight Boosts', desc: 'Refreshed per month.' },
+  { icon: '👤', title: 'Free Username Change', desc: 'One-time change allowed.' },
+  { icon: '💰', title: '150 Bonus Credits', desc: 'When free tier runs out.' },
+  { icon: '👑', title: 'Premium Badge', desc: 'Displayed on all posts.' },
 ]
 
 export default function PremiumSubscriptionModal({ onClose }) {
   const [processing, setProcessing] = useState(false)
 
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = 'unset' }
-  }, [])
-
   const handleSubscribe = async () => {
-    if (processing) return;
-    
     setProcessing(true)
+    console.log('👑 Starting premium subscription...')
 
     try {
-      const response = await fetch(`${API_URL}/api/payments/create-subscription`, {
+      // Step 1: Create subscription order
+      const res = await fetch(`${API_URL}/api/payments/create-subscription`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -34,26 +28,37 @@ export default function PremiumSubscriptionModal({ onClose }) {
         }
       })
 
-      const data = await response.json()
+      const data = await res.json()
+      console.log('📦 Subscription order created:', data)
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to create subscription')
+        alert('❌ Failed: ' + (data.error || 'Unknown error'))
+        setProcessing(false)
+        return
       }
 
+      // Step 2: Check if Razorpay is loaded
       if (typeof window.Razorpay === 'undefined') {
-        throw new Error('Payment system not loaded')
+        alert('❌ Razorpay not loaded! Please refresh the page.')
+        setProcessing(false)
+        return
       }
 
+      // Step 3: Configure Razorpay options
       const options = {
         key: data.key,
         amount: data.amount,
         currency: data.currency,
-        name: 'Cherrish Premium',
-        description: 'Monthly Subscription - ₹99',
+        name: 'Cherrish',
+        description: 'Premium Monthly Subscription - ₹99',
         order_id: data.order_id,
         
-        handler: async function (paymentResponse) {
+        // Success handler
+        handler: async function (response) {
+          console.log('✅ Premium payment successful:', response)
+          
           try {
+            // Verify subscription on backend
             const verifyRes = await fetch(`${API_URL}/api/payments/verify-subscription`, {
               method: 'POST',
               headers: {
@@ -61,140 +66,153 @@ export default function PremiumSubscriptionModal({ onClose }) {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                razorpay_order_id: paymentResponse.razorpay_order_id,
-                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                razorpay_signature: paymentResponse.razorpay_signature
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
               })
             })
 
             const verifyData = await verifyRes.json()
 
             if (verifyData.success) {
-              const successDiv = document.createElement('div')
-              successDiv.className = 'premium-success-toast'
-              successDiv.innerHTML = `
-                <div class="success-crown">👑</div>
-                <div>
-                  <div class="success-title">Welcome to Premium!</div>
-                  <div class="success-text">All features unlocked</div>
-                </div>
-              `
-              document.body.appendChild(successDiv)
+              // Success! Premium activated
+              alert(`🎉 PREMIUM ACTIVATED!\n\nWelcome to the elite club!\n\nYou now have unlimited confessions + 150 bonus credits!`)
               
-              setTimeout(() => {
-                successDiv.remove()
-                window.location.href = '/'
-              }, 1500)
+              // Close modal
+              onClose()
+              
+              // Redirect to home to refresh
+              window.location.href = '/'
             } else {
-              throw new Error(verifyData.error || 'Verification failed')
+              alert('❌ Verification failed: ' + verifyData.error)
+              setProcessing(false)
             }
           } catch (error) {
-            alert('Subscription verification failed')
+            console.error('❌ Verification error:', error)
+            alert('❌ Premium verification failed. Contact support.')
             setProcessing(false)
           }
         },
         
-        theme: { color: '#FFD700' },
+        // Prefill user info (optional)
+        prefill: {
+          name: '',
+          email: '',
+          contact: ''
+        },
         
+        // Theme
+        theme: { 
+          color: '#FFD700' 
+        },
+        
+        // Modal settings
         modal: {
           ondismiss: function() {
+            console.log('💨 Premium subscription cancelled')
             setProcessing(false)
           }
         }
       }
 
+      // Step 4: Open Razorpay checkout
       const rzp = new window.Razorpay(options)
       
+      // Handle payment failure
       rzp.on('payment.failed', function (response) {
-        alert(`Payment failed: ${response.error.description}`)
+        console.error('❌ Payment failed:', response.error)
+        alert(`❌ Payment Failed!\n\n${response.error.description}`)
         setProcessing(false)
       })
       
       rzp.open()
 
     } catch (error) {
-      alert(error.message)
+      console.error('❌ Subscribe error:', error)
+      alert('❌ Failed to create subscription: ' + error.message)
       setProcessing(false)
     }
   }
 
   return (
-    <div className="premium-overlay" onClick={onClose}>
-      <div className="premium-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="aura-overlay" onClick={onClose}>
+      <div className="aura-container" onClick={(e) => e.stopPropagation()}>
         
-        {/* Close Button */}
-        <button className="premium-close" onClick={onClose}>
-          <i className="fas fa-times"></i>
+        <div className="aura-glow-bg"></div>
+        <div className="floating-crown">👑</div>
+        
+        <button className="aura-close-btn" onClick={onClose}>
+            <i className="fas fa-times"></i>
         </button>
 
-        {/* Crown Animation */}
-        <div className="crown-container">
-          <div className="crown-glow"></div>
-          <div className="crown-icon">👑</div>
-        </div>
-
-        {/* Header */}
-        <div className="premium-header">
-          <h1 className="premium-title">
-            <span className="title-line1">Unlock</span>
-            <span className="title-line2">Premium</span>
-          </h1>
-          <p className="premium-tagline">Unlimited power. Zero limits.</p>
-        </div>
-
-        {/* Pricing */}
-        <div className="premium-pricing">
-          <div className="price-old">
-            <span className="strike-price">₹319</span>
-            <span className="save-badge">69% OFF</span>
-          </div>
-          <div className="price-current">
-            <span className="price-amount">₹99</span>
-            <span className="price-period">/month</span>
-          </div>
-        </div>
-
-        {/* Features */}
-        <div className="premium-features">
-          {FEATURES.map((feature, index) => (
-            <div 
-              key={index}
-              className="feature-item"
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <div className="feature-icon">{feature.icon}</div>
-              <div className="feature-text">
-                <div className="feature-title">{feature.title}</div>
-                <div className="feature-desc">{feature.desc}</div>
-              </div>
-              <div className="feature-check">✓</div>
+        {/* LEFT PANEL */}
+        <div className="aura-left-panel">
+            <div className="holo-card">
+                <div className="holo-shine"></div>
+                <div className="card-header">
+                    <span>VIP ACCESS</span>
+                    <i className="fas fa-infinity"></i>
+                </div>
+                <div className="card-body">
+                    <h1>AURA<br/>PASS</h1>
+                    <div className="card-chip">
+                        <div className="chip-lines"></div>
+                    </div>
+                    <p className="card-number">**** **** **** ELITE</p>
+                </div>
+                <div className="card-footer">
+                    <span>MEMBER SINCE 2024</span>
+                    <span className="master-logo">///</span>
+                </div>
             </div>
-          ))}
+            
+            <div className="price-explainer">
+                <div className="discount-row">
+                    <span className="strike">₹319</span>
+                    <div className="save-tag">SAVE 69%</div>
+                </div>
+                <div className="final-price-row">
+                    <span className="current-price">₹99</span>
+                    <span className="period">/month</span>
+                </div>
+            </div>
         </div>
 
-        {/* CTA Button */}
-        <button 
-          className="premium-subscribe-btn"
-          onClick={handleSubscribe}
-          disabled={processing}
-        >
-          {processing ? (
-            <>
-              <span className="btn-spinner"></span>
-              <span>Processing...</span>
-            </>
-          ) : (
-            <>
-              <span>Activate Premium</span>
-              <i className="fas fa-arrow-right"></i>
-            </>
-          )}
-        </button>
+        {/* RIGHT PANEL */}
+        <div className="aura-right-panel">
+            <div className="panel-header">
+                <h2>UNLOCK GOD MODE</h2>
+                <p>Don't just post. Dominate.</p>
+            </div>
 
-        {/* Terms */}
-        <p className="premium-terms">
-          Recurring monthly. Cancel anytime. No hidden fees.
-        </p>
+            {/* FEATURES SCROLL */}
+            <div className="features-auto-scroll-mask">
+                <div className="features-track">
+                    {/* Map TWICE for seamless loop */}
+                    {[...AURA_FEATURES, ...AURA_FEATURES].map((f, i) => (
+                        <div key={i} className="aura-feature-row">
+                            <div className="feature-icon-glow">{f.icon}</div>
+                            <div className="feature-texts">
+                                <h4>{f.title}</h4>
+                                <p>{f.desc}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <button 
+                className="activate-aura-btn"
+                onClick={handleSubscribe}
+                disabled={processing}
+            >
+                <span className="btn-content">
+                    {processing ? 'SYNCING AURA...' : 'ACTIVATE AURA PASS ⚡'}
+                </span>
+            </button>
+            
+            <p className="micro-terms">Recurring billing. Cancel anytime. No hidden fees.</p>
+        </div>
 
       </div>
     </div>
