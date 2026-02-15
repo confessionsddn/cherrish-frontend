@@ -1,4 +1,4 @@
-// frontend/src/components/Header/Header.jsx - MOBILE FIRST REDESIGN
+// frontend/src/components/Header/Header.jsx
 import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
@@ -18,7 +18,7 @@ export default function Header({
   const [unreadCount, setUnreadCount] = useState(0);
 
   const handleLogout = () => {
-    if (window.confirm('Logout?')) {
+    if (window.confirm('Are you sure you want to leave?')) {
       localStorage.removeItem('auth_token');
       window.location.href = '/';
     }
@@ -26,12 +26,13 @@ export default function Header({
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+    // Prevent body scroll when menu is open
+    document.body.style.overflow = !isMobileMenuOpen ? 'hidden' : 'auto';
   };
 
   // Fetch unread count
   useEffect(() => {
     if (!isAuthenticated) return;
-
     const fetchUnreadCount = async () => {
       try {
         const response = await fetch(`${API_URL}/api/admin-messages/unread-count`, {
@@ -43,7 +44,6 @@ export default function Header({
         }
       } catch (error) {}
     };
-
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 10000);
     return () => clearInterval(interval);
@@ -53,163 +53,154 @@ export default function Header({
 
   return (
     <>
-      <header className="header-clean">
-        <div className="header-wrap">
+      <header className="nb-header">
+        <div className="nb-container">
           
-          {/* LOGO (ALWAYS VISIBLE) */}
-          <button className="logo" onClick={() => window.location.href = '/'}>
-            <span className="logo-main">cherrish</span>
-            <span className="logo-sub">SOCIAL PLATFORM</span>
+          {/* 1. LOGO */}
+          <button className="nb-logo" onClick={() => window.location.href = '/'}>
+            <div className="logo-box">C</div>
+            <span className="logo-text">CHERRISH</span>
           </button>
 
-          {/* DESKTOP NAV (HIDDEN ON MOBILE) */}
-          <nav className="desktop-nav">
-            <button onClick={() => window.location.href = '/community'}>
-              <i className="fas fa-users"></i><span>Community</span>
+          {/* 2. DESKTOP NAV (Hidden on Mobile) */}
+          <nav className="nb-desktop-nav">
+            <button className="nb-nav-item" onClick={() => window.location.href = '/community'}>
+              Community
             </button>
-            
-            <button onClick={() => window.location.href = '/admin-chat'} className="support-btn">
-              <i className="fas fa-headset"></i><span>Support</span>
-              {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
+            <button className="nb-nav-item" onClick={() => window.location.href = '/admin-chat'}>
+              Support
+              {unreadCount > 0 && <span className="nb-badge">{unreadCount}</span>}
             </button>
-
             {user.is_admin && (
-              <button onClick={() => window.location.href = '/admin'} className="admin-btn">
-                <i className="fas fa-shield-halved"></i><span>Admin</span>
+              <button className="nb-nav-item admin" onClick={() => window.location.href = '/admin'}>
+                Admin
               </button>
             )}
           </nav>
 
-          {/* DESKTOP LEGAL LINKS */}
-          <div className="desktop-legal">
-            <button onClick={() => window.location.href = '/contact-us'}>Contact</button>
-            <button onClick={() => window.location.href = '/terms-and-conditions'}>Terms</button>
-            <button onClick={() => window.location.href = '/refunds-and-cancellation-policy'}>Refunds</button>
-          </div>
-
-          {/* DESKTOP ACTIONS */}
-          <div className="desktop-actions">
+          {/* 3. RIGHT SIDE ACTIONS */}
+          <div className="nb-actions">
             
-            {/* Credits */}
-            <button className="credits-pill" onClick={onBuyCreditsClick}>
-              <i className="fas fa-coins"></i>
-              <div>
-                <span className="label">CREDITS</span>
-                <span className="value">{credits}</span>
+            {/* CREDITS (VISIBLE ON MOBILE & DESKTOP) */}
+            {/* This acts as the "Buy" trigger */}
+            <button className="nb-credits-btn" onClick={onBuyCreditsClick}>
+              <span className="coin-icon">
+                <i className="fas fa-coins"></i>
+              </span>
+              <span className="credit-amount">{credits}</span>
+              <div className="plus-btn">
+                <i className="fas fa-plus"></i>
               </div>
-              <i className="fas fa-plus plus-icon"></i>
             </button>
 
-            {/* Premium */}
-            {!user.is_premium && (
-              <button className="premium-pill" onClick={onPremiumClick}>
-                <i className="fas fa-crown"></i><span>PREMIUM</span>
+            {/* DESKTOP ONLY EXTRAS */}
+            <div className="nb-desktop-extras">
+              {!user.is_premium && (
+                <button className="nb-premium-btn" onClick={onPremiumClick}>
+                  PREMIUM <i className="fas fa-crown"></i>
+                </button>
+              )}
+              
+              <button className="nb-icon-btn" onClick={onThemeToggle}>
+                <i className={`fas fa-${theme === 'light' ? 'moon' : 'sun'}`}></i>
               </button>
-            )}
 
-            {/* Theme */}
-            <button className="icon-only" onClick={onThemeToggle}>
-              <i className={`fas fa-${theme === 'light' ? 'moon' : 'sun'}`}></i>
-            </button>
-
-            {/* User */}
-            <div className="user-badge">
-              <div className="avatar">{user.username[0].toUpperCase()}</div>
-              <div className="info">
-                <span className="name">{user.username}</span>
-                <span className="num">#{user.user_number}</span>
+              <div className="nb-user-profile">
+                <div className="nb-avatar">{user.username[0].toUpperCase()}</div>
+                <span className="nb-username">{user.username}</span>
               </div>
-              {user.is_premium && <i className="fas fa-crown crown-icon"></i>}
             </div>
-          </div>
 
-          {/* MOBILE ACTIONS (ONLY HAMBURGER + CREDITS) */}
-          <div className="mobile-actions">
-            <button className="mobile-credits" onClick={onBuyCreditsClick}>
-              <i className="fas fa-coins"></i>
-              <span>{credits}</span>
-            </button>
-
-            <button className="hamburger" onClick={toggleMobileMenu}>
-              <span className={isMobileMenuOpen ? 'active' : ''}></span>
-              <span className={isMobileMenuOpen ? 'active' : ''}></span>
-              <span className={isMobileMenuOpen ? 'active' : ''}></span>
+            {/* HAMBURGER (MOBILE ONLY) */}
+            <button 
+              className={`nb-hamburger ${isMobileMenuOpen ? 'open' : ''}`} 
+              onClick={toggleMobileMenu}
+            >
+              <span></span>
+              <span></span>
+              <span></span>
             </button>
           </div>
-
         </div>
       </header>
 
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU OVERLAY */}
       {isMobileMenuOpen && (
-        <div className="mobile-overlay" onClick={toggleMobileMenu}>
-          <div className="mobile-panel" onClick={(e) => e.stopPropagation()}>
+        <div className="nb-mobile-menu-overlay" onClick={toggleMobileMenu}>
+          <div className="nb-mobile-menu" onClick={(e) => e.stopPropagation()}>
             
-            {/* User Card */}
-            <div className="mobile-user">
-              <div className="mobile-avatar">{user.username[0].toUpperCase()}</div>
-              <div>
-                <div className="mobile-name">{user.username} {user.is_premium && '⭐'}</div>
-                <div className="mobile-email">{user.email}</div>
+            {/* Menu Header */}
+            <div className="nb-menu-header">
+              <div className="nb-menu-user">
+                <div className="nb-menu-avatar">
+                   {user.username[0].toUpperCase()}
+                </div>
+                <div className="nb-menu-details">
+                  <h3>{user.username} {user.is_premium && <i className="fas fa-crown gold"></i>}</h3>
+                  <span className="user-id">#{user.user_number}</span>
+                </div>
               </div>
+              <button className="nb-close-btn" onClick={toggleMobileMenu}>
+                <i className="fas fa-times"></i>
+              </button>
             </div>
 
-            {/* Actions */}
-            <div className="mobile-menu-items">
+            {/* Menu Links */}
+            <div className="nb-menu-list">
               
-              <button onClick={() => { toggleMobileMenu(); window.location.href = '/community'; }}>
-                <i className="fas fa-users"></i><span>Community</span>
+              {!user.is_premium && (
+                <button onClick={() => { toggleMobileMenu(); onPremiumClick(); }} className="nb-menu-item premium-highlight">
+                  <span>Upgrade to Premium</span>
+                  <i className="fas fa-star"></i>
+                </button>
+              )}
+
+              <div className="nb-divider">Social</div>
+
+              <button onClick={() => { toggleMobileMenu(); window.location.href = '/community'; }} className="nb-menu-item">
+                <span>Community Hub</span>
+                <i className="fas fa-users"></i>
               </button>
 
-              <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin-chat'; }}>
-                <i className="fas fa-headset"></i><span>Support</span>
-                {unreadCount > 0 && <span className="mini-badge">{unreadCount}</span>}
+              <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin-chat'; }} className="nb-menu-item">
+                <span>Support Chat</span>
+                <div className="icon-wrapper">
+                  <i className="fas fa-headset"></i>
+                  {unreadCount > 0 && <span className="nb-dot"></span>}
+                </div>
               </button>
 
               {user.is_admin && (
-                <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin'; }}>
-                  <i className="fas fa-shield-halved"></i><span>Admin Panel</span>
+                <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin'; }} className="nb-menu-item admin-highlight">
+                  <span>Admin Panel</span>
+                  <i className="fas fa-shield-halved"></i>
                 </button>
               )}
 
-              {!user.is_premium && (
-                <button onClick={() => { toggleMobileMenu(); onPremiumClick(); }} className="premium-item">
-                  <i className="fas fa-crown"></i><span>Get Premium</span>
-                </button>
-              )}
+              <div className="nb-divider">Account</div>
 
               {!user.username_changed && (
-                <button onClick={() => { toggleMobileMenu(); setShowUsernameModal(true); }}>
-                  <i className="fas fa-user-edit"></i><span>Change Username</span>
-                  <span className="price-tag">{user.is_premium ? 'FREE' : '200₹'}</span>
+                <button onClick={() => { toggleMobileMenu(); setShowUsernameModal(true); }} className="nb-menu-item">
+                  <span>Change Username</span>
+                  <span className="tag">{user.is_premium ? 'FREE' : '200₹'}</span>
                 </button>
               )}
 
-              <div className="divider"></div>
-
-              <button onClick={() => { toggleMobileMenu(); window.location.href = '/contact-us'; }} className="legal-item">
-                <i className="fas fa-envelope"></i><span>Contact Us</span>
-              </button>
-
-              <button onClick={() => { toggleMobileMenu(); window.location.href = '/terms-and-conditions'; }} className="legal-item">
-                <i className="fas fa-file-contract"></i><span>Terms & Conditions</span>
-              </button>
-
-              <button onClick={() => { toggleMobileMenu(); window.location.href = '/refunds-and-cancellation-policy'; }} className="legal-item">
-                <i className="fas fa-undo"></i><span>Refund Policy</span>
-              </button>
-
-              <div className="divider"></div>
-
-              <button onClick={() => { toggleMobileMenu(); onThemeToggle(); }}>
+              <button onClick={() => { toggleMobileMenu(); onThemeToggle(); }} className="nb-menu-item">
+                <span>Switch Theme</span>
                 <i className={`fas fa-${theme === 'light' ? 'moon' : 'sun'}`}></i>
-                <span>{theme === 'light' ? 'Dark' : 'Light'} Mode</span>
               </button>
 
-              <button onClick={handleLogout} className="danger">
-                <i className="fas fa-right-from-bracket"></i><span>Logout</span>
-              </button>
+              <div className="nb-legal-row">
+                 <a href="/terms-and-conditions">Terms</a>
+                 <a href="/contact-us">Contact</a>
+                 <a href="/refunds-and-cancellation-policy">Refunds</a>
+              </div>
 
+              <button onClick={handleLogout} className="nb-menu-item logout">
+                <span>Logout</span>
+                <i className="fas fa-right-from-bracket"></i>
+              </button>
             </div>
           </div>
         </div>
