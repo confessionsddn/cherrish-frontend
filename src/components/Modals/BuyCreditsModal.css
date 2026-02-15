@@ -1,551 +1,468 @@
-/* ============================================
-   CONFESSION CARD - REDESIGNED & CLEANER
-   ============================================ */
+/* MOBILE-FIRST BuyCreditsModal - 60FPS SMOOTH */
 
-.confession-card {
-  background: var(--candy-white);
-  border: 4px solid var(--candy-black);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 6px 6px 0px var(--candy-black);
-  position: relative;
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 25px;
-  transition: all 0.2s ease;
-}
-
-.confession-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 8px 8px 0px var(--candy-black);
-}
-
-/* Spotlight glow effect */
-.confession-card.spotlight-active {
-  border-color: #FFD700;
-  box-shadow: 6px 6px 0px #FFD700, 0 0 20px rgba(255, 215, 0, 0.3);
-}
-
-/* ============================================
-   MOOD STICKER (Centered Top)
-   ============================================ */
-
-.mood-sticker {
-  position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-2deg);
-  
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  
-  background: var(--candy-white);
-  border: 3px solid var(--candy-black);
-  border-radius: 50px;
-  box-shadow: 3px 3px 0px var(--candy-black);
-  z-index: 10;
-  
-  font-family: 'Dela Gothic One', cursive;
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-.mood-sticker.Crush { background: var(--pop-pink); color: white; }
-.mood-sticker.Heartbreak { background: var(--pop-blue); color: white; }
-.mood-sticker.SecretAdmirer { background: var(--pop-purple); color: white; }
-.mood-sticker.LoveStories { background: var(--pop-orange); color: white; }
-
-.sticker-icon { font-size: 1rem; }
-
-/* ============================================
-   BADGES ROW (Spotlight/Boost)
-   ============================================ */
-
-.badges-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.badge-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-.spotlight-badge {
-  background: #FFD700;
-  color: #000;
-  border: 2px solid #000;
-}
-
-.boost-badge {
-  background: #FF6B9D;
-  color: white;
-  border: 2px solid #000;
-}
-
-.badge-time {
-  font-size: 0.7rem;
-  opacity: 0.8;
-  margin-left: 4px;
-}
-
-/* ============================================
-   HEADER (User Info + Meta)
-   ============================================ */
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 2px dashed #E0E0E0;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--pop-purple), var(--pop-pink));
-  border: 3px solid var(--candy-black);
+.credits-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Dela Gothic One', cursive;
-  font-size: 1.2rem;
-  color: white;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+  will-change: opacity;
 }
 
-.user-details {
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.credits-modal {
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 4px solid #000;
+  box-shadow: 12px 12px 0 #000;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
 }
 
-.username-row {
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== HEADER ===== */
+
+.credits-header {
+  padding: 24px;
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  border-bottom: 4px solid #000;
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.username {
-  font-family: 'Dela Gothic One', cursive;
-  font-size: 0.95rem;
-  color: var(--candy-black);
-  text-transform: uppercase;
+.credits-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
 }
 
-.premium-star {
-  font-size: 0.9rem;
-  animation: starShine 2s ease-in-out infinite;
+.credits-icon-large {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid #000;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
 }
 
-@keyframes starShine {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.1); }
+.credits-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #FFF;
+  margin: 0;
+  line-height: 1.2;
 }
 
-.user-tag {
-  font-size: 0.8rem;
-  color: #888;
+.credits-subtitle {
+  font-size: 14px;
   font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 4px 0 0 0;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.timestamp {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #999;
-  background: #F5F5F5;
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid #DDD;
-}
-
-.menu-btn {
-  background: transparent;
-  border: none;
-  color: #CCC;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 6px;
-  transition: color 0.2s;
-}
-
-.menu-btn:hover {
-  color: var(--candy-black);
-}
-
-/* ============================================
-   CONTENT
-   ============================================ */
-
-.confession-content {
-  font-size: 1rem;
-  line-height: 1.6;
-  font-weight: 500;
-  color: var(--candy-black);
-  word-wrap: break-word;
-}
-
-/* ============================================
-   AUDIO PLAYER (Redesigned Capsule)
-   ============================================ */
-
-.audio-capsule {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #F8F8F8;
-  border: 3px solid var(--candy-black);
-  border-radius: 50px;
-  padding: 10px 10px 10px 15px;
-  box-shadow: 3px 3px 0px var(--candy-black);
-  transition: all 0.2s;
-}
-
-.audio-capsule.playing {
-  border-color: var(--pop-green);
-  box-shadow: 3px 3px 0px var(--pop-green);
-  background: white;
-}
-
-.audio-icon {
+.credits-close {
   width: 40px;
   height: 40px;
-  background: var(--candy-black);
-  color: var(--pop-yellow);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-
-.audio-waveform {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 28px;
-}
-
-.wave-bar {
-  width: 4px;
-  background: #DDD;
-  border-radius: 2px;
-  height: 8px;
-  transition: all 0.2s;
-}
-
-.wave-bar:nth-child(1) { height: 12px; }
-.wave-bar:nth-child(2) { height: 20px; }
-.wave-bar:nth-child(3) { height: 16px; }
-.wave-bar:nth-child(4) { height: 24px; }
-.wave-bar:nth-child(5) { height: 14px; }
-
-.audio-capsule.playing .wave-bar {
-  background: var(--pop-green);
-  animation: waveMove 0.6s infinite ease-in-out alternate;
-}
-
-.audio-capsule.playing .wave-bar:nth-child(odd) { animation-duration: 0.4s; }
-.audio-capsule.playing .wave-bar:nth-child(even) { animation-duration: 0.7s; }
-
-@keyframes waveMove {
-  0% { height: 8px; }
-  100% { height: 28px; }
-}
-
-.audio-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #888;
-  letter-spacing: 0.5px;
-  margin-left: auto;
-  padding-right: 8px;
-}
-
-.play-btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--pop-green);
-  border: 3px solid var(--candy-black);
-  color: var(--candy-black);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid #000;
+  border-radius: 12px;
+  color: #FFF;
+  font-size: 18px;
   cursor: pointer;
-  font-size: 1.1rem;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-  transition: all 0.1s;
+  transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
-.audio-capsule.playing .play-btn {
-  background: var(--pop-pink);
-  color: white;
+.credits-close:active {
+  transform: scale(0.9);
 }
 
-.play-btn:hover {
-  transform: scale(1.05);
-}
+/* ===== BALANCE ===== */
 
-.play-btn:active {
-  transform: scale(0.95);
-  box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2);
-}
-
-/* ============================================
-   STATS ROW
-   ============================================ */
-
-.stats-row {
+.credits-balance {
+  padding: 20px 24px;
+  background: #F8F9FA;
+  border-bottom: 2px dashed #DDD;
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 10px 0;
-  border-top: 1px solid #F0F0F0;
-  border-bottom: 1px solid #F0F0F0;
-}
-
-.stat-item {
-  font-size: 0.85rem;
-  color: #888;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.stat-item i {
-  color: #BBB;
-}
-
-.fire-badge {
-  font-size: 0.75rem;
-  background: linear-gradient(135deg, #FF6B6B, #FF9100);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-weight: 700;
-  margin-left: auto;
-  animation: fireGlow 1.5s ease-in-out infinite;
-}
-
-@keyframes fireGlow {
-  0%, 100% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5); }
-  50% { box-shadow: 0 0 15px rgba(255, 107, 107, 0.8); }
-}
-
-/* ============================================
-   ACTIONS ROW (Reactions + Gift)
-   ============================================ */
-
-.actions-row {
-  display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 10px;
 }
 
-.reactions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+.credits-balance span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.reaction-btn {
-  position: relative; /* For emoji burst positioning */
-  background: white;
-  border: 3px solid var(--candy-black);
-  border-radius: 10px;
-  padding: 8px 12px;
+.balance-amount {
+  font-size: 24px;
+  font-weight: 900;
+  color: #000;
   display: flex;
   align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  box-shadow: 3px 3px 0px var(--candy-black);
-  transition: all 0.1s;
-  overflow: visible; /* Allow burst to escape */
+  gap: 8px;
 }
 
-.reaction-btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px var(--candy-black);
+.balance-amount i {
+  color: #FFA502;
+  font-size: 20px;
 }
 
-.reaction-btn:active {
+/* ===== PACKAGES ===== */
+
+.credits-packages {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  overflow-y: auto;
+  max-height: 60vh;
+  -webkit-overflow-scrolling: touch;
+}
+
+.credit-package {
+  position: relative;
+  background: #FFF;
+  border: 4px solid #000;
+  border-radius: 16px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 4px 4px 0 #000;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow;
+}
+
+.credit-package:active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--candy-black);
+  box-shadow: 2px 2px 0 #000;
 }
 
-.reaction-btn.active {
-  background: var(--pop-pink);
-  border-color: var(--candy-black);
-  animation: reactionPop 0.3s ease;
+.credit-package.processing {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
-.reaction-btn.pressing {
-  animation: pressShake 0.1s infinite;
+.package-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: var(--pkg-color, #FF6348);
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  letter-spacing: 0.5px;
+  transform: rotate(8deg);
+  animation: badgeWiggle 2s ease-in-out infinite;
 }
 
-@keyframes reactionPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-  100% { transform: scale(1); }
+@keyframes badgeWiggle {
+  0%, 100% { transform: rotate(8deg); }
+  50% { transform: rotate(-5deg) scale(1.05); }
 }
 
-@keyframes pressShake {
-  0%, 100% { transform: rotate(-1deg); }
-  50% { transform: rotate(1deg); }
-}
-
-.reaction-emoji {
-  font-size: 1.2rem;
+.package-emoji {
+  font-size: 40px;
   line-height: 1;
+  animation: emojiFloat 3s ease-in-out infinite;
 }
 
-.reaction-count {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--candy-black);
-  min-width: 16px;
+@keyframes emojiFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.package-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #000;
   text-align: center;
 }
 
-.gift-btn {
-  background: var(--pop-green);
-  border: 3px solid var(--candy-black);
+.package-credits {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #F8F9FA;
+  border: 2px solid #000;
   border-radius: 10px;
-  padding: 10px 16px;
+}
+
+.credits-main {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--pkg-color, #000);
+}
+
+.credits-bonus {
+  font-size: 16px;
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+.package-total {
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
+  text-align: center;
+}
+
+.package-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: #999;
+  text-align: center;
+  padding: 4px 8px;
+  background: #F0F0F0;
+  border-radius: 6px;
+}
+
+.package-buy-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--pkg-color, #667EEA);
+  color: #FFF;
+  font-size: 14px;
+  font-weight: 800;
+  border: 3px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 3px 3px 0 #000;
+  transition: all 0.15s ease;
+  will-change: transform;
+}
+
+.package-buy-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #000;
+}
+
+.package-buy-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #FFF;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== TRUST BADGES ===== */
+
+.credits-trust {
+  padding: 20px 24px;
+  border-top: 2px dashed #DDD;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.trust-item {
   display: flex;
   align-items: center;
   gap: 6px;
-  cursor: pointer;
-  box-shadow: 3px 3px 0px var(--candy-black);
-  transition: all 0.1s;
-  font-size: 1.1rem;
-  color: var(--candy-black);
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
 }
 
-.gift-btn:hover {
-  background: #00FF70;
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0px var(--candy-black);
+.trust-item i {
+  font-size: 14px;
+  color: #4CAF50;
 }
 
-.gift-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--candy-black);
-}
+/* ===== SUCCESS TOAST ===== */
 
-/* ============================================
-   EMOJI BURST ANIMATION 🎉
-   ============================================ */
-
-.emoji-burst-container {
-  position: absolute;
-  top: 50%;
+.payment-success-toast {
+  position: fixed;
+  top: 24px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 100;
+  transform: translateX(-50%);
+  background: #4CAF50;
+  color: #FFF;
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0 #000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10001;
+  animation: toastSlide 0.3s ease;
 }
 
-.emoji-particle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-size: 1.5rem;
-  animation: burstOut var(--duration) ease-out forwards;
-}
-
-@keyframes burstOut {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 1;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: 
-      translate(
-        calc(cos(var(--angle)) * var(--distance)),
-        calc(sin(var(--angle)) * var(--distance))
-      )
-      scale(0.5);
+@keyframes toastSlide {
+  from {
     opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }
 
-/* ============================================
-   MOBILE RESPONSIVE
-   ============================================ */
+.success-icon {
+  width: 32px;
+  height: 32px;
+  background: #FFF;
+  color: #4CAF50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.success-title {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.success-text {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* ===== RESPONSIVE ===== */
 
 @media (max-width: 600px) {
-  .confession-card {
+  .credits-modal {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    margin-top: auto;
+    max-height: 95vh;
+  }
+
+  .credits-header {
+    padding: 20px;
+  }
+
+  .credits-icon-large {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .credits-title {
+    font-size: 20px;
+  }
+
+  .credits-subtitle {
+    font-size: 13px;
+  }
+
+  .credits-packages {
     padding: 16px;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
-  .avatar {
-    width: 38px;
-    height: 38px;
-    font-size: 1rem;
+  .credit-package {
+    padding: 16px 12px;
   }
 
-  .username {
-    font-size: 0.85rem;
+  .package-emoji {
+    font-size: 32px;
   }
 
-  .confession-content {
-    font-size: 0.95rem;
+  .credits-main {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 400px) {
+  .credits-packages {
+    grid-template-columns: 1fr;
   }
 
-  .reaction-btn {
-    padding: 6px 10px;
+  .credit-package {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
   }
 
-  .reaction-emoji {
-    font-size: 1.1rem;
+  .package-emoji {
+    font-size: 36px;
+    flex-shrink: 0;
   }
 
-  .reaction-count {
-    font-size: 0.8rem;
+  .package-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .badges-row {
-    gap: 6px;
+  .package-buy-btn {
+    margin-top: 8px;
   }
+}
 
-  .badge-item {
-    font-size: 0.7rem;
-    padding: 4px 8px;
-  }
+/* GPU ACCELERATION */
+.credits-modal-overlay,
+.credits-modal,
+.credit-package,
+.package-buy-btn,
+.spinner {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
