@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './ChangeUsernameModal.css'
 import { API_URL } from '../../services/api';
+
 export default function ChangeUsernameModal({ 
   onClose, 
   currentUsername, 
@@ -55,14 +56,23 @@ export default function ChangeUsernameModal({
         throw new Error(data.error || 'OPERATION FAILED')
       }
       
+      // ✅ FIX: Call onSuccess THEN reload
       alert(`✅ SYSTEM SUCCESS: You are now known as ${data.new_username}.`)
-      onSuccess(data.new_username, data.credits_remaining)
+      
+      // Update parent component state
+      if (onSuccess) {
+        onSuccess(data.new_username, data.credits_remaining)
+      }
+      
       onClose()
-      window.location.reload()
+      
+      // Reload after a delay to allow state update
+      setTimeout(() => {
+        window.location.reload()
+      }, 100)
       
     } catch (err) {
       setError(err.message)
-    } finally {
       setLoading(false)
     }
   }
@@ -71,10 +81,8 @@ export default function ChangeUsernameModal({
     <div className="modal-overlay" onClick={onClose}>
       <div className="mystery-modal-container" onClick={(e) => e.stopPropagation()}>
         
-        {/* Decorative Scanner Line */}
         <div className="scan-line"></div>
 
-        {/* HEADER: CLASSIFIED FILE STYLE */}
         <div className="mystery-header">
           <div className="header-stamp">TOP SECRET // CLASSIFIED</div>
           <h2>IDENTITY PROTOCOL <span className="blink">_V2</span></h2>
@@ -87,7 +95,6 @@ export default function ChangeUsernameModal({
           
           <div className="layout-grid">
             
-            {/* LEFT COLUMN: VISUALS */}
             <div className="visual-col">
               <div className="incognito-icon">
                 <i className="fas fa-user-secret"></i>
@@ -99,13 +106,11 @@ export default function ChangeUsernameModal({
               </div>
             </div>
 
-            {/* RIGHT COLUMN: ACTION */}
             <div className="action-col">
               
-              {/* WARNING TAPE */}
               <div className="caution-tape">
                 <i className="fas fa-biohazard"></i>
-                <span>WARNING : ONLY ONE CHNACE</span>
+                <span>WARNING : ONLY ONE CHANCE</span>
                 <i className="fas fa-biohazard"></i>
               </div>
 
@@ -167,7 +172,6 @@ export default function ChangeUsernameModal({
 
         </div>
         
-        {/* Footer Texture */}
         <div className="mystery-footer-strip">
           <span>SECURE CONNECTION ESTABLISHED</span>
           <span>ID: {Math.floor(Math.random() * 999999)}</span>
