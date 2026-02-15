@@ -1,16 +1,29 @@
-// BanOverlay with RAZORPAY SDK (No Links!)
 import { useState, useEffect } from 'react'
 import './BanOverlay.css'
-import { API_URL } from '../../services/api';
+
+// ✅ REPLACE WITH YOUR ACTUAL BAN PAYMENT LINKS
+const BAN_PAYMENT_LINKS = {
+  '3': 'https://rzp.io/rzp/EbkgtG4w',      // Replace with your ₹30 (3 days) link
+  '7': 'https://rzp.io/rzp/Cqp1w8kT',      // Replace with your ₹70 (7 days) link
+  'permanent': 'https://rzp.io/rzp/Lo1ElmLf' // Replace with your ₹300 (permanent) link
+};
 
 export default function BanOverlay({ user, onUnban }) {
   const [timeLeft, setTimeLeft] = useState('')
   const [banDuration, setBanDuration] = useState('permanent')
-  const [processing, setProcessing] = useState(false)
 
-  // Calculate ban duration
+  // Debug: Log user data
+  useEffect(() => {
+    console.log('🔍 BAN OVERLAY DEBUG:')
+    console.log('User:', user)
+    console.log('ban_until:', user.ban_until)
+    console.log('is_banned:', user.is_banned)
+  }, [user])
+
+  // Calculate ban duration and price
   useEffect(() => {
     if (!user.ban_until || user.ban_until === null) {
+      console.log('❌ No ban_until - PERMANENT BAN')
       setBanDuration('permanent')
       setTimeLeft('PERMANENT')
       return
@@ -20,6 +33,10 @@ export default function BanOverlay({ user, onUnban }) {
       const now = new Date()
       const banUntil = new Date(user.ban_until)
       const diff = banUntil - now
+
+      console.log('Now:', now)
+      console.log('Ban Until:', banUntil)
+      console.log('Diff (ms):', diff)
 
       if (diff <= 0) {
         setTimeLeft('EXPIRED')
@@ -31,6 +48,8 @@ export default function BanOverlay({ user, onUnban }) {
       const days = Math.floor(diff / (1000 * 60 * 60 * 24))
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
       const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+      console.log('Total days remaining:', totalDays)
 
       // Determine duration category
       if (totalDays <= 3) {
@@ -50,112 +69,48 @@ export default function BanOverlay({ user, onUnban }) {
   }, [user.ban_until])
 
   const getUnbanPrice = () => {
+    console.log('💰 Ban Duration:', banDuration)
+    
     if (banDuration === 'expired') return 0
     if (banDuration === '3') return 30
     if (banDuration === '7') return 70
     return 300
   }
 
-  const getUnbanPriceInPaise = () => {
-    return getUnbanPrice() * 100 // Convert to paise
-  }
-
-  // ✅ RAZORPAY SDK PAYMENT
-  const handlePayment = async () => {
-    if (processing) return;
-    
+  // ✅ UPDATED: Use payment links
+  const handlePayment = () => {
     const amount = getUnbanPrice()
+    
+    console.log('💳 Payment initiated:', amount, 'Duration:', banDuration)
     
     if (amount === 0) {
       alert('Ban has expired! Please refresh the page.')
       return
     }
     
-    setProcessing(true)
-
-    try {
-      // Create unban order
-      const response = await fetch(`${API_URL}/api/payments/create-unban-order`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ban_duration: banDuration })
-      })
-
-      const data = await response.json()
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to create unban order')
-      }
-
-      if (typeof window.Razorpay === 'undefined') {
-        throw new Error('Payment system not loaded')
-      }
-
-      const options = {
-        key: data.key,
-        amount: data.amount,
-        currency: data.currency,
-        name: 'Cherrish',
-        description: `Unban Account - ${banDuration === '3' ? '3 Days' : banDuration === '7' ? '7 Days' : 'Permanent'}`,
-        order_id: data.order_id,
-        
-        handler: async function (paymentResponse) {
-          try {
-            const verifyRes = await fetch(`${API_URL}/api/payments/verify-unban-payment`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                razorpay_order_id: paymentResponse.razorpay_order_id,
-                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                razorpay_signature: paymentResponse.razorpay_signature
-              })
-            })
-
-            const verifyData = await verifyRes.json()
-
-            if (verifyData.success) {
-              alert('✅ ACCOUNT UNBANNED!\n\nYou can now access Cherrish.')
-              window.location.reload()
-            } else {
-              throw new Error(verifyData.error || 'Verification failed')
-            }
-          } catch (error) {
-            alert('Payment verification failed. Contact support.')
-            setProcessing(false)
-          }
-        },
-        
-        theme: { color: '#FF4757' },
-        
-        modal: {
-          ondismiss: function() {
-            setProcessing(false)
-          }
-        }
-      }
-
-      const rzp = new window.Razorpay(options)
-      
-      rzp.on('payment.failed', function (response) {
-        alert(`Payment failed: ${response.error.description}`)
-        setProcessing(false)
-      })
-      
-      rzp.open()
-
-    } catch (error) {
-      alert(error.message)
-      setProcessing(false)
+    // Get payment link based on duration
+    const paymentLink = BAN_PAYMENT_LINKS[banDuration];
+    
+    if (!paymentLink || paymentLink === 'https://rzp.io/l/cccccccc') {
+      alert('❌ Unban payment link not configured! Please contact admin.');
+      return;
     }
+    
+    // Store pending payment info (optional - for tracking)
+    localStorage.setItem('pending_payment', JSON.stringify({
+      type: 'unban',
+      duration: banDuration,
+      price: amount,
+      timestamp: Date.now()
+    }));
+    
+    // Open payment link in new tab
+    window.open(paymentLink, '_blank');
+    
+    // Show notification
+    alert(`💳 Opening payment page...\n\nComplete the payment of ₹${amount} to unban your account!\n\nYou will be unbanned automatically after successful payment.`);
   }
 
-  // Disable context menu
   useEffect(() => {
     const prevent = (e) => { e.preventDefault(); return false; }
     document.addEventListener('contextmenu', prevent)
@@ -167,7 +122,7 @@ export default function BanOverlay({ user, onUnban }) {
   }, [])
 
   const handleEmergencyLogout = () => {
-    if (window.confirm('Logout?')) {
+    if (window.confirm('Are you sure you want to logout?')) {
       localStorage.removeItem('auth_token')
       window.location.href = '/'
     }
@@ -178,77 +133,99 @@ export default function BanOverlay({ user, onUnban }) {
       <div className="jail-bars"></div>
       <div className="dark-tint"></div>
 
-      <div className="ban-card">
-        
-        {/* Header */}
-        <div className="ban-header">
-          <div className="ban-icon">🚫</div>
-          <h1 className="ban-title">ACCOUNT BANNED</h1>
-          <p className="ban-subtitle">Community Guidelines Violation</p>
+      <div className="wide-ban-card">
+        {/* Full Width Header */}
+        <div className="ban-header-strip">
+          <h1>🛑 ACCOUNT BANNED 🛑</h1>
         </div>
 
-        {/* Info */}
-        <div className="ban-info">
-          <div className="info-row">
-            <span className="info-label">User</span>
-            <span className="info-value">{user.username} #{user.user_number}</span>
-          </div>
-          <div className="info-row highlight">
-            <span className="info-label">Time Left</span>
-            <span className="info-value blink">{timeLeft}</span>
-          </div>
-        </div>
-
-        {/* FOMO */}
-        <div className="ban-fomo">
-          <div className="fomo-icon">💔</div>
-          <div>
-            <div className="fomo-title">Missing Out</div>
-            <div className="fomo-text">128+ confessions posted while you're banned</div>
-          </div>
-        </div>
-
-        {/* Unban Section */}
-        <div className="ban-unban">
-          <h3 className="unban-title">Want to get unbanned?</h3>
-          <p className="unban-text">Pay the fine to restore access immediately</p>
+        <div className="ban-body-horizontal">
           
-          <button 
-            className="unban-btn"
-            onClick={handlePayment}
-            disabled={processing}
-          >
-            {processing ? (
-              <>
-                <span className="btn-spinner"></span>
-                <span>Processing...</span>
-              </>
-            ) : (
-              <>
-                <div className="btn-price">
-                  <span className="btn-label">Fine Amount</span>
-                  <span className="btn-amount">₹{getUnbanPrice()}</span>
-                </div>
-                <div className="btn-action">
-                  <span>Pay Now</span>
-                  <i className="fas fa-arrow-right"></i>
-                </div>
-              </>
-            )}
-          </button>
+          {/* LEFT COL: The "Record" */}
+          <div className="col-left">
+            <div className="info-table">
+              <div className="info-row">
+                <span className="info-label">OFFENDER</span>
+                <span className="info-value">
+                  {user.username} <span className="tag">#{user.user_number}</span>
+                </span>
+              </div>
+              <div className="info-row highlight-red">
+                <span className="info-label">SENTENCE</span>
+                <span className="info-value blink-text">{timeLeft}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">VIOLATION</span>
+                <span className="info-value">COMMUNITY GUIDELINES</span>
+              </div>
+            </div>
 
-          <div className="unban-secure">
-            <i className="fas fa-lock"></i>
-            Secure Payment Gateway
+            <div className="fomo-mini">
+              <span className="fomo-icon">💔</span>
+              <div className="fomo-text">
+                <strong>128+ CONFESSIONS LIVE</strong>
+                <p>You are missing all the gossip right now.</p>
+              </div>
+            </div>
           </div>
+
+          {/* VERTICAL DIVIDER */}
+          <div className="dashed-divider"></div>
+
+          {/* RIGHT COL: The "Bail" */}
+          <div className="col-right">
+            <div className="bail-header">
+              <h3>WANT TO UNBAN?</h3>
+              <p>Pay the fine to restore access immediately.</p>
+            </div>
+
+            <button className="brutal-pay-btn-large" onClick={handlePayment}>
+              <div className="btn-left">
+                <span className="label">FINE AMOUNT</span>
+                <span className="price">₹{getUnbanPrice()}</span>
+              </div>
+              <div className="btn-right">
+                <span>PAY NOW</span>
+                <i className="fas fa-arrow-right"></i>
+              </div>
+            </button>
+
+            <div className="secure-badge">
+              <i className="fas fa-lock"></i> SECURE PAYMENT GATEWAY
+            </div>
+            
+            {/* DEBUG INFO - Remove after testing */}
+            <div style={{ marginTop: '10px', fontSize: '0.7rem', color: '#666', textAlign: 'center' }}>
+              DEBUG: Duration={String(banDuration)} | Price=₹{getUnbanPrice()}
+            </div>
+          </div>
+
         </div>
 
-        {/* Emergency Logout */}
-        <button className="emergency-logout" onClick={handleEmergencyLogout}>
-          <i className="fas fa-right-from-bracket"></i>
-          Emergency Logout
+        {/* Footer */}
+        <div className="card-footer-strip">
+          <p>⚠️ VIOLATION DETECTED • ACCESS REVOKED • PAY TO RESTORE</p>
+        </div>
+        
+        <button 
+          onClick={handleEmergencyLogout}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            background: '#FF0000',
+            color: '#FFF',
+            border: '3px solid #000',
+            padding: '8px 15px',
+            cursor: 'pointer',
+            fontWeight: '900',
+            fontSize: '0.8rem',
+            boxShadow: '4px 4px 0 #000',
+            zIndex: 999
+          }}
+        >
+          🚪 EMERGENCY LOGOUT
         </button>
-
       </div>
     </div>
   )
