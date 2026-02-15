@@ -190,8 +190,8 @@ export default function ConfessionCard({
     const emojis = emojiMap[reactionType] || ['✨']
     const container = document.body 
     
-    // 100 Particles for a dense cloud
-    for (let i = 0; i < 100; i++) {
+    // 60 Particles for a dense cloud
+    for (let i = 0; i < 60; i++) { 
       const emoji = document.createElement('span')
       emoji.className = 'floating-heart'
       emoji.textContent = emojis[i % emojis.length]
