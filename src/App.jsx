@@ -121,6 +121,49 @@ function App() {
   // ============================================
   const isBanned = isAuthenticated && user && user.is_banned
 const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  // ============================================
+// ONESIGNAL PLAYER ID REGISTRATION
+// ============================================
+useEffect(() => {
+  if (user && user.id && window.OneSignalDeferred) {
+    console.log('🔔 Registering OneSignal...');
+    
+    window.OneSignalDeferred.push(async function(OneSignal) {
+      try {
+        // Get the player ID
+        const playerId = await OneSignal.User.PushSubscription.id;
+        
+        if (playerId) {
+          console.log('📱 OneSignal Player ID:', playerId);
+          
+          // Save to backend
+          const response = await fetch(`${API_URL}/api/notifications/register`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+              player_id: playerId,
+              push_enabled: true 
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            console.log('✅ Push notifications registered!');
+          } else {
+            console.error('❌ Failed to save player ID:', data.error);
+          }
+        }
+      } catch (error) {
+        console.error('OneSignal setup error:', error);
+      }
+    });
+  }
+}, [user]);
   // ============================================
   // AUTH FUNCTIONS
   // ============================================
