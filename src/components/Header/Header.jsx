@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
 import { API_URL } from '../../services/api';
+import ThemeSelectorModal from '../Modals/ThemeSelectorModal'
 
 export default function Header({
   credits,
@@ -16,6 +17,7 @@ export default function Header({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+const [showThemeSelector, setShowThemeSelector] = useState(false)
 
   const handleLogout = () => {
     if (window.confirm('Leaving so soon?')) {
@@ -116,7 +118,9 @@ export default function Header({
                 <i className="fas fa-sign-out-alt"></i>
               </button>
             </div>
-
+<button onClick={() => setShowThemeSelector(true)} title="Themes">
+  🎨
+</button>
             {/* MOBILE HAMBURGER (No Border, 3 Lines) */}
             <button 
               className={`hamburger-clean ${isMobileMenuOpen ? 'active' : ''}`} 
@@ -194,7 +198,13 @@ export default function Header({
           </div>
         </div>
       )}
-
+      
+{showThemeSelector && (
+  <ThemeSelectorModal
+    onClose={() => setShowThemeSelector(false)}
+    user={user}
+  />
+)}
       {/* Username Modal */}
       {showUsernameModal && (
         <ChangeUsernameModal
