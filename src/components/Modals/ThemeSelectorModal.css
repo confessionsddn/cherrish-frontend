@@ -1,0 +1,287 @@
+/* frontend/src/components/Modals/ThemeSelectorModal.css */
+
+.theme-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.theme-modal {
+  background: var(--bg-modal);
+  border: 4px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 500px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 36px 30px;
+  position: relative;
+}
+
+.theme-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  background: var(--color-danger);
+  border: 3px solid var(--border-color);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: var(--font-display);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.theme-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0 0 24px;
+}
+
+/* Auto mode row */
+.auto-mode-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--bg-tag);
+  border: 3px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+}
+
+.auto-mode-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.auto-mode-label {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.auto-mode-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.auto-toggle {
+  padding: 8px 20px;
+  border: 3px solid var(--border-color);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.auto-on {
+  background: var(--color-success);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.auto-off {
+  background: var(--bg-card);
+  color: var(--text-muted);
+}
+
+/* Theme grid */
+.theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.theme-card {
+  border: 3px solid var(--border-color);
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  background: var(--bg-card);
+}
+
+.theme-card:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+
+.theme-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.theme-active {
+  border-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-pink) !important;
+}
+
+.theme-card-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.theme-emoji {
+  font-size: 1.8rem;
+}
+
+.theme-name {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.theme-badge-active {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #000;
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  font-family: var(--font-display);
+  border: 2px solid var(--border-color);
+  align-self: flex-start;
+}
+
+.theme-badge-locked {
+  display: inline-block;
+  background: var(--bg-tag);
+  color: var(--text-muted);
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  font-family: var(--font-display);
+  border: 2px solid var(--border-light);
+  align-self: flex-start;
+}
+
+.theme-badge-free {
+  display: inline-block;
+  background: var(--bg-tag);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  font-family: var(--font-display);
+  border: 2px solid var(--border-light);
+  align-self: flex-start;
+}
+
+/* Theme preview dots */
+.theme-preview-dots {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 5px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.2);
+}
+
+/* Light theme preview */
+.theme-preview-light .dot-1 { background: #ffffff; border-color: #000; }
+.theme-preview-light .dot-2 { background: #FF69B4; }
+.theme-preview-light .dot-3 { background: #000000; }
+
+/* Dark theme preview */
+.theme-preview-dark .dot-1 { background: #1A1A1A; border-color: #FF69B4; }
+.theme-preview-dark .dot-2 { background: #FF69B4; }
+.theme-preview-dark .dot-3 { background: #0A0A0A; }
+
+/* Midnight rose preview */
+.theme-preview-midnight-rose { background: #2D1220 !important; }
+.theme-preview-midnight-rose .theme-name { color: #FFB3D9; }
+.theme-preview-midnight-rose .dot-1 { background: #FF1493; }
+.theme-preview-midnight-rose .dot-2 { background: #FFB3D9; }
+.theme-preview-midnight-rose .dot-3 { background: #1A0A14; }
+
+/* Golden hour preview */
+.theme-preview-golden-hour { background: #2D2400 !important; }
+.theme-preview-golden-hour .theme-name { color: #FFD700; }
+.theme-preview-golden-hour .dot-1 { background: #FFD700; }
+.theme-preview-golden-hour .dot-2 { background: #FFC200; }
+.theme-preview-golden-hour .dot-3 { background: #1A1400; }
+
+/* Neon cyberpunk preview */
+.theme-preview-neon-cyberpunk { background: #0A0A20 !important; }
+.theme-preview-neon-cyberpunk .theme-name { color: #00FFFF; }
+.theme-preview-neon-cyberpunk .dot-1 { background: #00FFFF; }
+.theme-preview-neon-cyberpunk .dot-2 { background: #FF00FF; }
+.theme-preview-neon-cyberpunk .dot-3 { background: #050510; }
+
+/* Gift progress */
+.gift-progress {
+  border: 3px solid var(--border-color);
+  padding: 20px;
+  background: var(--bg-tag);
+}
+
+.gift-progress-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0 0 16px;
+}
+
+.gift-milestones {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.milestone {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.milestone-bar {
+  height: 10px;
+  background: var(--border-light);
+  border: 2px solid var(--border-color);
+  overflow: hidden;
+  display: block;
+}
+
+.milestone-fill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 0.6s ease;
+  display: block;
+}
+
+.milestone.reached .milestone-fill {
+  background: var(--color-success);
+}
+
+.milestone-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+}
+
+.milestone.reached .milestone-label {
+  color: var(--color-success);
+}
