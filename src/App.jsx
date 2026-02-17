@@ -763,13 +763,14 @@ useEffect(() => {
         />
       )}
 
-      {showGiftModal && (
-        <GiftModal 
-          onClose={() => setShowGiftModal(false)}
-          onSendGift={handleSendGift}
-          credits={userCredits}
-        />
-      )}
+    {showGiftModal && (
+  <GiftModal
+    confession={confessions.find(c => c.id === selectedConfessionId) || { id: selectedConfessionId, username: '?', user_number: '?' }}
+    user={user}
+    onClose={() => setShowGiftModal(false)}
+    onCreditsUpdate={setUserCredits}
+  />
+)}
 
       {showBuyCreditsModal && (
         <BuyCreditsModal 
