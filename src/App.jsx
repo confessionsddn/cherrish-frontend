@@ -17,7 +17,7 @@ import GiftModal from './components/Modals/GiftModal'
 import BuyCreditsModal from './components/Modals/BuyCreditsModal'
 import PremiumSubscriptionModal from './components/Modals/PremiumSubscriptionModal'
 import ChangeUsernameModal from './components/Modals/ChangeUsernameModal'
-
+import { ThemeProvider, useTheme } from './context/ThemeContext'
 // Community Pages
 import CommunityPage from './pages/CommunityPage'
 import AdminCommunityPanel from './components/AdminCommunityPanel/AdminCommunityPanel'
@@ -451,10 +451,7 @@ useEffect(() => {
   // UI FUNCTIONS
   // ============================================
   
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
-    showNotification(`SWITCHED TO ${theme === 'light' ? 'DARK' : 'LIGHT'} THEME! 🔥`, 'info')
-  }
+  
 
   const showNotification = (message, type) => {
     setNotification({ message, type })
@@ -503,9 +500,7 @@ useEffect(() => {
   }, [currentFilter, isAuthenticated, sortBy, currentPath])
 
   // Apply theme
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-  }, [theme])
+
 
   // ============================================
   // ROUTING
@@ -690,6 +685,7 @@ useEffect(() => {
     : confessions.filter(conf => conf.mood_zone === currentFilter)
 
   return (
+      <ThemeProvider user={user}>
     <>
        <HashRouter />
       {/* Global animations */}
@@ -801,6 +797,8 @@ useEffect(() => {
         />
       )}
     </>
+          </ThemeProvider>
+
   )
 }
 
