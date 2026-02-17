@@ -1,979 +1,670 @@
-// frontend/src/pages/AdminPanel.jsx - COMPLETE WORKING VERSION
-import { useState, useEffect } from 'react'
-import './AdminPanel.css'
+// frontend/src/pages/AdminPanel.jsx - COMPLETE WITH ALL TABS
+import { useState, useEffect } from 'react';
 import { API_URL } from '../services/api';
+import './AdminPanel.css';
 
 export default function AdminPanel() {
-  // State variables
-  const [stats, setStats] = useState(null)
-  const [pendingRequests, setPendingRequests] = useState([])
-  const [codes, setCodes] = useState([])
-  const [users, setUsers] = useState([])
-  const [activeTab, setActiveTab] = useState('dashboard')
-  const [loading, setLoading] = useState(true)
-  const [notification, setNotification] = useState(null)
-  const [pendingConfessions, setPendingConfessions] = useState([])
-  const [reports, setReports] = useState([])
-  const [activityLogs, setActivityLogs] = useState([])
-  const [conversations, setConversations] = useState([])
+  // ============================================
+  // STATE
+  // ============================================
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [stats, setStats] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [confessions, setConfessions] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+  const [announcement, setAnnouncement] = useState({ title: '', message: '' });
 
-  // Load data on mount
-  useEffect(() => {
-    console.log('🚀 Admin Panel mounted')
-    loadStats()
-    loadPendingRequests()
-    loadCodes()
-    loadUsers()
-    loadPendingConfessions()
-    loadReports()
-  }, [])
+  // Pagination & filters
+  const [userPage, setUserPage] = useState(1);
+  const [userSearch, setUserSearch] = useState('');
+  const [userFilter, setUserFilter] = useState('all');
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
 
-  // Auth headers helper
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem('auth_token')
-    return {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  }
+  // UI state
+  const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showUserModal, setShowUserModal] = useState(false);
 
-  // Load functions
-  const loadStats = async () => {
+  const headers = {
+    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+    'Content-Type': 'application/json'
+  };
+
+  // ============================================
+  // FETCH FUNCTIONS
+  // ============================================
+
+  const fetchStats = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/admin/stats`, {
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      if (data.success) {
-        setStats(data.stats)
-      }
-    } catch (error) {
-      console.error('Failed to load stats:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/stats`, { headers });
+      const data = await res.json();
+      if (data.success) setStats(data.stats);
+    } catch (e) { console.error(e); }
+  };
 
-  const loadPendingRequests = async () => {
+  const fetchUsers = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/admin/pending-requests`, {
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
+      const res = await fetch(
+        `${API_URL}/api/admin/users?page=${userPage}&limit=50&search=${userSearch}&filter=${userFilter}`,
+        { headers }
+      );
+      const data = await res.json();
       if (data.success) {
-        setPendingRequests(data.requests)
+        setUsers(data.users);
+        setTotalPages(data.pagination?.pages || 1);
+        setTotalUsers(data.pagination?.total || data.users.length);
       }
-    } catch (error) {
-      console.error('Failed to load pending requests:', error)
-    }
-  }
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
 
-  const loadCodes = async () => {
+  const fetchConfessions = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/admin/codes`, {
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      if (data.success) {
-        setCodes(data.codes)
-      }
-    } catch (error) {
-      console.error('Failed to load codes:', error)
-    }
-  }
+      const res = await fetch(`${API_URL}/api/confessions?sort=recent&limit=100`, { headers });
+      const data = await res.json();
+      setConfessions(data.confessions || []);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
 
-  const loadUsers = async (searchTerm = '') => {
+  const fetchAnalytics = async () => {
+    setLoading(true);
     try {
-      const url = searchTerm 
-        ? `${API_URL}/api/admin/users?search=${encodeURIComponent(searchTerm)}`
-        : `${API_URL}/api/admin/users`
-        
-      console.log('📡 Fetching users from:', url)
-        
-      const response = await fetch(url, {
-        headers: getAuthHeaders()
-      })
-      
-      console.log('📡 Response status:', response.status)
-      
-      const data = await response.json()
-      
-      console.log('📡 Users data:', data)
-      
-      if (data.success) {
-        setUsers(data.users)
-        console.log('✅ Users loaded:', data.users.length)
-      } else {
-        console.error('❌ Failed to load users:', data.error)
-      }
-    } catch (error) {
-      console.error('❌ Load users error:', error)
-    }
-  }
+      const [dauRes, moodRes, topRes] = await Promise.all([
+        fetch(`${API_URL}/api/admin/analytics/dau?days=14`, { headers }),
+        fetch(`${API_URL}/api/admin/analytics/mood-zones`, { headers }),
+        fetch(`${API_URL}/api/admin/analytics/top-users`, { headers })
+      ]);
+      const dau = await dauRes.json();
+      const mood = await moodRes.json();
+      const top = await topRes.json();
+      setAnalytics({
+        dau: dau.data || [],
+        moodZones: mood.data || [],
+        topUsers: top.users || []
+      });
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
 
-  const loadPendingConfessions = async () => {
+  const fetchLogs = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/admin/confessions/pending`, {
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      if (data.success) {
-        setPendingConfessions(data.confessions)
-      }
-    } catch (error) {
-      console.error('Failed to load pending confessions:', error)
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/logs?limit=100`, { headers });
+      const data = await res.json();
+      if (data.success) setLogs(data.logs);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
 
-  const loadReports = async () => {
+  // ============================================
+  // USER ACTIONS
+  // ============================================
+
+  const banUser = async (userId, duration) => {
+    const reason = prompt(`Reason for banning (${duration === 'permanent' ? 'permanent' : duration + ' days'}):`) || 'Violated rules';
+    if (!confirm(`Ban this user ${duration === 'permanent' ? 'permanently' : 'for ' + duration + ' days'}?`)) return;
     try {
-      const response = await fetch(`${API_URL}/api/admin/reports`, {
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      if (data.success) {
-        setReports(data.reports)
-      }
-    } catch (error) {
-      console.error('Failed to load reports:', error)
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/users/${userId}/ban`, {
+        method: 'POST', headers,
+        body: JSON.stringify({ duration, reason })
+      });
+      const data = await res.json();
+      if (data.success) { showNotification('🚫 User banned!', 'success'); fetchUsers(); }
+      else showNotification(data.error, 'error');
+    } catch (e) { showNotification('Failed to ban', 'error'); }
+  };
 
-  const loadActivityLogs = async () => {
+  const unbanUser = async (userId) => {
+    if (!confirm('Unban this user?')) return;
     try {
-      const response = await fetch(`${API_URL}/api/admin/activity-logs?limit=100`, {
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      if (data.success) {
-        setActivityLogs(data.logs)
-      }
-    } catch (error) {
-      console.error('Failed to load activity logs:', error)
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/users/${userId}/unban`, { method: 'POST', headers });
+      const data = await res.json();
+      if (data.success) { showNotification('✅ User unbanned!', 'success'); fetchUsers(); }
+    } catch (e) { showNotification('Failed to unban', 'error'); }
+  };
 
-  const loadConversations = async () => {
+  const deleteUser = async (userId) => {
+    if (!confirm('⚠️ DELETE this user permanently?')) return;
     try {
-      const response = await fetch(`${API_URL}/api/admin/messages/conversations`, {
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      if (data.success) {
-        setConversations(data.conversations)
-      }
-    } catch (error) {
-      console.error('Failed to load conversations:', error)
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/users/${userId}`, { method: 'DELETE', headers });
+      const data = await res.json();
+      if (data.success) { showNotification('🗑️ User deleted!', 'success'); fetchUsers(); }
+    } catch (e) { showNotification('Failed to delete', 'error'); }
+  };
 
-  // Action handlers
-  const handleApprove = async (id) => {
+  const viewUser = async (userId) => {
     try {
-      const response = await fetch(`${API_URL}/api/admin/approve-request/${id}`, {
-        method: 'POST',
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      
-      if (data.success) {
-        showNotification(`✅ Approved! Code: ${data.code}`, 'success')
-        loadPendingRequests()
-        loadStats()
-      } else {
-        showNotification('❌ ' + data.error, 'error')
-      }
-    } catch (error) {
-      console.error('Approve error:', error)
-      showNotification('❌ Failed to approve request', 'error')
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/users/${userId}`, { headers });
+      const data = await res.json();
+      if (data.success) { setSelectedUser(data); setShowUserModal(true); }
+    } catch (e) { showNotification('Failed to load user', 'error'); }
+  };
 
-  const handleReject = async (id) => {
-    if (!confirm('Are you sure you want to reject this request?')) return
-    
+  // ============================================
+  // CONFESSION ACTIONS
+  // ============================================
+
+  const pinConfession = async (id, isPinned) => {
+    const endpoint = isPinned ? 'unpin' : 'pin';
     try {
-      const response = await fetch(`${API_URL}/api/admin/reject-request/${id}`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ reason: 'Not verified' })
-      })
-      const data = await response.json()
-      
-      if (data.success) {
-        showNotification('❌ Request rejected', 'success')
-        loadPendingRequests()
-        loadStats()
-      }
-    } catch (error) {
-      console.error('Reject error:', error)
-      showNotification('❌ Failed to reject request', 'error')
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/confessions/${id}/${endpoint}`, { method: 'POST', headers });
+      const data = await res.json();
+      if (data.success) { showNotification(isPinned ? '📌 Unpinned!' : '📌 Pinned!', 'success'); fetchConfessions(); }
+      else showNotification(data.error || data.message, 'error');
+    } catch (e) { showNotification('Failed', 'error'); }
+  };
 
-  const handleGenerateCodes = async () => {
-    const count = prompt('How many codes to generate? (1-100)', '10')
-    if (!count) return
-    
+  const featureConfession = async (id, isFeatured) => {
+    const endpoint = isFeatured ? 'unfeature' : 'feature';
     try {
-      const response = await fetch(`${API_URL}/api/admin/generate-codes`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ count: parseInt(count) })
-      })
-      const data = await response.json()
-      
-      if (data.success) {
-        showNotification(`✅ Generated ${count} codes!`, 'success')
-        loadCodes()
-        loadStats()
-      }
-    } catch (error) {
-      console.error('Generate codes error:', error)
-      showNotification('❌ Failed to generate codes', 'error')
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/confessions/${id}/${endpoint}`, { method: 'POST', headers });
+      const data = await res.json();
+      if (data.success) { showNotification(isFeatured ? 'Unfeatured!' : '⭐ Featured!', 'success'); fetchConfessions(); }
+    } catch (e) { showNotification('Failed', 'error'); }
+  };
 
-  const handleDownloadCSV = () => {
-    const csv = codes.map(c => 
-      `${c.code},${c.is_used ? 'Used' : 'Unused'},${c.username || 'N/A'},${c.email || 'N/A'}`
-    ).join('\n')
-    
-    const blob = new Blob(['Code,Status,Username,Email\n' + csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `access-codes-${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    showNotification('📥 CSV downloaded!', 'success')
-  }
-
-  const handleBanUser = async (userId, banned, duration = 'permanent') => {
-    if (banned && !confirm(`Ban this user${duration === 'permanent' ? ' permanently' : ` for ${duration} days`}?`)) {
-      return
-    }
-    
+  const deleteConfession = async (id) => {
+    if (!confirm('Delete this confession?')) return;
     try {
-      const response = await fetch(`${API_URL}/api/admin/users/${userId}/ban`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ banned, duration })
-      })
-      const data = await response.json()
-      
-      if (data.success) {
-        showNotification(banned ? `🚫 User banned ${duration === 'permanent' ? 'permanently' : `for ${duration} days`}` : '✅ User unbanned', 'success')
-        loadUsers()
-      }
-    } catch (error) {
-      console.error('Ban user error:', error)
-      showNotification('❌ Failed to update user', 'error')
-    }
-  }
+      const res = await fetch(`${API_URL}/api/admin/confessions/${id}`, { method: 'DELETE', headers });
+      const data = await res.json();
+      if (data.success) { showNotification('🗑️ Deleted!', 'success'); fetchConfessions(); }
+    } catch (e) { showNotification('Failed to delete', 'error'); }
+  };
 
-  const handleViewUserDetails = async (userId) => {
+  // ============================================
+  // ANNOUNCEMENT
+  // ============================================
+
+  const sendAnnouncement = async () => {
+    if (!announcement.title || !announcement.message) {
+      showNotification('Title and message required!', 'error'); return;
+    }
     try {
-      const response = await fetch(`${API_URL}/api/admin/users/${userId}/stats`, {
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      
+      const res = await fetch(`${API_URL}/api/notifications/announce`, {
+        method: 'POST', headers,
+        body: JSON.stringify({ ...announcement, target_audience: 'all' })
+      });
+      const data = await res.json();
       if (data.success) {
-        alert(`
-User Stats:
-- Reactions Given: ${data.stats.reactions_given}
-- Recent Confessions: ${data.stats.recent_confessions.length}
+        showNotification('📢 Announcement sent to all users!', 'success');
+        setAnnouncement({ title: '', message: '' });
+      } else showNotification(data.error, 'error');
+    } catch (e) { showNotification('Failed to send', 'error'); }
+  };
 
-Recent Activity:
-${data.stats.recent_confessions.map(c => 
-  `- ${c.content.substring(0, 50)}... (${c.total_reactions} reactions)`
-).join('\n')}
-        `)
-      }
-    } catch (error) {
-      console.error('Failed to get user details:', error)
-      showNotification('❌ Failed to load user details', 'error')
-    }
-  }
+  // ============================================
+  // UI HELPERS
+  // ============================================
 
-  const handleApproveConfession = async (id) => {
-    try {
-      const response = await fetch(`${API_URL}/api/admin/confessions/${id}/approve`, {
-        method: 'POST',
-        headers: getAuthHeaders()
-      })
-      const data = await response.json()
-      
-      if (data.success) {
-        showNotification('✅ Confession approved!', 'success')
-        loadPendingConfessions()
-        loadStats()
-      }
-    } catch (error) {
-      console.error('Approve confession error:', error)
-      showNotification('❌ Failed to approve', 'error')
-    }
-  }
-
-  const handleRejectConfession = async (id) => {
-    const reason = prompt('Rejection reason (optional):')
-    
-    try {
-      const response = await fetch(`${API_URL}/api/admin/confessions/${id}/reject`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ reason })
-      })
-      const data = await response.json()
-      
-      if (data.success) {
-        showNotification('❌ Confession rejected', 'success')
-        loadPendingConfessions()
-        loadStats()
-      }
-    } catch (error) {
-      console.error('Reject confession error:', error)
-      showNotification('❌ Failed to reject', 'error')
-    }
-  }
-
-  const handleResolveReport = async (reportId, action) => {
-    if (action === 'remove_confession' && !confirm('Remove this confession permanently?')) {
-      return
-    }
-    
-    try {
-      const response = await fetch(`${API_URL}/api/admin/reports/${reportId}/resolve`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ action })
-      })
-      const data = await response.json()
-      
-      if (data.success) {
-        showNotification(data.message, 'success')
-        loadReports()
-      }
-    } catch (error) {
-      console.error('Resolve report error:', error)
-      showNotification('❌ Failed to resolve report', 'error')
-    }
-  }
-
-  // Utility functions
   const showNotification = (message, type) => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification(null), 3000)
-  }
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diff = now - date
-    const minutes = Math.floor(diff / 60000)
-    const hours = Math.floor(diff / 3600000)
-    const days = Math.floor(diff / 86400000)
-    
-    if (minutes < 1) return 'Just now'
-    if (minutes < 60) return `${minutes} min ago`
-    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`
-    if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`
-    return date.toLocaleDateString()
-  }
+  const timeAgo = (date) => {
+    const diff = Date.now() - new Date(date);
+    const m = Math.floor(diff / 60000);
+    const h = Math.floor(diff / 3600000);
+    const d = Math.floor(diff / 86400000);
+    if (m < 1) return 'just now';
+    if (m < 60) return `${m}m ago`;
+    if (h < 24) return `${h}h ago`;
+    return `${d}d ago`;
+  };
 
-  const formatLastOnline = (lastActivity) => {
-    if (!lastActivity) return 'Never'
-    
-    const now = new Date()
-    const lastSeen = new Date(lastActivity)
-    const diffMs = now - lastSeen
-    const diffMins = Math.floor(diffMs / 60000)
-    
-    // Online if activity within 5 minutes
-    if (diffMins < 5) return '🟢 ONLINE NOW'
-    
-    // Minutes
-    if (diffMins < 60) return `⚫ ${diffMins} min ago`
-    
-    // Hours
-    const diffHours = Math.floor(diffMins / 60)
-    if (diffHours < 24) return `⚫ ${diffHours}h ago`
-    
-    // Days
-    const diffDays = Math.floor(diffHours / 24)
-    if (diffDays < 7) return `⚫ ${diffDays}d ago`
-    
-    // Weeks
-    const diffWeeks = Math.floor(diffDays / 7)
-    return `⚫ ${diffWeeks}w ago`
-  }
+  const getMoodColor = (zone) => {
+    const colors = { 'Crush': '#FFB3BA', 'Heartbreak': '#BAE1FF', 'Secret Admirer': '#FFD4E5', 'Love Stories': '#FFFFBA' };
+    return colors[zone] || '#f0f0f0';
+  };
 
-  if (loading) {
-    return <div className="admin-loading">LOADING ADMIN PANEL...</div>
-  }
+  // ============================================
+  // EFFECTS
+  // ============================================
 
-  return (
-    <div className="admin-panel">
-      {notification && (
-        <div className={`admin-notification ${notification.type}`}>
-          {notification.message}
-        </div>
-      )}
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
-      <div className="admin-header">
-        <h1><i className="fas fa-shield-alt"></i> ADMIN PANEL</h1>
-        <button className="btn btn--outline" onClick={() => window.location.href = '/'}>
-          <i className="fas fa-arrow-left"></i> Back to Site
-        </button>
-      </div>
+  useEffect(() => {
+    if (activeTab === 'users') fetchUsers();
+    else if (activeTab === 'confessions') fetchConfessions();
+    else if (activeTab === 'analytics') fetchAnalytics();
+    else if (activeTab === 'logs') fetchLogs();
+  }, [activeTab, userPage, userFilter]);
 
-      <div className="admin-tabs">
-        <button 
-          className={`admin-tab ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
-        >
-          <i className="fas fa-chart-line"></i> Dashboard
-        </button>
-        
-        <button 
-          className={`admin-tab ${activeTab === 'requests' ? 'active' : ''}`}
-          onClick={() => setActiveTab('requests')}
-        >
-          <i className="fas fa-inbox"></i> Requests ({pendingRequests.length})
-        </button>
-        
-        <button 
-          className={`admin-tab ${activeTab === 'codes' ? 'active' : ''}`}
-          onClick={() => setActiveTab('codes')}
-        >
-          <i className="fas fa-ticket-alt"></i> Codes
-        </button>
-        
-        <button 
-          className={`admin-tab ${activeTab === 'users' ? 'active' : ''}`}
-          onClick={() => setActiveTab('users')}
-        >
-          <i className="fas fa-users"></i> Users
-        </button>
-        
-        <button 
-          className={`admin-tab ${activeTab === 'moderation' ? 'active' : ''}`}
-          onClick={() => setActiveTab('moderation')}
-        >
-          <i className="fas fa-shield-alt"></i> Moderation ({pendingConfessions.length})
-        </button>
-        
-        <button 
-          className={`admin-tab ${activeTab === 'reports' ? 'active' : ''}`}
-          onClick={() => setActiveTab('reports')}
-        >
-          <i className="fas fa-flag"></i> Reports ({reports.length})
-        </button>
-        
-        <button 
-          className={`admin-tab ${activeTab === 'activity' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveTab('activity')
-            loadActivityLogs()
-          }}
-        >
-          <i className="fas fa-history"></i> Activity
-        </button>
-        
-        <button 
-          className={`admin-tab ${activeTab === 'messages' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveTab('messages')
-            loadConversations()
-          }}
-        >
-          <i className="fas fa-envelope"></i> Messages
-        </button>
-      </div>
+  useEffect(() => {
+    if (activeTab === 'users') {
+      const timer = setTimeout(fetchUsers, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [userSearch]);
 
-      <div className="admin-content">
-        {/* DASHBOARD TAB */}
-        {activeTab === 'dashboard' && (
-          <div className="dashboard">
-            <div className="stats-grid">
-              <div className="stat-card">
-                <i className="fas fa-inbox"></i>
-                <h3>{stats?.pendingRequests || 0}</h3>
-                <p>Pending Requests</p>
-              </div>
-              <div className="stat-card">
-                <i className="fas fa-users"></i>
-                <h3>{stats?.totalUsers || 0}</h3>
-                <p>Total Users</p>
-              </div>
-              <div className="stat-card">
-                <i className="fas fa-ticket-alt"></i>
-                <h3>{stats?.unusedCodes || 0}</h3>
-                <p>Unused Codes</p>
-              </div>
-              <div className="stat-card">
-                <i className="fas fa-comment"></i>
-                <h3>{stats?.totalConfessions || 0}</h3>
-                <p>Total Confessions</p>
-              </div>
-            </div>
-
-            <div className="recent-activity">
-              <h2>Recent Pending Requests</h2>
-              {pendingRequests.slice(0, 5).map(request => (
-                <div key={request.id} className="request-card">
-                  <div className="request-info">
-                    <strong>{request.email}</strong>
-                    <span>@{request.instagram_handle}</span>
-                    <small>{formatDate(request.requested_at)}</small>
-                  </div>
-                  <div className="request-actions">
-                    <button 
-                      className="btn btn--small btn--success"
-                      onClick={() => handleApprove(request.id)}
-                    >
-                      ✅ Approve
-                    </button>
-                    <button 
-                      className="btn btn--small btn--danger"
-                      onClick={() => handleReject(request.id)}
-                    >
-                      ❌ Reject
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {pendingRequests.length === 0 && (
-                <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                  No pending requests
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* REQUESTS TAB */}
-        {activeTab === 'requests' && (
-          <div className="requests-tab">
-            <h2>All Pending Requests ({pendingRequests.length})</h2>
-            {pendingRequests.map(request => (
-              <div key={request.id} className="request-card">
-                <div className="request-info">
-                  <strong>{request.email}</strong>
-                  <span>@{request.instagram_handle}</span>
-                  <small>{formatDate(request.requested_at)}</small>
-                </div>
-                <div className="request-actions">
-                  <button 
-                    className="btn btn--success"
-                    onClick={() => handleApprove(request.id)}
-                  >
-                    ✅ Approve
-                  </button>
-                  <button 
-                    className="btn btn--danger"
-                    onClick={() => handleReject(request.id)}
-                  >
-                    ❌ Reject
-                  </button>
-                </div>
+  // ============================================
+  // RENDER: DASHBOARD
+  // ============================================
+  const renderDashboard = () => (
+    <div className="tab-content">
+      <h2 className="tab-title">DASHBOARD</h2>
+      {stats ? (
+        <>
+          <div className="stats-grid">
+            {[
+              { icon: '👥', value: stats.total_users, label: 'TOTAL USERS' },
+              { icon: '💬', value: stats.total_confessions, label: 'CONFESSIONS' },
+              { icon: '🔥', value: stats.active_users_24h, label: 'ACTIVE (24H)' },
+              { icon: '⭐', value: stats.premium_users, label: 'PREMIUM' },
+              { icon: '❤️', value: stats.total_reactions, label: 'REACTIONS' },
+              { icon: '💰', value: stats.credits_in_circulation, label: 'CREDITS' },
+              { icon: '🎁', value: stats.total_gifts, label: 'GIFTS' },
+              { icon: '🚫', value: stats.banned_users, label: 'BANNED', alert: true },
+            ].map((s, i) => (
+              <div key={i} className={`stat-card ${s.alert ? 'stat-alert' : ''}`}>
+                <div className="stat-icon">{s.icon}</div>
+                <div className="stat-value">{s.value?.toLocaleString() ?? 0}</div>
+                <div className="stat-label">{s.label}</div>
               </div>
             ))}
-            {pendingRequests.length === 0 && (
-              <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                No pending requests! 🎉
-              </p>
-            )}
+          </div>
+
+          {/* Announcement Section */}
+          <div className="announce-box">
+            <h3>📢 SEND ANNOUNCEMENT</h3>
+            <p>Notify all users instantly</p>
+            <input
+              className="announce-input"
+              placeholder="ANNOUNCEMENT TITLE..."
+              value={announcement.title}
+              onChange={e => setAnnouncement({ ...announcement, title: e.target.value })}
+            />
+            <textarea
+              className="announce-textarea"
+              placeholder="Write your message to all users..."
+              rows={3}
+              value={announcement.message}
+              onChange={e => setAnnouncement({ ...announcement, message: e.target.value })}
+            />
+            <button className="announce-btn" onClick={sendAnnouncement}>
+              📢 SEND TO ALL USERS
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="loading-state">Loading...</div>
+      )}
+    </div>
+  );
+
+  // ============================================
+  // RENDER: USERS
+  // ============================================
+  const renderUsers = () => (
+    <div className="tab-content">
+      <div className="tab-header">
+        <h2 className="tab-title">USERS ({totalUsers})</h2>
+        <div className="controls-row">
+          <input
+            className="ctrl-input"
+            placeholder="SEARCH USERNAME, EMAIL..."
+            value={userSearch}
+            onChange={e => { setUserSearch(e.target.value); setUserPage(1); }}
+          />
+          <select className="ctrl-select" value={userFilter} onChange={e => { setUserFilter(e.target.value); setUserPage(1); }}>
+            <option value="all">ALL USERS</option>
+            <option value="premium">PREMIUM</option>
+            <option value="banned">BANNED</option>
+            <option value="active">ACTIVE (7D)</option>
+          </select>
+        </div>
+      </div>
+
+      {loading ? <div className="loading-state">LOADING...</div> : (
+        <>
+          <div className="data-table">
+            <div className="table-head">
+              <span>#</span>
+              <span>USERNAME</span>
+              <span>EMAIL</span>
+              <span>CREDITS</span>
+              <span>STATUS</span>
+              <span>ACTIVITY</span>
+              <span>ACTIONS</span>
+            </div>
+            {users.map(u => (
+              <div key={u.id} className={`table-row ${u.is_banned ? 'row-banned' : ''}`}>
+                <span className="cell-num">#{u.user_number}</span>
+                <span className="cell-user">
+                  {u.username}
+                  {u.is_premium && <span className="tag tag-premium">⭐</span>}
+                  {u.is_admin && <span className="tag tag-admin">👑</span>}
+                </span>
+                <span className="cell-email">{u.email}</span>
+                <span className="cell-credits">{u.credits}</span>
+                <span className="cell-status">
+                  <span className={`status-pill ${u.is_banned ? 'pill-banned' : u.is_premium ? 'pill-premium' : 'pill-free'}`}>
+                    {u.is_banned ? 'BANNED' : u.is_premium ? 'PREMIUM' : 'FREE'}
+                  </span>
+                </span>
+                <span className="cell-activity">
+                  {u.confession_count ?? 0} posts<br />
+                  {u.reaction_count ?? 0} reactions
+                </span>
+                <span className="cell-actions">
+                  <button className="act-btn act-view" onClick={() => viewUser(u.id)}>VIEW</button>
+                  {u.is_banned ? (
+                    <button className="act-btn act-unban" onClick={() => unbanUser(u.id)}>UNBAN</button>
+                  ) : !u.is_admin && (
+                    <div className="ban-group">
+                      <button className="act-btn act-ban" onClick={() => banUser(u.id, '3')}>3D</button>
+                      <button className="act-btn act-ban" onClick={() => banUser(u.id, '7')}>7D</button>
+                      <button className="act-btn act-ban" onClick={() => banUser(u.id, 'permanent')}>PERM</button>
+                    </div>
+                  )}
+                  {!u.is_admin && <button className="act-btn act-delete" onClick={() => deleteUser(u.id)}>DEL</button>}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="pagination">
+            <button className="page-btn" onClick={() => setUserPage(p => Math.max(1, p - 1))} disabled={userPage === 1}>← PREV</button>
+            <span className="page-info">PAGE {userPage} / {totalPages}</span>
+            <button className="page-btn" onClick={() => setUserPage(p => Math.min(totalPages, p + 1))} disabled={userPage === totalPages}>NEXT →</button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  // ============================================
+  // RENDER: CONFESSIONS
+  // ============================================
+  const renderConfessions = () => {
+    const pinned = confessions.filter(c => c.is_pinned);
+    const featured = confessions.filter(c => c.is_featured && !c.is_pinned);
+    const normal = confessions.filter(c => !c.is_pinned && !c.is_featured);
+
+    return (
+      <div className="tab-content">
+        <h2 className="tab-title">CONFESSIONS ({confessions.length})</h2>
+
+        {pinned.length > 0 && (
+          <div className="conf-section">
+            <h3 className="section-label pinned-label">📌 PINNED ({pinned.length}/3)</h3>
+            {pinned.map(c => <ConfessionRow key={c.id} c={c} onPin={pinConfession} onFeature={featureConfession} onDelete={deleteConfession} getMoodColor={getMoodColor} timeAgo={timeAgo} />)}
           </div>
         )}
 
-        {/* CODES TAB */}
-        {activeTab === 'codes' && (
-          <div className="codes-tab">
-            <div className="codes-header">
-              <h2>Access Codes ({codes.length})</h2>
-              <div>
-                <button className="btn btn--primary" onClick={handleGenerateCodes}>
-                  <i className="fas fa-plus"></i> Generate Codes
-                </button>
-                <button className="btn btn--secondary" onClick={handleDownloadCSV}>
-                  <i className="fas fa-download"></i> Download CSV
-                </button>
+        {featured.length > 0 && (
+          <div className="conf-section">
+            <h3 className="section-label featured-label">⭐ FEATURED BY ADMIN</h3>
+            {featured.map(c => <ConfessionRow key={c.id} c={c} onPin={pinConfession} onFeature={featureConfession} onDelete={deleteConfession} getMoodColor={getMoodColor} timeAgo={timeAgo} />)}
+          </div>
+        )}
+
+        <div className="conf-section">
+          <h3 className="section-label">ALL CONFESSIONS</h3>
+          {loading ? <div className="loading-state">LOADING...</div> : normal.map(c => (
+            <ConfessionRow key={c.id} c={c} onPin={pinConfession} onFeature={featureConfession} onDelete={deleteConfession} getMoodColor={getMoodColor} timeAgo={timeAgo} />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // ============================================
+  // RENDER: ANALYTICS
+  // ============================================
+  const renderAnalytics = () => (
+    <div className="tab-content">
+      <h2 className="tab-title">ANALYTICS</h2>
+      {loading ? <div className="loading-state">LOADING...</div> : analytics ? (
+        <div className="analytics-grid">
+
+          {/* Mood Zones */}
+          <div className="analytics-card wide">
+            <h3>💕 MOOD ZONE BREAKDOWN</h3>
+            <div className="mood-bars">
+              {analytics.moodZones.map((zone, i) => (
+                <div key={i} className="mood-bar-row">
+                  <span className="mood-bar-label">{zone.mood_zone}</span>
+                  <div className="mood-bar-track">
+                    <div
+                      className="mood-bar-fill"
+                      style={{ width: `${zone.percentage}%`, background: getMoodColor(zone.mood_zone) }}
+                    />
+                  </div>
+                  <span className="mood-bar-count">{zone.count} ({zone.percentage}%)</span>
+                </div>
+              ))}
+              {analytics.moodZones.length === 0 && <p className="no-data-msg">No data yet</p>}
+            </div>
+          </div>
+
+          {/* Top Users */}
+          <div className="analytics-card wide">
+            <h3>🏆 TOP USERS BY ACTIVITY</h3>
+            <div className="top-users-list">
+              {analytics.topUsers.slice(0, 10).map((u, i) => (
+                <div key={u.id} className="top-user-row">
+                  <span className="top-rank">#{i + 1}</span>
+                  <span className="top-username">
+                    {u.username}
+                    {u.is_premium && '⭐'}
+                  </span>
+                  <div className="top-stats">
+                    <span>{u.confession_count} posts</span>
+                    <span>{u.reaction_count} reactions</span>
+                    <span>{u.reply_count} replies</span>
+                  </div>
+                  <span className="top-total">{u.total_activity} total</span>
+                </div>
+              ))}
+              {analytics.topUsers.length === 0 && <p className="no-data-msg">No data yet</p>}
+            </div>
+          </div>
+
+          {/* DAU */}
+          <div className="analytics-card wide">
+            <h3>📈 DAILY ACTIVE USERS (LAST 14 DAYS)</h3>
+            <div className="dau-chart">
+              {analytics.dau.length > 0 ? (
+                <div className="bar-chart">
+                  {analytics.dau.slice(0, 14).reverse().map((d, i) => {
+                    const maxVal = Math.max(...analytics.dau.map(x => x.active_users));
+                    const height = maxVal > 0 ? (d.active_users / maxVal) * 120 : 0;
+                    return (
+                      <div key={i} className="bar-col">
+                        <span className="bar-value">{d.active_users}</span>
+                        <div className="bar-fill" style={{ height: `${height}px` }} />
+                        <span className="bar-date">{new Date(d.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : <p className="no-data-msg">No DAU data yet. IP tracking will populate this.</p>}
+            </div>
+          </div>
+
+        </div>
+      ) : <div className="loading-state">Failed to load analytics</div>}
+    </div>
+  );
+
+  // ============================================
+  // RENDER: LOGS
+  // ============================================
+  const renderLogs = () => (
+    <div className="tab-content">
+      <h2 className="tab-title">ADMIN ACTION LOGS</h2>
+      {loading ? <div className="loading-state">LOADING...</div> : (
+        <div className="logs-list">
+          {logs.length === 0 ? (
+            <div className="empty-state">
+              <p>📋 No admin actions logged yet</p>
+              <small>Actions like banning, pinning, featuring will appear here</small>
+            </div>
+          ) : logs.map(log => (
+            <div key={log.id} className="log-row">
+              <div className="log-left">
+                <span className={`log-badge log-${log.action_type}`}>
+                  {log.action_type.toUpperCase()}
+                </span>
+                <span className="log-admin">by {log.admin_username}</span>
+              </div>
+              <div className="log-middle">
+                <span className="log-target">{log.target_type}: {log.target_id?.slice(0, 8)}...</span>
+                {log.details && (
+                  <span className="log-details">
+                    {typeof log.details === 'string' ? log.details : JSON.stringify(log.details).slice(0, 80)}
+                  </span>
+                )}
+              </div>
+              <div className="log-right">
+                <span className="log-time">{timeAgo(log.created_at)}</span>
+                {log.ip_address && <span className="log-ip">{log.ip_address}</span>}
               </div>
             </div>
-            <div className="codes-list">
-              {codes.map(code => (
-                <div key={code.id} className={`code-card ${code.is_used ? 'used' : 'unused'}`}>
-                  <div className="code-text">{code.code}</div>
-                  <div className="code-status">
-                    {code.is_used ? (
-                      <>
-                        <span className="status-badge used">✅ Used</span>
-                        <span>{code.username} #{code.user_number}</span>
-                        <small>{code.email}</small>
-                      </>
-                    ) : (
-                      <span className="status-badge unused">⏳ Unused</span>
-                    )}
-                  </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // ============================================
+  // MAIN RENDER
+  // ============================================
+  return (
+    <div className="admin-wrap">
+      {notification && (
+        <div className={`admin-notif ${notification.type}`}>{notification.message}</div>
+      )}
+
+      {/* Sidebar */}
+      <aside className="admin-side">
+        <div className="side-logo">
+          <span>ADMIN</span>
+        </div>
+        <nav className="side-nav">
+          {[
+            { key: 'dashboard', icon: '📊', label: 'DASHBOARD' },
+            { key: 'users', icon: '👥', label: 'USERS' },
+            { key: 'confessions', icon: '💬', label: 'CONFESSIONS' },
+            { key: 'analytics', icon: '📈', label: 'ANALYTICS' },
+            { key: 'logs', icon: '📋', label: 'LOGS' },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              className={`side-btn ${activeTab === tab.key ? 'side-btn-active' : ''}`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              <span className="side-icon">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+        <button className="back-btn" onClick={() => window.location.href = '/'}>← BACK TO APP</button>
+      </aside>
+
+      {/* Content */}
+      <main className="admin-main">
+        {activeTab === 'dashboard' && renderDashboard()}
+        {activeTab === 'users' && renderUsers()}
+        {activeTab === 'confessions' && renderConfessions()}
+        {activeTab === 'analytics' && renderAnalytics()}
+        {activeTab === 'logs' && renderLogs()}
+      </main>
+
+      {/* User Detail Modal */}
+      {showUserModal && selectedUser && (
+        <div className="modal-bg" onClick={() => setShowUserModal(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowUserModal(false)}>✕</button>
+            <h2>USER DETAILS</h2>
+
+            <div className="modal-grid">
+              <div className="modal-field"><b>Username</b> {selectedUser.user.username}</div>
+              <div className="modal-field"><b>Email</b> {selectedUser.user.email}</div>
+              <div className="modal-field"><b>User #</b> {selectedUser.user.user_number}</div>
+              <div className="modal-field"><b>Credits</b> {selectedUser.user.credits}</div>
+              <div className="modal-field"><b>Premium</b> {selectedUser.user.is_premium ? '⭐ Yes' : 'No'}</div>
+              <div className="modal-field"><b>Banned</b> {selectedUser.user.is_banned ? '🚫 Yes' : 'No'}</div>
+              <div className="modal-field"><b>Reg. IP</b> {selectedUser.user.registration_ip || 'N/A'}</div>
+              <div className="modal-field"><b>Last IP</b> {selectedUser.user.last_ip || 'N/A'}</div>
+              <div className="modal-field"><b>Joined</b> {new Date(selectedUser.user.created_at).toLocaleDateString()}</div>
+              <div className="modal-field"><b>Last Login</b> {selectedUser.user.last_login ? new Date(selectedUser.user.last_login).toLocaleDateString() : 'N/A'}</div>
+            </div>
+
+            <h3>RECENT CONFESSIONS</h3>
+            <div className="modal-list">
+              {selectedUser.confessions?.slice(0, 5).map(c => (
+                <div key={c.id} className="modal-list-item">
+                  <span className="modal-list-mood" style={{ background: getMoodColor(c.mood_zone) }}>{c.mood_zone}</span>
+                  <span className="modal-list-text">{c.content?.slice(0, 80)}...</span>
+                  <span className="modal-list-time">{timeAgo(c.created_at)}</span>
                 </div>
               ))}
-            </div>
-          </div>
-        )}
-
-        {/* USERS TAB */}
-        {activeTab === 'users' && (
-          <div className="users-tab">
-            <div className="users-header">
-              <h2>Registered Users ({users.length})</h2>
-              <div className="search-box">
-                <input 
-                  type="text" 
-                  placeholder="Search: username, email, or #batch" 
-                  className="search-input"
-                  onChange={(e) => {
-                    const searchValue = e.target.value.trim()
-                    clearTimeout(window.searchTimeout)
-                    window.searchTimeout = setTimeout(() => {
-                      console.log('🔍 Searching for:', searchValue)
-                      loadUsers(searchValue)
-                    }, 500)
-                  }}
-                />
-              </div>
+              {(!selectedUser.confessions || selectedUser.confessions.length === 0) && <p>No confessions</p>}
             </div>
 
-            <div className="users-table">
-              <div className="table-header">
-                <div className="th">User</div>
-                <div className="th">Instagram</div>
-                <div className="th">Joined</div>
-                <div className="th">Confessions</div>
-                <div className="th">Reactions</div>
-                <div className="th">Credits</div>
-                <div className="th">Actions</div>
-              </div>
-
-              {users.map(user => (
-                <div key={user.id} className="table-row">
-                  <div className="td user-cell">
-                    <div className="user-details">
-                      <strong>{user.username} #{user.user_number}</strong>
-                      <small>{user.email}</small>
-                      {user.is_admin && <span className="badge-admin">👑 ADMIN</span>}
-                      {user.is_premium && <span className="badge-premium">⭐ PREMIUM</span>}
-                      {user.is_banned && <span className="badge-banned">🚫 BANNED</span>}
-                    </div>
-                  </div>
-
-                  <div className="td">
-                    {user.instagram_handle ? (
-                      <a 
-                        href={`https://instagram.com/${user.instagram_handle}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="instagram-link"
-                      >
-                        @{user.instagram_handle}
-                      </a>
-                    ) : (
-                      <span className="no-data">N/A</span>
-                    )}
-                  </div>
-
-                  <div className="td">
-                    <small>{formatDate(user.created_at)}</small>
-                    {user.last_activity && (
-                      <small style={{ display: 'block', color: '#999', marginTop: '4px' }}>
-                        {formatLastOnline(user.last_activity)}
-                      </small>
-                    )}
-                  </div>
-
-                  <div className="td stat-cell">
-                    <strong>{user.total_confessions || 0}</strong>
-                    <small>posts</small>
-                  </div>
-
-                  <div className="td stat-cell">
-                    <strong>{user.total_reactions_received || 0}</strong>
-                    <small>received</small>
-                  </div>
-
-                  <div className="td stat-cell">
-                    <strong>{user.credits}</strong>
-                    <small>credits</small>
-                  </div>
-
-                  <div className="td actions-cell">
-                    {!user.is_admin && (
-                      <>
-                        {!user.is_banned ? (
-                          <button 
-                            className="btn btn--small btn--danger"
-                            onClick={() => {
-                              const duration = prompt('Ban duration:\n1. Enter "3" for 3 days\n2. Enter "7" for 7 days\n3. Enter "permanent" for permanent ban')
-                              if (duration) {
-                                handleBanUser(user.id, true, duration)
-                              }
-                            }}
-                            title="Ban user"
-                          >
-                            🚫 BAN
-                          </button>
-                        ) : (
-                          <button 
-                            className="btn btn--small btn--success"
-                            onClick={() => handleBanUser(user.id, false)}
-                            title="Unban user"
-                          >
-                            ✅ UNBAN
-                          </button>
-                        )}
-                        <button 
-                          className="btn btn--small btn--secondary"
-                          onClick={() => handleViewUserDetails(user.id)}
-                          title="View details"
-                        >
-                          👁️
-                        </button>
-                      </>
-                    )}
-                  </div>
+            <h3>IP ACTIVITY LOG</h3>
+            <div className="modal-list">
+              {selectedUser.activity?.slice(0, 8).map((a, i) => (
+                <div key={i} className="modal-list-item">
+                  <span className="modal-list-mood">{a.action_type}</span>
+                  <span className="modal-list-ip">{a.ip_address}</span>
+                  <span className="modal-list-time">{timeAgo(a.created_at)}</span>
                 </div>
               ))}
-
-              {users.length === 0 && (
-                <div className="no-data-message">
-                  <p>No users found</p>
-                </div>
-              )}
+              {(!selectedUser.activity || selectedUser.activity.length === 0) && <p>No activity logged</p>}
             </div>
           </div>
-        )}
+        </div>
+      )}
+    </div>
+  );
+}
 
-        {/* MODERATION TAB */}
-        {activeTab === 'moderation' && (
-          <div className="moderation-tab">
-            <h2>Pending Confessions ({pendingConfessions.length})</h2>
-            <p className="tab-description">Review and approve confessions before they appear in the feed</p>
-            
-            <div className="confessions-moderation-list">
-              {pendingConfessions.map(confession => (
-                <div key={confession.id} className="confession-mod-card">
-                  <div className="confession-mod-header">
-                    <div className="confession-meta">
-                      <span className="mood-badge" style={{
-                        background: confession.mood_zone === 'Crush' ? '#FFB3BA' :
-                                   confession.mood_zone === 'Heartbreak' ? '#BAE1FF' :
-                                   confession.mood_zone === 'Secret Admirer' ? '#FFD4E5' : '#FFFFBA'
-                      }}>
-                        {confession.mood_zone}
-                      </span>
-                      <span className="user-info">
-                        {confession.username} #{confession.user_number}
-                      </span>
-                      <small>{confession.email}</small>
-                    </div>
-                    <div className="confession-time">
-                      {formatDate(confession.created_at)}
-                    </div>
-                  </div>
-                  
-                  <div className="confession-content">
-                    <p>{confession.content}</p>
-                    {confession.audio_url && (
-                      <div className="audio-indicator">
-                        <i className="fas fa-microphone"></i> Has voice note
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="confession-mod-actions">
-                    <button 
-                      className="btn btn--success"
-                      onClick={() => handleApproveConfession(confession.id)}
-                    >
-                      ✅ APPROVE
-                    </button>
-                    <button 
-                      className="btn btn--danger"
-                      onClick={() => handleRejectConfession(confession.id)}
-                    >
-                      ❌ REJECT
-                    </button>
-                  </div>
-                </div>
-              ))}
-              
-              {pendingConfessions.length === 0 && (
-                <div className="empty-state">
-                  <i className="fas fa-check-circle" style={{ fontSize: '3rem', color: '#4CAF50' }}></i>
-                  <h3>All caught up! 🎉</h3>
-                  <p>No confessions pending moderation</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* REPORTS TAB */}
-        {activeTab === 'reports' && (
-          <div className="reports-tab">
-            <h2>Reported Confessions ({reports.length})</h2>
-            <p className="tab-description">Review user reports and take action</p>
-            
-            <div className="reports-list">
-              {reports.map(report => (
-                <div key={report.id} className="report-card">
-                  <div className="report-header">
-                    <span className="report-reason-badge">{report.reason.replace('_', ' ').toUpperCase()}</span>
-                    <small>Reported {formatDate(report.created_at)} by {report.reporter_username}</small>
-                  </div>
-                  
-                  <div className="report-body">
-                    <div className="reported-confession">
-                      <strong>Confession:</strong>
-                      <p>{report.confession_content}</p>
-                      <span className="mood-badge-small">{report.mood_zone}</span>
-                    </div>
-                    
-                    {report.details && (
-                      <div className="report-details">
-                        <strong>Reporter's note:</strong>
-                        <p>{report.details}</p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="report-actions">
-                    <button 
-                      className="btn btn--danger"
-                      onClick={() => handleResolveReport(report.id, 'remove_confession')}
-                    >
-                      🗑️ REMOVE CONFESSION
-                    </button>
-                    <button 
-                      className="btn btn--secondary"
-                      onClick={() => handleResolveReport(report.id, 'dismiss')}
-                    >
-                      ✓ DISMISS REPORT
-                    </button>
-                  </div>
-                </div>
-              ))}
-              
-              {reports.length === 0 && (
-                <div className="empty-state">
-                  <i className="fas fa-shield-alt" style={{ fontSize: '3rem', color: '#2196F3' }}></i>
-                  <h3>No reports! 🛡️</h3>
-                  <p>No confessions have been flagged</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ACTIVITY LOGS TAB */}
-        {activeTab === 'activity' && (
-          <div className="activity-tab">
-            <h2>Activity Logs ({activityLogs.length})</h2>
-            <p className="tab-description">Real-time user actions and events</p>
-            
-            <div className="activity-logs-list">
-              {activityLogs.map(log => (
-                <div key={log.id} className="activity-log-card">
-                  <div className="log-header">
-                    <div className="log-user">
-                      <strong>{log.username} #{log.user_number}</strong>
-                      <small>{log.email}</small>
-                    </div>
-                    <div className="log-time">
-                      {formatDate(log.created_at)}
-                    </div>
-                  </div>
-                  
-                  <div className="log-body">
-                    <span className={`log-action-badge ${log.action_type}`}>
-                      {log.action_type.replace(/_/g, ' ').toUpperCase()}
-                    </span>
-                    
-                    {log.credits_change !== 0 && (
-                      <span className={`credits-change ${log.credits_change > 0 ? 'positive' : 'negative'}`}>
-                        {log.credits_change > 0 ? '+' : ''}{log.credits_change} credits
-                      </span>
-                    )}
-                    
-                    {log.action_details && (
-                      <div className="log-details">
-                        <pre>{JSON.stringify(JSON.parse(log.action_details), null, 2)}</pre>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-              
-              {activityLogs.length === 0 && (
-                <div className="empty-state">
-                  <i className="fas fa-history" style={{ fontSize: '3rem', color: '#999' }}></i>
-                  <h3>No Activity Yet</h3>
-                  <p>User actions will appear here</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* MESSAGES TAB */}
-        {activeTab === 'messages' && (
-          <div className="messages-tab">
-            <h2>User Messages ({conversations.length})</h2>
-            <p className="tab-description">Admin-User conversations</p>
-            
-            <div className="conversations-list">
-              {conversations.map(conv => (
-                <div key={conv.user_id} className="conversation-card">
-                  <div className="conv-header">
-                    <div className="conv-user">
-                      <strong>{conv.username} #{conv.user_number}</strong>
-                      <small>{conv.email}</small>
-                      <span className="online-status">
-                        {formatLastOnline(conv.last_activity)}
-                      </span>
-                    </div>
-                    {conv.unread_count > 0 && (
-                      <span className="conv-unread-badge">{conv.unread_count} new</span>
-                    )}
-                  </div>
-                  
-                  <div className="conv-preview">
-                    <span className="conv-sender">{conv.last_sender === 'user' ? 'User' : 'You'}:</span>
-                    {conv.last_message}
-                  </div>
-                  
-                  <div className="conv-actions">
-                    <button 
-                      className="btn btn--primary"
-                      onClick={() => window.location.href = `/admin-chat?user=${conv.user_id}`}
-                    >
-                      <i className="fas fa-reply"></i> REPLY
-                    </button>
-                  </div>
-                </div>
-              ))}
-              
-              {conversations.length === 0 && (
-                <div className="empty-state">
-                  <i className="fas fa-envelope" style={{ fontSize: '3rem', color: '#999' }}></i>
-                  <h3>No Messages</h3>
-                  <p>User messages will appear here</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+// ============================================
+// CONFESSION ROW COMPONENT
+// ============================================
+function ConfessionRow({ c, onPin, onFeature, onDelete, getMoodColor, timeAgo }) {
+  return (
+    <div className={`conf-row ${c.is_pinned ? 'conf-pinned' : ''} ${c.is_featured ? 'conf-featured' : ''}`}>
+      <div className="conf-left">
+        <span className="conf-mood" style={{ background: getMoodColor(c.mood_zone) }}>{c.mood_zone}</span>
+        {c.is_pinned && <span className="conf-tag conf-tag-pin">📌 PINNED</span>}
+        {c.is_featured && <span className="conf-tag conf-tag-feature">⭐ FEATURED</span>}
+        <p className="conf-text">{c.content?.slice(0, 120)}{c.content?.length > 120 ? '...' : ''}</p>
+        <div className="conf-meta">
+          <span>{c.username} #{c.user_number}</span>
+          <span>{timeAgo(c.created_at)}</span>
+          <span>❤️{c.heart_count} 👍{c.like_count} 😢{c.cry_count} 😂{c.laugh_count}</span>
+        </div>
+      </div>
+      <div className="conf-actions">
+        <button
+          className={`conf-btn ${c.is_pinned ? 'conf-btn-active' : ''}`}
+          onClick={() => onPin(c.id, c.is_pinned)}
+          title={c.is_pinned ? 'Unpin' : 'Pin to top'}
+        >
+          {c.is_pinned ? '📌 UNPIN' : '📌 PIN'}
+        </button>
+        <button
+          className={`conf-btn ${c.is_featured ? 'conf-btn-gold' : ''}`}
+          onClick={() => onFeature(c.id, c.is_featured)}
+          title={c.is_featured ? 'Remove feature' : 'Feature this'}
+        >
+          {c.is_featured ? '⭐ UNFEATURE' : '⭐ FEATURE'}
+        </button>
+        <button className="conf-btn conf-btn-delete" onClick={() => onDelete(c.id)}>🗑️ DELETE</button>
       </div>
     </div>
-  )
+  );
 }
