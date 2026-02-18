@@ -24,7 +24,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/icon-192.png">
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -32,8 +31,13 @@
     await OneSignal.init({
       appId: "79ef7558-1556-4939-81ca-70747e98e33a",
       safari_web_id: "web.onesignal.auto.14469d21-a548-446f-9323-a0e21fc14d38",
+      allowLocalhostAsSecureOrigin: true,
       notifyButton: { enable: true },
-      allowLocalhostAsSecureOrigin: true
+      serviceWorker: {
+        path: "/",
+        workerName: "OneSignalSDKWorker.js",
+        useCached: false
+      }
     });
   });
 </script>
