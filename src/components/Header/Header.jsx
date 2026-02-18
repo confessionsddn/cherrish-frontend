@@ -104,9 +104,9 @@ const [showThemeSelector, setShowThemeSelector] = useState(false)
                  </button>
               )}
 
-              <button className="neo-btn icon-btn" onClick={onThemeToggle}>
+              {/* <button className="neo-btn icon-btn" onClick={onThemeToggle}>
                 {theme === 'light' ? '☾' : '☼'}
-              </button>
+              </button> */}
 
               <div className="user-text-only" onClick={() => setShowUsernameModal(true)}>
                  <span className="u-name">@{user.username}</span>
