@@ -278,11 +278,7 @@ export default function ConfessionMenu({
           )}
 
 
-            {!isOwner && !isAdmin && (
-        <div className="menu-empty">
-          <span>No actions available</span>
-        </div>
-      )}
+    
         </div>
       </div>
     </div>
