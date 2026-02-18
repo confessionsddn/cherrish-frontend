@@ -400,3 +400,44 @@ h1, h2, h3, button, .tag, .badge, .mood-name {
 }
 
 
+
+/* SIMPLE DARK MODE */
+[data-theme="dark"] {
+  --bg-app: #0A0A0A;
+  --bg-card: #1A1A1A;
+  --bg-card-hover: #222222;
+  --bg-header: #111111;
+  --bg-input: #2A2A2A;
+  --bg-modal: #1A1A1A;
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  --bg-tag: #2A2A2A;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --text-muted: #888888;
+
+  --border-color: #444444;
+  --border-light: #333333;
+
+  --candy-black: #FFFFFF;
+  --candy-white: #1A1A1A;
+  
+  background: #0A0A0A;
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] body {
+  background: #0A0A0A;
+  background-image: radial-gradient(#222 1px, transparent 1px);
+}
+
+[data-theme="dark"] .confession-card {
+  background: #1A1A1A;
+  border-color: #444;
+}
+
+[data-theme="dark"] .neo-header {
+  background: #111;
+  border-color: #444;
+}
+
