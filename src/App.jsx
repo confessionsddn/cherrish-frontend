@@ -571,12 +571,10 @@ useEffect(() => {
         
         <Header 
           credits={userCredits}
-          onThemeToggle={toggleTheme}
           onPremiumClick={handlePremiumClick}
           onBuyCreditsClick={handleBuyCreditsClick}
           onLogout={handleLogout}
           onChangeUsername={() => setShowChangeUsernameModal(true)}
-          theme={theme}
           isAuthenticated={isAuthenticated}
           user={user}
         />
@@ -608,12 +606,10 @@ useEffect(() => {
       <>
         <Header 
           credits={userCredits}
-          onThemeToggle={toggleTheme}
           onPremiumClick={handlePremiumClick}
           onBuyCreditsClick={handleBuyCreditsClick}
           onLogout={handleLogout}
           onChangeUsername={() => setShowChangeUsernameModal(true)}
-          theme={theme}
           isAuthenticated={isAuthenticated}
           user={user}
         />
@@ -635,12 +631,10 @@ useEffect(() => {
       <>
         <Header 
           credits={userCredits}
-          onThemeToggle={toggleTheme}
           onPremiumClick={handlePremiumClick}
           onBuyCreditsClick={handleBuyCreditsClick}
           onLogout={handleLogout}
           onChangeUsername={() => setShowChangeUsernameModal(true)}
-          theme={theme}
           isAuthenticated={isAuthenticated}
           user={user}
         />
@@ -704,12 +698,10 @@ useEffect(() => {
       {/* Header */}
       <Header 
         credits={userCredits}
-        onThemeToggle={toggleTheme}
         onPremiumClick={handlePremiumClick}
         onBuyCreditsClick={handleBuyCreditsClick}
         onLogout={handleLogout}
         onChangeUsername={() => setShowChangeUsernameModal(true)}
-        theme={theme}
         isAuthenticated={isAuthenticated}
         user={user}
       />
