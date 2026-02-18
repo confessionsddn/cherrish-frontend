@@ -3,21 +3,17 @@ import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
 import { API_URL } from '../../services/api';
-import ThemeSelectorModal from '../Modals/ThemeSelectorModal'
 
 export default function Header({
   credits,
-  onThemeToggle,
   onPremiumClick,
   onBuyCreditsClick,
-  theme,
   isAuthenticated,
   user
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-const [showThemeSelector, setShowThemeSelector] = useState(false)
 
   const handleLogout = () => {
     if (window.confirm('Leaving so soon?')) {
@@ -104,10 +100,6 @@ const [showThemeSelector, setShowThemeSelector] = useState(false)
                  </button>
               )}
 
-              {/* <button className="neo-btn icon-btn" onClick={onThemeToggle}>
-                {theme === 'light' ? '☾' : '☼'}
-              </button> */}
-
               <div className="user-text-only" onClick={() => setShowUsernameModal(true)}>
                  <span className="u-name">@{user.username}</span>
                  <span className="u-num">#{user.user_number || '1'}</span>
@@ -118,9 +110,7 @@ const [showThemeSelector, setShowThemeSelector] = useState(false)
                 <i className="fas fa-sign-out-alt"></i>
               </button>
             </div>
-<button onClick={() => setShowThemeSelector(true)} title="Themes">
-  🎨
-</button>
+
             {/* MOBILE HAMBURGER (No Border, 3 Lines) */}
             <button 
               className={`hamburger-clean ${isMobileMenuOpen ? 'active' : ''}`} 
@@ -180,10 +170,6 @@ const [showThemeSelector, setShowThemeSelector] = useState(false)
                 </button>
               )}
 
-              <button onClick={() => { toggleMobileMenu(); onThemeToggle(); }} className="drawer-item">
-                SWITCH THEME <span className="theme-icon">{theme === 'light' ? '☾' : '☼'}</span>
-              </button>
-
               <div className="legal-row">
                 <a href="/terms-and-conditions">Terms</a>
                 <a href="/contact-us">Contact</a>
@@ -198,13 +184,7 @@ const [showThemeSelector, setShowThemeSelector] = useState(false)
           </div>
         </div>
       )}
-      
-{showThemeSelector && (
-  <ThemeSelectorModal
-    onClose={() => setShowThemeSelector(false)}
-    user={user}
-  />
-)}
+
       {/* Username Modal */}
       {showUsernameModal && (
         <ChangeUsernameModal
