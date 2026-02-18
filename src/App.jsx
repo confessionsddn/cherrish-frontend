@@ -18,6 +18,7 @@ import BuyCreditsModal from './components/Modals/BuyCreditsModal'
 import PremiumSubscriptionModal from './components/Modals/PremiumSubscriptionModal'
 import ChangeUsernameModal from './components/Modals/ChangeUsernameModal'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
+import PWAInstallPrompt from './components/PWAInstallPrompt/PWAInstallPrompt'
 // Community Pages
 import CommunityPage from './pages/CommunityPage'
 import AdminCommunityPanel from './components/AdminCommunityPanel/AdminCommunityPanel'
@@ -793,7 +794,9 @@ useEffect(() => {
           onSuccess={handleUsernameChange}
         />
       )}
+      <PWAInstallPrompt /> 
     </>
+        
           </ThemeProvider>
 
   )
