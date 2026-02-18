@@ -55,7 +55,8 @@ export default function ConfessionMenu({
   confessionUserId,
   isPremium = false,
   spotlightRemaining = 0,
-  boostRemaining = 0
+  boostRemaining = 0,
+  allowUserDelete = false
 }) {
   const [showSpotlight, setShowSpotlight] = useState(false)
   const [showBoost, setShowBoost] = useState(false)
@@ -222,24 +223,42 @@ export default function ConfessionMenu({
             </div>
           )}
 
-          {/* Delete (Owner only) */}
-          {isOwner && (
-            <button 
-              className="menu-item delete-item"
-              onClick={() => {
-                if (confirm('Delete this confession? You will get 2 credits refunded.')) {
-                  onDelete(confessionId)
-                  onClose()
-                }
-              }}
-            >
-              <div className="menu-item-icon">🗑️</div>
-              <div className="menu-item-content">
-                <div className="menu-item-title">Delete</div>
-                <div className="menu-item-desc">Remove confession</div>
-              </div>
-            </button>
-          )}
+          {/* ADMIN DELETE ONLY */}
+      {isAdmin && (
+        <div className="menu-section">
+          <div className="menu-label">ADMIN ACTIONS</div>
+          <button 
+            className="menu-item delete"
+            onClick={() => {
+              if (window.confirm('⚠️ ADMIN DELETE\n\nPermanently delete this confession?')) {
+                onDelete(confessionId);
+              }
+              onClose();
+            }}
+          >
+            <i className="fas fa-trash"></i>
+            <span>Delete Confession</span>
+          </button>
+        </div>
+      )}
+
+      {/* USER DELETE - DISABLED */}
+      {isOwner && !isAdmin && allowUserDelete && (
+        <div className="menu-section">
+          <button 
+            className="menu-item delete"
+            onClick={() => {
+              if (window.confirm('Delete your confession? (5 credits refund)')) {
+                onDelete(confessionId);
+              }
+              onClose();
+            }}
+          >
+            <i className="fas fa-trash"></i>
+            <span>Delete (5 credits back)</span>
+          </button>
+        </div>
+      )}
 
           {/* Report (Non-owner only) */}
           {!isOwner && (
@@ -258,6 +277,12 @@ export default function ConfessionMenu({
             </button>
           )}
 
+
+            {!isOwner && !isAdmin && (
+        <div className="menu-empty">
+          <span>No actions available</span>
+        </div>
+      )}
         </div>
       </div>
     </div>
