@@ -451,7 +451,11 @@ useEffect(() => {
   // UI FUNCTIONS
   // ============================================
   
-  
+  // Load saved theme
+useEffect(() => {
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+}, []);
 
   const showNotification = (message, type) => {
     setNotification({ message, type })
