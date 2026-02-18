@@ -420,6 +420,7 @@ export default function ConfessionCard({
                 spotlightRemaining={premiumData?.spotlight_12h_remaining || 0}
                 boostRemaining={premiumData?.boost_12h_remaining || 0}
                 isAdmin={confession.is_current_user_admin}
+                allowUserDelete={false}
               />
             </div>
           )}
