@@ -27,20 +27,15 @@
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function (OneSignal) {
+  OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "79ef7558-1556-4939-81ca-70747e98e33a",
       safari_web_id: "web.onesignal.auto.14469d21-a548-446f-9323-a0e21fc14d38",
-      allowLocalhostAsSecureOrigin: true,
-      notifyButton: { enable: true },
-      serviceWorker: {
-        path: "/",
-        workerName: "OneSignalSDKWorker.js",
-        useCached: false
-      }
+      notifyButton: { enable: true }
     });
   });
 </script>
+
 
   </head>
   <body>
