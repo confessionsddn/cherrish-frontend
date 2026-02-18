@@ -106,6 +106,19 @@ export default function Header({
                  {user.is_premium && <i className="fas fa-crown black-crown"></i>}
               </div>
 
+              <button 
+                className="neo-btn icon-btn" 
+                onClick={() => {
+                  const current = document.documentElement.getAttribute('data-theme') || 'light';
+                  const next = current === 'light' ? 'dark' : 'light';
+                  document.documentElement.setAttribute('data-theme', next);
+                  localStorage.setItem('theme', next);
+                }}
+                title="Toggle theme"
+              >
+                {(document.documentElement.getAttribute('data-theme') || 'light') === 'light' ? '🌙' : '☀️'}
+              </button>
+              
               <button className="neo-btn logout-desktop" onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt"></i>
               </button>
