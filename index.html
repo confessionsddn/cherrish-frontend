@@ -30,15 +30,9 @@
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "79ef7558-1556-4939-81ca-70747e98e33a",
-      serviceWorkerPath: "/OneSignalSDKWorker.js",
-      safari_web_id: "web.onesignal.auto.14469d21-a548-446f-9323-a0e21fc14d38",
-      notifyButton: {
-        enable: true,
-        position: 'bottom-left',  // Mobile-friendly
-        size: 'small'
-      },
-      // Mobile fixes
-     
+      serviceWorkerPath: "/OneSignalSDKWorker.js",  // ← Relative path
+      serviceWorkerUpdaterPath: "/OneSignal.sw.js",
+      allowLocalhostAsSecureOrigin: true
     });
   });
 </script>
