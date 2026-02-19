@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+e<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -31,7 +31,8 @@
     await OneSignal.init({
       appId: "79ef7558-1556-4939-81ca-70747e98e33a",
       serviceWorkerPath: "/OneSignalSDKWorker.js",
-      serviceWorkerParam: { scope: "/" }
+      serviceWorkerUpdaterPath: "/OneSignal.sw.js",
+      path: "/"
     });
   });
 </script>
