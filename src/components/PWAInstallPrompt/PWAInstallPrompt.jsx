@@ -5,7 +5,34 @@ import './PWAInstallPrompt.css';
 export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showPrompt, setShowPrompt] = useState(false);
+useEffect(() => {
+  // Check if already dismissed
+  const dismissed = localStorage.getItem('pwa_install_dismissed');
+  if (dismissed) return;
 
+  // Check if already installed
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('✅ App already installed');
+    return;
+  }
+
+  // Listen for install prompt
+  const handler = (e) => {
+    console.log('💾 Install prompt fired');
+    e.preventDefault();
+    setDeferredPrompt(e);
+    
+    // Show after 30 seconds
+    setTimeout(() => {
+      console.log('📱 Showing install prompt');
+      setShowPrompt(true);
+    }, 30000);
+  };
+
+  window.addEventListener('beforeinstallprompt', handler);
+
+  return () => window.removeEventListener('beforeinstallprompt', handler);
+}, []);
   useEffect(() => {
     // Check if already dismissed
     const dismissed = localStorage.getItem('pwa_install_dismissed');
