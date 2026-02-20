@@ -56,6 +56,7 @@ export default function ConfessionMenu({
   isPremium = false,
   spotlightRemaining = 0,
   boostRemaining = 0,
+  isAdmin,
   allowUserDelete = false
 }) {
   const [showSpotlight, setShowSpotlight] = useState(false)
