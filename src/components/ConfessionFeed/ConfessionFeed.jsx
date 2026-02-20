@@ -34,8 +34,10 @@ export default function ConfessionFeed({
           currentUserId={currentUserId}
           isPremium={isPremium}
           premiumData={premiumData}
+          isAdmin={isAdmin} 
           style={{
             animationDelay: `${index * 0.05}s`
+            
           }}
         />
       ))}
