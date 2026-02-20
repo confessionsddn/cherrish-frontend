@@ -262,22 +262,62 @@ export default function ConfessionMenu({
       )}
 
           {/* Report (Non-owner only) */}
-          {!isOwner && (
-            <button 
-              className="menu-item report-item"
-              onClick={() => {
-                onClose()
-                // Trigger report modal (implement separately)
-              }}
-            >
-              <div className="menu-item-icon">🚩</div>
-              <div className="menu-item-content">
-                <div className="menu-item-title">Report</div>
-                <div className="menu-item-desc">Report inappropriate content</div>
-              </div>
-            </button>
-          )}
-
+{!isOwner && (
+  <button 
+    className="menu-item report-item"
+    onClick={async () => {
+      onClose()
+      
+      const reasons = [
+        'Spam',
+        'Harassment', 
+        'Inappropriate content',
+        'False information',
+        'Other'
+      ];
+      
+      const reason = prompt('Why are you reporting this confession?\n\n' + 
+        reasons.map((r, i) => `${i+1}. ${r}`).join('\n') + 
+        '\n\nEnter number (1-5):');
+      
+      if (!reason || reason < 1 || reason > 5) return;
+      
+      const reasonText = ['spam', 'harassment', 'inappropriate', 'false_info', 'other'][parseInt(reason) - 1];
+      const details = prompt('Additional details (optional):');
+      
+      try {
+        const response = await fetch(`${API_URL}/api/confessions/${confessionId}/report`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            reason: reasonText,
+            details: details || ''
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('✅ Report submitted! Admin will review it.');
+        } else {
+          alert('❌ ' + data.error);
+        }
+      } catch (error) {
+        console.error('Report error:', error);
+        alert('❌ Failed to submit report');
+      }
+    }}
+  >
+    <div className="menu-item-icon">🚩</div>
+    <div className="menu-item-content">
+      <div className="menu-item-title">Report</div>
+      <div className="menu-item-desc">Report inappropriate content</div>
+    </div>
+  </button>
+)}
 
     
         </div>
