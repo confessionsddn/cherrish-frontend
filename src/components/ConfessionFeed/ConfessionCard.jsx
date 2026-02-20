@@ -411,18 +411,17 @@ export default function ConfessionCard({
               zIndex: 100
             }}>
               <ConfessionMenu 
-                confessionId={confession.id}
-                isOwner={isOwner}
-                onClose={() => setShowMenu(false)}
-                onDelete={handleDelete}
-                currentUserId={currentUserId}
-                confessionUserId={confession.user_id}
-                isPremium={isPremium}
-                spotlightRemaining={premiumData?.spotlight_12h_remaining || 0}
-                boostRemaining={premiumData?.boost_12h_remaining || 0}
-                isAdmin={confession.is_current_user_admin}
-                allowUserDelete={false}
-                 isAdmin={isAdmin} 
+  confessionId={confession.id}
+  isOwner={isOwner}
+  onClose={() => setShowMenu(false)}
+  onDelete={handleDelete}
+  currentUserId={currentUserId}
+  confessionUserId={confession.user_id}
+  isPremium={isPremium}
+  spotlightRemaining={premiumData?.spotlight_12h_remaining || 0}
+  boostRemaining={premiumData?.boost_12h_remaining || 0}
+  isAdmin={isAdmin}  // ✅ ONLY THIS ONE
+  allowUserDelete={false}
               />
             </div>
           )}
