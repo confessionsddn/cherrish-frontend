@@ -266,6 +266,8 @@ const [currentPath, setCurrentPath] = useState(window.location.pathname)
   // ============================================
   
   const handleNewConfession = async (confession) => {
+     console.log('🔍 MOOD BEING SENT:', confession.mood_zone);
+  console.log('🔍 FULL CONFESSION:', confession);
     try {
       const formData = new FormData()
       formData.append('content', confession.content)
