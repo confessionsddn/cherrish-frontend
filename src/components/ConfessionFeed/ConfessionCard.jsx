@@ -71,7 +71,7 @@ export default function ConfessionCard({
   currentUserId,
   isPremium,
   premiumData,
-   isAdmin ,
+  isAdmin,
   style 
 }) {
   // State
@@ -420,7 +420,7 @@ export default function ConfessionCard({
   isPremium={isPremium}
   spotlightRemaining={premiumData?.spotlight_12h_remaining || 0}
   boostRemaining={premiumData?.boost_12h_remaining || 0}
-  isAdmin={isAdmin}  // ✅ ONLY THIS ONE
+  isAdmin={isAdmin}
   allowUserDelete={false}
               />
             </div>
