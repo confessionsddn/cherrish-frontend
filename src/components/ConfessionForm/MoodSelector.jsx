@@ -4,7 +4,7 @@ import './MoodSelector.css';
 const MOOD_OPTIONS = [
   { name: 'Crush',        color: 'var(--candy-pink)' },
   { name: 'Heartbreak',   color: 'var(--candy-blue)' },
-  { name: 'Secret',       color: 'var(--candy-purple)' },
+  { name: 'Secret Admirer', color: 'var(--candy-purple)' }, 
   { name: 'Love Stories', color: 'var(--candy-orange)' }
 ];
 
