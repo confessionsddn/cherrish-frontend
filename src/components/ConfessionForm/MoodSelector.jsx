@@ -13,7 +13,7 @@ const MOOD_VIDEO_FILES = {
   Crush: 'crush.mp4',
   Heartbreak: 'hbreak.mp4',
   Secret: 'secret.mp4',
-  'Love Stories': 'stories.mp4',
+  'Love Stories': 'secret.mp4',
 };
 
 const MoodVideoLoop = ({ moodName }) => {
