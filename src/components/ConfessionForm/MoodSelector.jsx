@@ -10,10 +10,10 @@ const MOOD_OPTIONS = [
 
 // Explicit mapping from mood name to video file in /public
 const MOOD_VIDEO_FILES = {
-  Crush: 'crush.mp4',
-  Heartbreak: 'hbreak.mp4',
-  Secret: 'secret.mp4',
-  'Love Stories': 'secret.mp4',
+  'Crush': 'crush.mp4',
+  'Heartbreak': 'hbreak.mp4',
+  'Secret Admirer': 'secret.mp4',    // ✅ Fixed key name
+  'Love Stories': 'stories.mp4',     // ✅ Fixed video file
 };
 
 const MoodVideoLoop = ({ moodName }) => {
