@@ -308,6 +308,8 @@ export default function AdminPanel() {
     else if (activeTab === 'analytics') fetchAnalytics();
     else if (activeTab === 'logs') fetchLogs();
     else if (activeTab === 'polls') fetchPolls();
+    else if (activeTab === 'reports') fetchReports();
+    else if (activeTab === 'access') fetchAccessRequests();
   }, [activeTab, userPage, userFilter]);
 
   useEffect(() => {
@@ -770,6 +772,10 @@ export default function AdminPanel() {
             { key: 'polls', icon: '📊', label: 'POLLS' },
             { key: 'analytics', icon: '📈', label: 'ANALYTICS' },
             { key: 'logs', icon: '📋', label: 'USER LOGS' },
+            { key: 'reports', icon: '🚩', label: 'REPORTS' },
+            { key: 'access', icon: '🎫', label: 'ACCESS CODES' },
+            { key: 'credits', icon: '💰', label: 'CREDIT MANAGER' },
+            { key: 'premium', icon: '⭐', label: 'PREMIUM MANAGER' },
           ].map(tab => (
             <button key={tab.key}
               className={`side-btn ${activeTab === tab.key ? 'side-btn-active' : ''}`}
@@ -788,6 +794,11 @@ export default function AdminPanel() {
         {activeTab === 'polls' && renderPolls()}
         {activeTab === 'analytics' && renderAnalytics()}
         {activeTab === 'logs' && renderLogs()}
+        {activeTab === 'reports' && renderReports()}
+        {activeTab === 'access' && renderAccessCodes()}
+        {activeTab === 'credits' && renderCreditManager()}
+        {activeTab === 'premium' && renderPremiumManager()}
+
       </main>
 
       {/* User detail modal */}
@@ -842,6 +853,455 @@ export default function AdminPanel() {
     </div>
   );
 }
+
+// ============================================
+// TAB: REPORTS (NEW)
+// ============================================
+const [reports, setReports] = useState([]);
+
+const fetchReports = async () => {
+  setLoading(true);
+  try {
+    const res = await fetch(`${API_URL}/api/admin/reports`, { headers });
+    const data = await res.json();
+    setReports(data.reports || []);
+  } catch (e) { console.error(e); }
+  finally { setLoading(false); }
+};
+
+const handleReport = async (reportId, action) => {
+  const msg = action === 'dismiss' ? 'DISMISS this report?' : 'REMOVE the confession?';
+  if (!confirm(msg)) return;
+  
+  try {
+    const res = await fetch(`${API_URL}/api/admin/reports/${reportId}/resolve`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ action })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showNotification(action === 'dismiss' ? '✅ Report dismissed' : '🗑️ Confession removed', 'success');
+      fetchReports();
+    } else {
+      showNotification(data.error, 'error');
+    }
+  } catch (e) {
+    showNotification('Failed to resolve report', 'error');
+  }
+};
+
+const renderReports = () => (
+  <div className="tab-content">
+    <h2 className="tab-title">REPORTS ({reports.filter(r => r.status === 'pending').length})</h2>
+    {loading ? <div className="loading-state">LOADING...</div> : (
+      <div className="reports-list">
+        {reports.filter(r => r.status === 'pending').length === 0 ? (
+          <div className="empty-state">
+            <p>✅ No pending reports!</p>
+            <small>Reported confessions will appear here</small>
+          </div>
+        ) : (
+          reports.filter(r => r.status === 'pending').map(report => (
+            <div key={report.id} className="report-card">
+              <div className="report-header">
+                <span className="report-reason">🚩 {report.reason.toUpperCase()}</span>
+                <span className="report-date">{new Date(report.created_at).toLocaleDateString()}</span>
+              </div>
+              
+              <div className="report-details">
+                <p><strong>Reported by:</strong> {report.reporter_username} #{report.reporter_user_number}</p>
+                <p><strong>Confession by:</strong> {report.confession_username} #{report.confession_user_number}</p>
+                {report.details && <p><strong>Details:</strong> {report.details}</p>}
+              </div>
+
+              <div className="reported-confession-box">
+                <strong>📝 Reported Confession:</strong>
+                <p className="conf-text" style={{ marginTop: 8, padding: 12, background: '#f5f5f5', borderRadius: 8 }}>
+                  {report.confession_content}
+                </p>
+                <span className="conf-mood" style={{ marginTop: 8, display: 'inline-block', background: getMoodColor(report.confession_mood_zone) }}>
+                  {report.confession_mood_zone}
+                </span>
+              </div>
+
+              <div className="report-actions" style={{ marginTop: 16, display: 'flex', gap: 8 }}>
+                <button 
+                  className="conf-btn" 
+                  style={{ background: '#4CAF50', color: '#fff' }}
+                  onClick={() => handleReport(report.id, 'dismiss')}
+                >
+                  ✅ DISMISS (Keep Confession)
+                </button>
+                <button 
+                  className="conf-btn conf-btn-delete" 
+                  onClick={() => handleReport(report.id, 'remove')}
+                >
+                  🗑️ REMOVE CONFESSION
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    )}
+  </div>
+);
+
+// ============================================
+// TAB: ACCESS CODES (NEW)
+// ============================================
+const [accessRequests, setAccessRequests] = useState([]);
+const [generatedCodes, setGeneratedCodes] = useState([]);
+
+const fetchAccessRequests = async () => {
+  setLoading(true);
+  try {
+    const res = await fetch(`${API_URL}/api/admin/access-requests`, { headers });
+    const data = await res.json();
+    setAccessRequests(data.requests || []);
+  } catch (e) { console.error(e); }
+  finally { setLoading(false); }
+};
+
+const generateAccessCodes = async () => {
+  const count = prompt('How many access codes? (1-1000)');
+  if (!count || count < 1 || count > 1000) return;
+  
+  try {
+    const res = await fetch(`${API_URL}/api/admin/codes/generate`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ count: parseInt(count) })
+    });
+    const data = await res.json();
+    if (data.success) {
+      setGeneratedCodes(data.codes);
+      
+      // Download as text file
+      const blob = new Blob([data.codes.join('\n')], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `access_codes_${Date.now()}.txt`;
+      a.click();
+      
+      showNotification(`✅ Generated ${count} codes! Downloaded as file.`, 'success');
+    } else {
+      showNotification(data.error, 'error');
+    }
+  } catch (e) {
+    showNotification('Failed to generate codes', 'error');
+  }
+};
+
+const handleAccessRequest = async (requestId, action) => {
+  try {
+    const res = await fetch(`${API_URL}/api/admin/access-requests/${requestId}/${action}`, {
+      method: 'POST',
+      headers
+    });
+    const data = await res.json();
+    if (data.success) {
+      showNotification(`✅ Request ${action}d!`, 'success');
+      fetchAccessRequests();
+    } else {
+      showNotification(data.error, 'error');
+    }
+  } catch (e) {
+    showNotification('Failed', 'error');
+  }
+};
+
+const renderAccessCodes = () => (
+  <div className="tab-content">
+    <h2 className="tab-title">ACCESS CODES</h2>
+    
+    <div className="access-actions" style={{ marginBottom: 32 }}>
+      <button className="announce-btn" onClick={generateAccessCodes}>
+        🎫 GENERATE ACCESS CODES
+      </button>
+    </div>
+
+    {generatedCodes.length > 0 && (
+      <div className="generated-codes-box" style={{ marginBottom: 32, padding: 20, background: '#f9f9f9', borderRadius: 12, border: '3px solid #000' }}>
+        <h3>✅ RECENTLY GENERATED CODES</h3>
+        <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: 12 }}>
+          These codes were just generated. They've been downloaded as a text file.
+        </p>
+        <div style={{ maxHeight: 200, overflow: 'auto', background: '#fff', padding: 12, borderRadius: 8, fontFamily: 'monospace', fontSize: '0.85rem' }}>
+          {generatedCodes.map((code, i) => (
+            <div key={i}>{code}</div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <h3 style={{ marginBottom: 16 }}>📧 PENDING ACCESS REQUESTS</h3>
+    {loading ? <div className="loading-state">LOADING...</div> : (
+      accessRequests.filter(r => r.status === 'pending').length === 0 ? (
+        <div className="empty-state">
+          <p>✅ No pending requests!</p>
+        </div>
+      ) : (
+        <div className="table-scroll-wrap">
+          <div className="data-table">
+            <div className="table-head">
+              <span>EMAIL</span>
+              <span>REQUESTED</span>
+              <span>ACTIONS</span>
+            </div>
+            {accessRequests.filter(r => r.status === 'pending').map(req => (
+              <div key={req.id} className="table-row">
+                <span className="cell-email">{req.email}</span>
+                <span className="cell-activity">{timeAgo(req.created_at)}</span>
+                <span className="cell-actions">
+                  <button 
+                    className="act-btn" 
+                    style={{ background: '#4CAF50', color: '#fff' }}
+                    onClick={() => handleAccessRequest(req.id, 'approve')}
+                  >
+                    ✅ APPROVE
+                  </button>
+                  <button 
+                    className="act-btn act-delete" 
+                    onClick={() => handleAccessRequest(req.id, 'reject')}
+                  >
+                    ❌ REJECT
+                  </button>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    )}
+  </div>
+);
+
+// ============================================
+// TAB: CREDIT MANAGER (NEW)
+// ============================================
+const [creditUser, setCreditUser] = useState('');
+const [creditAmount, setCreditAmount] = useState('');
+
+const adjustCredits = async (operation) => {
+  if (!creditUser || !creditAmount) {
+    showNotification('Enter user ID/email and amount', 'error');
+    return;
+  }
+
+  const amount = parseInt(creditAmount);
+  if (isNaN(amount) || amount <= 0) {
+    showNotification('Invalid amount', 'error');
+    return;
+  }
+
+  const finalAmount = operation === 'add' ? amount : -amount;
+  
+  if (!confirm(`${operation === 'add' ? 'ADD' : 'REMOVE'} ${amount} credits ${operation === 'add' ? 'to' : 'from'} user ${creditUser}?`)) return;
+
+  try {
+    const res = await fetch(`${API_URL}/api/admin/users/adjust-credits`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        userIdentifier: creditUser, // can be user_id, email, or username
+        amount: finalAmount,
+        reason: `Admin adjustment: ${operation === 'add' ? 'added' : 'removed'} ${amount} credits`
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showNotification(`✅ ${operation === 'add' ? 'Added' : 'Removed'} ${amount} credits! New balance: ${data.new_balance}`, 'success');
+      setCreditUser('');
+      setCreditAmount('');
+    } else {
+      showNotification(data.error, 'error');
+    }
+  } catch (e) {
+    showNotification('Failed to adjust credits', 'error');
+  }
+};
+
+const renderCreditManager = () => (
+  <div className="tab-content">
+    <h2 className="tab-title">CREDIT MANAGER</h2>
+    <p style={{ color: '#888', marginBottom: 24, fontSize: '0.9rem' }}>
+      Manually add or remove credits from any user's account
+    </p>
+
+    <div className="credit-manager-box" style={{ maxWidth: 600, padding: 24, background: '#f9f9f9', borderRadius: 12, border: '3px solid #000' }}>
+      <div className="poll-field">
+        <label style={{ display: 'block', marginBottom: 8, fontWeight: 700 }}>USER (Email, Username, or User #)</label>
+        <input
+          className="announce-input"
+          placeholder="user@example.com OR username OR #123"
+          value={creditUser}
+          onChange={e => setCreditUser(e.target.value)}
+        />
+      </div>
+
+      <div className="poll-field">
+        <label style={{ display: 'block', marginBottom: 8, fontWeight: 700 }}>AMOUNT</label>
+        <input
+          type="number"
+          className="announce-input"
+          placeholder="100"
+          value={creditAmount}
+          onChange={e => setCreditAmount(e.target.value)}
+          min="1"
+        />
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+        <button 
+          className="announce-btn" 
+          style={{ flex: 1, background: '#4CAF50' }}
+          onClick={() => adjustCredits('add')}
+        >
+          ➕ ADD CREDITS
+        </button>
+        <button 
+          className="announce-btn" 
+          style={{ flex: 1, background: '#FF5722' }}
+          onClick={() => adjustCredits('remove')}
+        >
+          ➖ REMOVE CREDITS
+        </button>
+      </div>
+    </div>
+
+    <div className="info-box" style={{ marginTop: 24, padding: 16, background: '#FFF9C4', borderRadius: 8, border: '2px solid #000' }}>
+      <strong>💡 TIP:</strong> You can use email, username, or user number (e.g., #123) to identify users.
+    </div>
+  </div>
+);
+
+// ============================================
+// TAB: PREMIUM MANAGER (NEW)
+// ============================================
+const [premiumUser, setPremiumUser] = useState('');
+const [premiumDuration, setPremiumDuration] = useState('30');
+
+const togglePremium = async (action) => {
+  if (!premiumUser) {
+    showNotification('Enter user ID/email', 'error');
+    return;
+  }
+
+  if (action === 'activate') {
+    const days = parseInt(premiumDuration);
+    if (isNaN(days) || days <= 0) {
+      showNotification('Invalid duration', 'error');
+      return;
+    }
+
+    if (!confirm(`Activate PREMIUM for ${days} days for user ${premiumUser}?`)) return;
+
+    try {
+      const res = await fetch(`${API_URL}/api/admin/users/grant-premium`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          userIdentifier: premiumUser,
+          days: days
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showNotification(`✅ Premium activated for ${days} days!`, 'success');
+        setPremiumUser('');
+      } else {
+        showNotification(data.error, 'error');
+      }
+    } catch (e) {
+      showNotification('Failed to activate premium', 'error');
+    }
+  } else {
+    // Deactivate
+    if (!confirm(`REMOVE premium from user ${premiumUser}?`)) return;
+
+    try {
+      const res = await fetch(`${API_URL}/api/admin/users/revoke-premium`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          userIdentifier: premiumUser
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showNotification('❌ Premium deactivated!', 'success');
+        setPremiumUser('');
+      } else {
+        showNotification(data.error, 'error');
+      }
+    } catch (e) {
+      showNotification('Failed to deactivate premium', 'error');
+    }
+  }
+};
+
+const renderPremiumManager = () => (
+  <div className="tab-content">
+    <h2 className="tab-title">PREMIUM MANAGER</h2>
+    <p style={{ color: '#888', marginBottom: 24, fontSize: '0.9rem' }}>
+      Grant or revoke premium subscription for any user
+    </p>
+
+    <div className="premium-manager-box" style={{ maxWidth: 600, padding: 24, background: '#f9f9f9', borderRadius: 12, border: '3px solid #000' }}>
+      <div className="poll-field">
+        <label style={{ display: 'block', marginBottom: 8, fontWeight: 700 }}>USER (Email, Username, or User #)</label>
+        <input
+          className="announce-input"
+          placeholder="user@example.com OR username OR #123"
+          value={premiumUser}
+          onChange={e => setPremiumUser(e.target.value)}
+        />
+      </div>
+
+      <div className="poll-field">
+        <label style={{ display: 'block', marginBottom: 8, fontWeight: 700 }}>DURATION (Days)</label>
+        <select 
+          className="ctrl-select"
+          value={premiumDuration}
+          onChange={e => setPremiumDuration(e.target.value)}
+        >
+          <option value="7">7 Days</option>
+          <option value="15">15 Days</option>
+          <option value="30">30 Days (1 Month)</option>
+          <option value="90">90 Days (3 Months)</option>
+          <option value="180">180 Days (6 Months)</option>
+          <option value="365">365 Days (1 Year)</option>
+          <option value="730">730 Days (2 Years)</option>
+          <option value="3650">3650 Days (10 Years)</option>
+        </select>
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+        <button 
+          className="announce-btn" 
+          style={{ flex: 1, background: '#FFD700', color: '#000' }}
+          onClick={() => togglePremium('activate')}
+        >
+          ⭐ ACTIVATE PREMIUM
+        </button>
+        <button 
+          className="announce-btn" 
+          style={{ flex: 1, background: '#666' }}
+          onClick={() => togglePremium('deactivate')}
+        >
+          ❌ DEACTIVATE PREMIUM
+        </button>
+      </div>
+    </div>
+
+    <div className="info-box" style={{ marginTop: 24, padding: 16, background: '#FFE0E0', borderRadius: 8, border: '2px solid #000' }}>
+      <strong>⚠️ WARNING:</strong> Manually granted premium will override any active subscription. Deactivating will cancel premium immediately without refund.
+    </div>
+  </div>
+);
 
 // ============================================
 // CONFESSION ROW COMPONENT
