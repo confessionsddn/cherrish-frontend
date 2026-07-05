@@ -36,6 +36,15 @@ export default function AdminPanel() {
   const [notification, setNotification] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
+  
+  // Reports, Access Codes, Credit Manager, Premium Manager state
+  const [reports, setReports] = useState([]);
+  const [accessRequests, setAccessRequests] = useState([]);
+  const [generatedCodes, setGeneratedCodes] = useState([]);
+  const [creditUser, setCreditUser] = useState('');
+  const [creditAmount, setCreditAmount] = useState('');
+  const [premiumUser, setPremiumUser] = useState('');
+  const [premiumDuration, setPremiumDuration] = useState('30');
 
   const headers = {
     'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -852,12 +861,10 @@ export default function AdminPanel() {
       )}
     </div>
   );
-}
 
 // ============================================
 // TAB: REPORTS (NEW)
 // ============================================
-const [reports, setReports] = useState([]);
 
 const fetchReports = async () => {
   setLoading(true);
@@ -951,8 +958,6 @@ const renderReports = () => (
 // ============================================
 // TAB: ACCESS CODES (NEW)
 // ============================================
-const [accessRequests, setAccessRequests] = useState([]);
-const [generatedCodes, setGeneratedCodes] = useState([]);
 
 const fetchAccessRequests = async () => {
   setLoading(true);
@@ -1082,8 +1087,6 @@ const renderAccessCodes = () => (
 // ============================================
 // TAB: CREDIT MANAGER (NEW)
 // ============================================
-const [creditUser, setCreditUser] = useState('');
-const [creditAmount, setCreditAmount] = useState('');
 
 const adjustCredits = async (operation) => {
   if (!creditUser || !creditAmount) {
@@ -1181,8 +1184,6 @@ const renderCreditManager = () => (
 // ============================================
 // TAB: PREMIUM MANAGER (NEW)
 // ============================================
-const [premiumUser, setPremiumUser] = useState('');
-const [premiumDuration, setPremiumDuration] = useState('30');
 
 const togglePremium = async (action) => {
   if (!premiumUser) {
@@ -1302,6 +1303,8 @@ const renderPremiumManager = () => (
     </div>
   </div>
 );
+
+} // end of AdminPanel component
 
 // ============================================
 // CONFESSION ROW COMPONENT
