@@ -393,47 +393,6 @@ const [currentPath, setCurrentPath] = useState(window.location.pathname)
   }
 
   // ============================================
-  // GIFT HANDLER
-  // ============================================
-  
-  const handleSendGift = async (giftType, price) => {
-    try {
-      const response = await fetch(`${API_URL}/api/gifts/send`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          gift_id: giftType,
-          receiver_id: selectedConfessionId,
-          confession_id: selectedConfessionId
-        })
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setUserCredits(data.credits_remaining)
-        setShowGiftModal(false)
-        showNotification(`GIFT SENT! 🎁 ${data.message}`, 'success')
-        
-        // Show unlock notification if just unlocked
-        if (data.receiver_progress?.just_unlocked) {
-          setTimeout(() => {
-            showNotification(`🎉 GIFT UNLOCKED!`, 'success')
-          }, 1500)
-        }
-      } else {
-        showNotification(data.error || 'Failed to send gift', 'error')
-      }
-    } catch (error) {
-      console.error('Send gift error:', error)
-      showNotification('NOT ENOUGH CREDITS! 💸', 'error')
-    }
-  }
-
-  // ============================================
   // MODAL HANDLERS
   // ============================================
   

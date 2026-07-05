@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
+import ThemeSelectorModal from '../Modals/ThemeSelectorModal';
 import { API_URL } from '../../services/api';
 
 export default function Header({
@@ -13,6 +14,7 @@ export default function Header({
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [showThemeModal, setShowThemeModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
   const handleLogout = () => {
@@ -108,15 +110,10 @@ export default function Header({
 
               <button 
                 className="neo-btn icon-btn" 
-                onClick={() => {
-                  const current = document.documentElement.getAttribute('data-theme') || 'light';
-                  const next = current === 'light' ? 'dark' : 'light';
-                  document.documentElement.setAttribute('data-theme', next);
-                  localStorage.setItem('theme', next);
-                }}
-                title="Toggle theme"
+                onClick={() => setShowThemeModal(true)}
+                title="Choose theme"
               >
-                {(document.documentElement.getAttribute('data-theme') || 'light') === 'light' ? '🌙' : '☀️'}
+                🎨
               </button>
               
               <button className="neo-btn logout-desktop" onClick={handleLogout}>
@@ -206,6 +203,14 @@ export default function Header({
           isPremium={user.is_premium}
           credits={credits}
           onSuccess={() => window.location.reload()}
+        />
+      )}
+
+      {/* Theme Selector Modal */}
+      {showThemeModal && (
+        <ThemeSelectorModal
+          onClose={() => setShowThemeModal(false)}
+          user={user}
         />
       )}
     </>

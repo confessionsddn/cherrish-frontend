@@ -4,18 +4,22 @@ import { useState, useEffect } from 'react';
 import { API_URL } from '../../services/api';
 import './GiftModal.css';
 
-// Gift catalog
+// Gift catalog - MUST match backend GIFT_CATALOG keys exactly
 const GIFTS = [
-  { id: 'heart',      emoji: '💖', name: 'Heart',       cost: 5,   rarity: 'common',    description: 'Send some love' },
-  { id: 'rose',       emoji: '🌹', name: 'Rose',        cost: 10,  rarity: 'common',    description: 'Classic romance' },
-  { id: 'fire',       emoji: '🔥', name: 'Fire',        cost: 15,  rarity: 'uncommon',  description: 'This is 🔥' },
-  { id: 'crown',      emoji: '👑', name: 'Crown',       cost: 25,  rarity: 'uncommon',  description: 'You are royalty' },
-  { id: 'diamond',    emoji: '💎', name: 'Diamond',     cost: 50,  rarity: 'rare',      description: 'You are precious' },
-  { id: 'star',       emoji: '⭐', name: 'Star',        cost: 30,  rarity: 'uncommon',  description: 'You\'re a star' },
-  { id: 'magic',      emoji: '✨', name: 'Magic',       cost: 20,  rarity: 'uncommon',  description: 'Pure magic' },
-  { id: 'cake',       emoji: '🎂', name: 'Cake',        cost: 35,  rarity: 'rare',      description: 'Celebrate you' },
-  { id: 'rainbow',    emoji: '🌈', name: 'Rainbow',     cost: 40,  rarity: 'rare',      description: 'Colorful vibes' },
-  { id: 'galaxy',     emoji: '🌌', name: 'Galaxy',      cost: 100, rarity: 'legendary', description: 'You\'re out of this world' },
+  // Effects (Awards)
+  { id: 'gold_hearts',  emoji: '💖', name: 'Sparkle Hearts', cost: 25,  rarity: 'uncommon',  description: 'Shower them with sparkle' },
+  { id: 'cyber_glitch', emoji: '⚡', name: 'Cyber Glitch',   cost: 35,  rarity: 'rare',      description: 'Glitch in the matrix' },
+  { id: 'holo_foil',    emoji: '🌈', name: 'Holo Foil',      cost: 50,  rarity: 'rare',      description: 'Holographic vibes' },
+  { id: 'sunset_bg',    emoji: '🌅', name: 'Vaporwave',      cost: 40,  rarity: 'rare',      description: 'Aesthetic sunset' },
+  { id: 'starry_night', emoji: '🌌', name: 'Galactic Mode',  cost: 45,  rarity: 'rare',      description: 'Out of this world' },
+  { id: 'retro_vhs',    emoji: '📼', name: 'Retro VHS',      cost: 30,  rarity: 'uncommon',  description: 'Nostalgic rewind' },
+  // Physical Gifts
+  { id: 'roses',        emoji: '🌹', name: 'Mega Bouquet',   cost: 20,  rarity: 'common',    description: 'Classic romance' },
+  { id: 'ring',         emoji: '💎', name: 'Diamond Ring',   cost: 100, rarity: 'legendary', description: 'You are precious' },
+  { id: 'chocolates',   emoji: '🍫', name: 'Luxury Box',     cost: 15,  rarity: 'common',    description: 'Sweet treat' },
+  { id: 'teddy',        emoji: '🧸', name: 'Giant Teddy',    cost: 40,  rarity: 'rare',      description: 'Warm cuddles' },
+  { id: 'mixtape',      emoji: '🎵', name: 'Lo-Fi Mixtape',  cost: 15,  rarity: 'common',    description: 'Chill vibes only' },
+  { id: 'poem',         emoji: '📝', name: 'Epic Poem',      cost: 25,  rarity: 'uncommon',  description: 'Words from the heart' },
 ];
 
 const RARITY_COLORS = {
@@ -70,8 +74,7 @@ export default function GiftModal({ confession, onClose, user, onCreditsUpdate }
         },
         body: JSON.stringify({
           confession_id: confession.id,
-          receiver_id: confession.user_id,
-          gift_id: selectedGift.id,
+          gift_type: selectedGift.id,
           message: message.trim() || null
         })
       });
@@ -215,7 +218,7 @@ export default function GiftModal({ confession, onClose, user, onCreditsUpdate }
               </div>
             ) : (
               giftHistory.map((g, i) => {
-                const giftData = GIFTS.find(x => x.id === g.gift_id);
+                const giftData = GIFTS.find(x => x.id === g.gift_type);
                 return (
                   <div key={i} className="gift-history-item">
                     <span className="gh-emoji">{giftData?.emoji || '🎁'}</span>
