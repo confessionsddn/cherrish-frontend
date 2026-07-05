@@ -15,28 +15,47 @@ export default function AccessCodePage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const encodedData = params.get('data')
+    const regToken = params.get('reg_token')
     
-    if (encodedData) {
+    if (regToken) {
+      // Server-signed registration token — decode payload for display only
       try {
-        const jsonString = atob(encodedData)
-        const data = JSON.parse(jsonString)
+        const payload = JSON.parse(atob(regToken.split('.')[1]))
         
-        if (data.email && data.googleId) {
-          setRegData(data)
-          checkRequestStatus(data.email)
+        if (payload.email && payload.googleId && payload.purpose === 'registration') {
+          setRegData({ email: payload.email, googleId: payload.googleId, reg_token: regToken })
+          checkRequestStatus(payload.email)
         } else {
-          setError('Invalid registration data')
+          setError('Invalid registration token')
           setErrorType('left')
         }
       } catch (err) {
-        console.error('Failed to decode registration data:', err)
-        setError('Invalid registration session.')
+        console.error('Failed to decode registration token:', err)
+        setError('Invalid or expired registration session. Please try logging in again.')
         setErrorType('left')
       }
     } else {
-      setError('No registration data found.')
-      setErrorType('left')
+      // Legacy support: check for old base64 data param
+      const encodedData = params.get('data')
+      if (encodedData) {
+        try {
+          const jsonString = atob(encodedData)
+          const data = JSON.parse(jsonString)
+          if (data.email && data.googleId) {
+            setRegData(data)
+            checkRequestStatus(data.email)
+          } else {
+            setError('Invalid registration data')
+            setErrorType('left')
+          }
+        } catch (err) {
+          setError('Invalid registration session.')
+          setErrorType('left')
+        }
+      } else {
+        setError('No registration data found. Please login with Google first.')
+        setErrorType('left')
+      }
     }
 
     return () => {
@@ -93,6 +112,7 @@ export default function AccessCodePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           accessCode: accessCode.toUpperCase(),
+          registration_token: regData.reg_token || null,
           email: regData.email,
           googleId: regData.googleId
         })
