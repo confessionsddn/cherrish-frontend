@@ -26,6 +26,36 @@
   --brutal-black: #000;
   --brutal-white: #FFF;
   
+  /* Modal & Component Variables (light mode) */
+  --bg-app: #F5F5F5;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8F8F8;
+  --bg-header: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-modal: #FFFFFF;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+  --bg-tag: #F0F0F0;
+  
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #888888;
+  
+  --border-color: #000000;
+  --border-light: #E0E0E0;
+  
+  --color-primary: #FF69B4;
+  --color-danger: #FF4444;
+  --color-gold: #FFD700;
+  
+  --shadow-sm: 3px 3px 0 #000;
+  --shadow-lg: 6px 6px 0 #000;
+  --shadow-pink: 6px 6px 0 #FF69B4;
+  
+  --font-display: 'Dela Gothic One', cursive;
+  --font-body: 'Space Grotesk', sans-serif;
+  
+  --transition-fast: 0.15s ease;
+  
   /* Brutal Shadows */
   --shadow-brutal: 4px 4px 0px var(--brutal-black);
   --shadow-brutal-lg: 6px 6px 0px var(--brutal-black);
@@ -418,6 +448,14 @@ h1, h2, h3, button, .tag, .badge, .mood-name {
 
   --border-color: #444444;
   --border-light: #333333;
+  
+  --color-primary: #FF69B4;
+  --color-danger: #FF4444;
+  --color-gold: #FFD700;
+  
+  --shadow-sm: 3px 3px 0 #333;
+  --shadow-lg: 6px 6px 0 #333;
+  --shadow-pink: 6px 6px 0 #FF69B4;
 
   --candy-black: #FFFFFF;
   --candy-white: #1A1A1A;
