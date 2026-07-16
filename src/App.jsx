@@ -19,6 +19,7 @@ import PremiumSubscriptionModal from './components/Modals/PremiumSubscriptionMod
 import ChangeUsernameModal from './components/Modals/ChangeUsernameModal'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
 import PWAInstallPrompt from './components/PWAInstallPrompt/PWAInstallPrompt'
+import ITMVotesBanner from './components/ITMVotesBanner/ITMVotesBanner'
 // Community Pages
 import CommunityPage from './pages/CommunityPage'
 import AdminCommunityPanel from './components/AdminCommunityPanel/AdminCommunityPanel'
@@ -671,6 +672,9 @@ useEffect(() => {
         isAuthenticated={isAuthenticated}
         user={user}
       />
+
+      {/* Voting Banner */}
+      <ITMVotesBanner />
 
       {/* Main content */}
       <div className="app-container">
