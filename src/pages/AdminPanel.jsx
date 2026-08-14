@@ -800,7 +800,10 @@ export default function AdminPanel() {
 
   const renderReports = () => (
     <div className="tab-content">
-      <h2 className="tab-title">REPORTS ({reports.filter(r => r.status === 'pending').length})</h2>
+      <h2 className="tab-title">🚩 REPORTS ({reports.filter(r => r.status === 'pending').length})</h2>
+      {!reports.length && !loading && (
+        <button className="announce-btn" onClick={fetchReports}>LOAD REPORTS</button>
+      )}
       {loading ? <div className="loading-state">LOADING...</div> : (
         <div className="reports-list">
           {reports.filter(r => r.status === 'pending').length === 0 ? (
@@ -920,7 +923,7 @@ export default function AdminPanel() {
 
   const renderAccessCodes = () => (
     <div className="tab-content">
-      <h2 className="tab-title">ACCESS CODES</h2>
+      <h2 className="tab-title">🎫 ACCESS CODES</h2>
       
       <div className="access-actions" style={{ marginBottom: 32 }}>
         <button className="announce-btn" onClick={generateAccessCodes}>
@@ -1029,14 +1032,14 @@ export default function AdminPanel() {
 
   const renderCreditManager = () => (
     <div className="tab-content">
-      <h2 className="tab-title">CREDIT MANAGER</h2>
-      <p style={{ color: '#888', marginBottom: 24, fontSize: '0.9rem' }}>
-        Manually add or remove credits from any user's account
-      </p>
+      <h2 className="tab-title">💰 CREDIT MANAGER</h2>
 
-      <div className="credit-manager-box" style={{ maxWidth: 600, padding: 24, background: '#f9f9f9', borderRadius: 12, border: '3px solid #000' }}>
+      <div className="announce-box">
+        <h3>ADJUST USER CREDITS</h3>
+        <p>Manually add or remove credits from any user's account</p>
+
         <div className="poll-field">
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 700 }}>USER (Email, Username, or User #)</label>
+          <label>USER (Email, Username, or User #)</label>
           <input
             className="announce-input"
             placeholder="user@example.com OR username OR #123"
@@ -1046,7 +1049,7 @@ export default function AdminPanel() {
         </div>
 
         <div className="poll-field">
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 700 }}>AMOUNT</label>
+          <label>AMOUNT</label>
           <input
             type="number"
             className="announce-input"
@@ -1057,26 +1060,14 @@ export default function AdminPanel() {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-          <button 
-            className="announce-btn" 
-            style={{ flex: 1, background: '#4CAF50' }}
-            onClick={() => adjustCredits('add')}
-          >
+        <div className="controls-row" style={{ marginTop: 20 }}>
+          <button className="announce-btn" style={{ flex: 1, background: '#4CAF50' }} onClick={() => adjustCredits('add')}>
             ➕ ADD CREDITS
           </button>
-          <button 
-            className="announce-btn" 
-            style={{ flex: 1, background: '#FF5722' }}
-            onClick={() => adjustCredits('remove')}
-          >
+          <button className="announce-btn" style={{ flex: 1, background: '#FF5722', color: '#fff' }} onClick={() => adjustCredits('remove')}>
             ➖ REMOVE CREDITS
           </button>
         </div>
-      </div>
-
-      <div className="info-box" style={{ marginTop: 24, padding: 16, background: '#FFF9C4', borderRadius: 8, border: '2px solid #000' }}>
-        <strong>💡 TIP:</strong> You can use email, username, or user number (e.g., #123) to identify users.
       </div>
     </div>
   );
@@ -1146,14 +1137,14 @@ export default function AdminPanel() {
 
   const renderPremiumManager = () => (
     <div className="tab-content">
-      <h2 className="tab-title">PREMIUM MANAGER</h2>
-      <p style={{ color: '#888', marginBottom: 24, fontSize: '0.9rem' }}>
-        Grant or revoke premium subscription for any user
-      </p>
+      <h2 className="tab-title">⭐ PREMIUM MANAGER</h2>
 
-      <div className="premium-manager-box" style={{ maxWidth: 600, padding: 24, background: '#f9f9f9', borderRadius: 12, border: '3px solid #000' }}>
+      <div className="announce-box">
+        <h3>GRANT / REVOKE PREMIUM</h3>
+        <p>Manage premium subscriptions for any user</p>
+
         <div className="poll-field">
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 700 }}>USER (Email, Username, or User #)</label>
+          <label>USER (Email, Username, or User #)</label>
           <input
             className="announce-input"
             placeholder="user@example.com OR username OR #123"
@@ -1163,9 +1154,10 @@ export default function AdminPanel() {
         </div>
 
         <div className="poll-field">
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 700 }}>DURATION (Days)</label>
+          <label>DURATION</label>
           <select 
             className="ctrl-select"
+            style={{ width: '100%' }}
             value={premiumDuration}
             onChange={e => setPremiumDuration(e.target.value)}
           >
@@ -1175,31 +1167,17 @@ export default function AdminPanel() {
             <option value="90">90 Days (3 Months)</option>
             <option value="180">180 Days (6 Months)</option>
             <option value="365">365 Days (1 Year)</option>
-            <option value="730">730 Days (2 Years)</option>
-            <option value="3650">3650 Days (10 Years)</option>
           </select>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-          <button 
-            className="announce-btn" 
-            style={{ flex: 1, background: '#FFD700', color: '#000' }}
-            onClick={() => togglePremium('activate')}
-          >
+        <div className="controls-row" style={{ marginTop: 20 }}>
+          <button className="announce-btn" style={{ flex: 1, background: '#FFD700', color: '#000' }} onClick={() => togglePremium('activate')}>
             ⭐ ACTIVATE PREMIUM
           </button>
-          <button 
-            className="announce-btn" 
-            style={{ flex: 1, background: '#666' }}
-            onClick={() => togglePremium('deactivate')}
-          >
-            ❌ DEACTIVATE PREMIUM
+          <button className="announce-btn" style={{ flex: 1, background: '#333', color: '#fff' }} onClick={() => togglePremium('deactivate')}>
+            ❌ DEACTIVATE
           </button>
         </div>
-      </div>
-
-      <div className="info-box" style={{ marginTop: 24, padding: 16, background: '#FFE0E0', borderRadius: 8, border: '2px solid #000' }}>
-        <strong>⚠️ WARNING:</strong> Manually granted premium will override any active subscription. Deactivating will cancel premium immediately without refund.
       </div>
     </div>
   );
