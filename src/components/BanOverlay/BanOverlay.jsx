@@ -255,11 +255,6 @@ export default function BanOverlay({ user, onUnban }) {
             <div className="secure-badge">
               <i className="fas fa-lock"></i> SECURE PAYMENT GATEWAY
             </div>
-            
-            {/* DEBUG INFO - Remove after testing */}
-            <div style={{ marginTop: '10px', fontSize: '0.7rem', color: '#666', textAlign: 'center' }}>
-              DEBUG: Duration={String(banDuration)} | Price=₹{getUnbanPrice()}
-            </div>
           </div>
 
         </div>
