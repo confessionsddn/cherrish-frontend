@@ -191,35 +191,30 @@ export default function ConfessionCard({
     const emojis = emojiMap[reactionType] || ['✨']
     const container = document.body 
     
-    // 60 Particles for a dense cloud
-    for (let i = 0; i < 60; i++) { 
+    // 20 particles (lighter on mobile, still looks great)
+    const count = window.innerWidth < 768 ? 15 : 25;
+    
+    for (let i = 0; i < count; i++) { 
       const emoji = document.createElement('span')
       emoji.className = 'floating-heart'
       emoji.textContent = emojis[i % emojis.length]
       
-      // Start at button center
       emoji.style.left = `${originX}px`
       emoji.style.top = `${originY}px`
       
-      // TARGET COORDINATES (Where they float TO)
-      // Spread X: Randomly float left (-150px) or right (+150px)
-      const targetX = (Math.random() - 0.5) * 300; 
-      // Spread Y: Float UPWARDS significantly (-200px to -500px)
-      const targetY = -200 - Math.random() * 300; 
-      
-      const rotate = (Math.random() - 0.5) * 40; // Subtle wobble
+      const targetX = (Math.random() - 0.5) * 200; 
+      const targetY = -100 - Math.random() * 200; 
+      const rotate = (Math.random() - 0.5) * 30;
 
       emoji.style.setProperty('--x', `${targetX}px`)
       emoji.style.setProperty('--y', `${targetY}px`)
       emoji.style.setProperty('--rot', `${rotate}deg`)
-      
-      // Random Size (Variable)
-      emoji.style.fontSize = `${1.0 + Math.random() * 1.5}rem`
+      emoji.style.fontSize = `${1.2 + Math.random() * 1.0}rem`
       
       container.appendChild(emoji)
       
-      // Remove after 5 seconds
-      setTimeout(() => emoji.remove(), 5000)
+      // Remove after animation (1.2s)
+      setTimeout(() => emoji.remove(), 1200)
     }
   }
   // Reaction Handlers

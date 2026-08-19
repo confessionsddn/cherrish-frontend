@@ -1,10 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@400;500;700&display=swap');
+
 /* LOVECONFESS - NEOBRUTALIST DESIGN SYSTEM */
 /* Converted from vanilla HTML/CSS to React-compatible */
 
 /* ============================================
+   MOBILE PERFORMANCE & SMOOTH SCROLL
+   ============================================ */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Force GPU compositing on scrollable containers */
+.app-container,
+.feed-section,
+.confession-feed {
+  transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+}
+
+/* Prevent layout thrashing on animations */
+.floating-heart,
+.confetti-piece,
+[class*="anim"] {
+  contain: layout style;
+}
+
+/* ============================================
    CSS VARIABLES & DESIGN TOKENS
    ============================================ */
-@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 :root {
   /* Pastel Color Palette */

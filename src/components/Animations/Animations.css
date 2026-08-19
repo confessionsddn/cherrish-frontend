@@ -281,43 +281,4 @@
 }
 
 
-/* --- POP & FLOAT ANIMATION --- */
-.floating-heart {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
-  
-  /* Initial State: Hidden at source */
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-  
-  /* 5 Second Duration */
-  animation: popAndFloat 5s ease-out forwards;
-}
-
-@keyframes popAndFloat {
-  /* 0% - 10%: THE POP (Fast appearance) */
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  10% {
-    /* Move 20% of the way to the target quickly */
-    transform: translate(calc(-50% + (var(--x) * 0.2)), calc(-50% + (var(--y) * 0.2))) scale(1.2);
-    opacity: 1;
-  }
-  
-  /* 10% - 80%: THE FLOAT (Slow drift) */
-  /* Keeps moving up slowly while staying visible */
-  80% {
-    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1) rotate(var(--rot));
-    opacity: 1; /* Still fully visible */
-  }
-  
-  /* 80% - 100%: THE FADE (Disappear) */
-  100% {
-    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y) - 50px)) scale(0.8);
-    opacity: 0;
-  }
-}
+/* --- POP & FLOAT ANIMATION (see ConfessionCard.css) --- */
