@@ -33,7 +33,6 @@ body {
 }
 
 /* Prevent layout thrashing on animations */
-.floating-heart,
 .confetti-piece,
 [class*="anim"] {
   contain: layout style;
