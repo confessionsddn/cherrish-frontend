@@ -213,8 +213,8 @@ export default function ConfessionCard({
       
       container.appendChild(emoji)
       
-      // Remove after animation (1.2s)
-      setTimeout(() => emoji.remove(), 1200)
+      // Remove after animation (2.5s)
+      setTimeout(() => emoji.remove(), 2500)
     }
   }
   // Reaction Handlers

@@ -675,7 +675,7 @@
   opacity: 1;
   will-change: transform, opacity;
   
-  animation: emojiBurst 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: emojiBurst 2.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
 }
 
 @keyframes emojiBurst {
@@ -683,16 +683,20 @@
     transform: translate(-50%, -50%) scale(0);
     opacity: 1;
   }
-  15% {
-    transform: translate(calc(-50% + var(--x) * 0.6), calc(-50% + var(--y) * 0.6)) scale(1.3) rotate(var(--rot));
+  10% {
+    transform: translate(calc(-50% + var(--x) * 0.5), calc(-50% + var(--y) * 0.5)) scale(1.3) rotate(var(--rot));
     opacity: 1;
   }
-  50% {
+  35% {
     transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1) rotate(var(--rot));
-    opacity: 0.9;
+    opacity: 1;
+  }
+  70% {
+    transform: translate(calc(-50% + var(--x) * 1.05), calc(-50% + var(--y) * 1.1)) scale(0.9) rotate(var(--rot));
+    opacity: 0.7;
   }
   100% {
-    transform: translate(calc(-50% + var(--x) * 1.1), calc(-50% + var(--y) * 1.3)) scale(0.4) rotate(var(--rot));
+    transform: translate(calc(-50% + var(--x) * 1.1), calc(-50% + var(--y) * 1.3)) scale(0.5) rotate(var(--rot));
     opacity: 0;
   }
 }
