@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
 import ThemeSelectorModal from '../Modals/ThemeSelectorModal';
+import NotificationBell from '../NotificationBell/NotificationBell';
 import { API_URL } from '../../services/api';
 
 export default function Header({
@@ -93,6 +94,9 @@ export default function Header({
               <span className="amt">{credits}</span>
               <div className="plus-circle">+</div>
             </button>
+
+            {/* NOTIFICATION BELL */}
+            <NotificationBell />
 
             {/* DESKTOP EXTRAS */}
             <div className="desktop-extras">
