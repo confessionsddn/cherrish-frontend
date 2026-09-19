@@ -370,6 +370,21 @@ useEffect(() => {
     }
   }, [showNotification])
 
+  // Derived feed + stable gift handler. MUST live here (before any early
+  // return) so hook order stays constant across every render — React error
+  // #310 fires if hooks run conditionally.
+  const filteredConfessions = useMemo(
+    () => (currentFilter === 'all'
+      ? confessions
+      : confessions.filter(conf => conf.mood_zone === currentFilter)),
+    [confessions, currentFilter]
+  )
+
+  const handleGiftClick = useCallback((confessionId) => {
+    setSelectedConfessionId(confessionId)
+    setShowGiftModal(true)
+  }, [])
+
   // ============================================
   // MODAL HANDLERS
   // ============================================
@@ -650,19 +665,6 @@ useEffect(() => {
   // MAIN APP (Authenticated)
   // ============================================
   
-  const filteredConfessions = useMemo(
-    () => (currentFilter === 'all'
-      ? confessions
-      : confessions.filter(conf => conf.mood_zone === currentFilter)),
-    [confessions, currentFilter]
-  )
-
-  // Stable handler so memoized ConfessionCard children don't re-render.
-  const handleGiftClick = useCallback((confessionId) => {
-    setSelectedConfessionId(confessionId)
-    setShowGiftModal(true)
-  }, [])
-
   return (
       <ThemeProvider user={user}>
     <>
