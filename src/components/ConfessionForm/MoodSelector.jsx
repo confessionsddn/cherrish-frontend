@@ -25,22 +25,43 @@ const MoodVideoLoop = ({ moodName }) => {
     if (!video) return;
 
     let loopTimeout;
+    let observer;
 
     const playVideo = () => {
       video.currentTime = 0;
-      video.play().catch(e => console.log('Autoplay prevented:', e));
+      video.muted = true;
+      const playPromise = video.play();
+      if (playPromise) playPromise.catch(() => {});
+    };
+
+    const pauseVideo = () => {
+      video.pause();
     };
 
     const handleEnded = () => {
       loopTimeout = setTimeout(() => playVideo(), 5000);
     };
 
+    // Only play when video is visible in viewport (avoids power-saving abort)
+    observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          playVideo();
+        } else {
+          pauseVideo();
+          clearTimeout(loopTimeout);
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(video);
     video.addEventListener('ended', handleEnded);
-    playVideo();
 
     return () => {
       video.removeEventListener('ended', handleEnded);
       clearTimeout(loopTimeout);
+      observer?.disconnect();
     };
   }, [moodName]);
 

@@ -296,7 +296,7 @@ export default function ConfessionCard({
   return (
     <div 
       ref={cardRef}
-      className={`confession-card ${isSpotlightActive ? 'spotlight-active' : ''} ${confession.premium ? 'premium' : ''} typing-animation`}
+      className={`confession-card ${isSpotlightActive ? 'spotlight-active' : ''} ${confession.premium ? 'premium' : ''} ${confession.author_theme ? `theme-${confession.author_theme}` : ''} typing-animation`}
       style={style}
     >
       {/* Spotlight Badge */}

@@ -23,6 +23,7 @@ import ITMVotesBanner from './components/ITMVotesBanner/ITMVotesBanner'
 import { initOneSignal, unregisterOneSignal } from './services/oneSignalInit'
 // Community Pages
 import CommunityPage from './pages/CommunityPage'
+import GiftsPage from './pages/GiftsPage'
 import AdminCommunityPanel from './components/AdminCommunityPanel/AdminCommunityPanel'
 
 import { 
@@ -550,6 +551,41 @@ useEffect(() => {
           user={user}
         />
         <CommunityPage />
+      </>
+    )
+  }
+
+  // Gifts & Skins page
+  if (currentPath === '/gifts') {
+    if (loading) {
+      return <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh', 
+        fontSize: '1.5rem', 
+        fontWeight: 'bold',
+        fontFamily: 'Dela Gothic One, cursive'
+      }}>
+        LOADING...
+      </div>
+    }
+    if (!isAuthenticated) {
+      window.location.href = '/'
+      return null
+    }
+    return (
+      <>
+        <Header 
+          credits={userCredits}
+          onPremiumClick={handlePremiumClick}
+          onBuyCreditsClick={handleBuyCreditsClick}
+          onLogout={handleLogout}
+          onChangeUsername={() => setShowChangeUsernameModal(true)}
+          isAuthenticated={isAuthenticated}
+          user={user}
+        />
+        <GiftsPage />
       </>
     )
   }

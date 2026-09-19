@@ -700,3 +700,122 @@
     opacity: 0;
   }
 }
+
+/* ============================================================
+   GIFT CARD SKINS (base layer)
+   Applied via .theme-{name} when a confession author has an
+   active theme. These are functional base skins — polish the
+   visuals later. Background needs !important to beat the base
+   .confession-card { background: #fcf0f2 !important }.
+   ============================================================ */
+
+/* 💖 Sparkle Hearts */
+.confession-card.theme-sparkle {
+  background: linear-gradient(135deg, #fff0f6, #ffe3ef) !important;
+  border-color: #ff4d94;
+  box-shadow: 6px 6px 0px #ff4d94;
+}
+
+/* ⚡ Cyber Glitch */
+.confession-card.theme-cyber {
+  background: linear-gradient(135deg, #0f0f1a, #1a1030) !important;
+  border-color: #00e5ff;
+  box-shadow: 6px 6px 0px #00e5ff;
+  color: #e6faff;
+}
+.confession-card.theme-cyber .confession-content,
+.confession-card.theme-cyber .confession-text {
+  color: #e6faff;
+}
+
+/* 🌈 Holo Foil */
+.confession-card.theme-holo {
+  background: linear-gradient(135deg, #f5e6ff, #e6f7ff, #fff0f5) !important;
+  border-color: #b06cff;
+  box-shadow: 6px 6px 0px #b06cff;
+}
+
+/* 🌆 Vaporwave */
+.confession-card.theme-vaporwave {
+  background: linear-gradient(135deg, #ff6ec7, #7873f5) !important;
+  border-color: #2d1b4e;
+  box-shadow: 6px 6px 0px #2d1b4e;
+  color: #fff;
+}
+
+/* 🌌 Galaxy */
+.confession-card.theme-galaxy {
+  background: radial-gradient(circle at 30% 20%, #2a2a72, #0b0b2b) !important;
+  border-color: #8f7dff;
+  box-shadow: 6px 6px 0px #8f7dff;
+  color: #eae6ff;
+}
+.confession-card.theme-galaxy .confession-content,
+.confession-card.theme-galaxy .confession-text {
+  color: #eae6ff;
+}
+
+/* 📼 Retro VHS */
+.confession-card.theme-retro {
+  background: linear-gradient(135deg, #1b1b1b, #2b2b2b) !important;
+  border-color: #ff5e5e;
+  box-shadow: 6px 6px 0px #38f9d7;
+  color: #f5f5f5;
+}
+.confession-card.theme-retro .confession-content,
+.confession-card.theme-retro .confession-text {
+  color: #f5f5f5;
+}
+
+/* 🌹 Rose */
+.confession-card.theme-rose {
+  background: linear-gradient(135deg, #fff5f5, #ffe0e0) !important;
+  border-color: #c1121f;
+  box-shadow: 6px 6px 0px #c1121f;
+}
+
+/* 💍 Diamond */
+.confession-card.theme-diamond {
+  background: linear-gradient(135deg, #f0fbff, #dff3fb) !important;
+  border-color: #4fb0d0;
+  box-shadow: 6px 6px 0px #9be7ff;
+}
+
+/* 🍫 Chocolate */
+.confession-card.theme-chocolate {
+  background: linear-gradient(135deg, #4a2c1a, #6b4226) !important;
+  border-color: #2b160b;
+  box-shadow: 6px 6px 0px #2b160b;
+  color: #fbe9d7;
+}
+.confession-card.theme-chocolate .confession-content,
+.confession-card.theme-chocolate .confession-text {
+  color: #fbe9d7;
+}
+
+/* 🧸 Teddy */
+.confession-card.theme-teddy {
+  background: linear-gradient(135deg, #f7ead6, #eed6b8) !important;
+  border-color: #8b5a2b;
+  box-shadow: 6px 6px 0px #8b5a2b;
+}
+
+/* 🎧 Lo-Fi */
+.confession-card.theme-lofi {
+  background: linear-gradient(135deg, #2c2b3f, #3d3a5a) !important;
+  border-color: #ffb26b;
+  box-shadow: 6px 6px 0px #ffb26b;
+  color: #f0eefc;
+}
+.confession-card.theme-lofi .confession-content,
+.confession-card.theme-lofi .confession-text {
+  color: #f0eefc;
+}
+
+/* 📜 Poem */
+.confession-card.theme-poem {
+  background: linear-gradient(135deg, #f7f1e1, #efe6cf) !important;
+  border-color: #7a6a4f;
+  box-shadow: 6px 6px 0px #7a6a4f;
+  font-family: Georgia, 'Times New Roman', serif;
+}

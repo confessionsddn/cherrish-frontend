@@ -1,0 +1,329 @@
+/* ============================================
+   GIFTS PAGE
+   ============================================ */
+.gifts-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 80px;
+}
+
+.gifts-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.gifts-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin: 0 0 6px;
+}
+
+.gifts-subtitle {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 auto;
+  max-width: 420px;
+  line-height: 1.4;
+}
+
+.gifts-admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffd700, #ff9a00);
+  color: #4a2c00;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Tabs ---------- */
+.gifts-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: #f2f2f5;
+  padding: 6px;
+  border-radius: 14px;
+}
+
+.gifts-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 8px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #777;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.gifts-tab.active {
+  background: #fff;
+  color: #ff2d78;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- States ---------- */
+.gifts-loading,
+.gifts-empty,
+.gifts-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.gifts-error {
+  color: #d33;
+}
+
+/* ============================================
+   RECEIVED — progress cards
+   ============================================ */
+.received-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 560px) {
+  .received-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.gift-progress-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gift-progress-card.unlocked {
+  border-color: #ffd0e2;
+  box-shadow: 0 2px 12px rgba(255, 45, 120, 0.1);
+}
+
+.gift-progress-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.gift-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.gift-names {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.gift-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.gift-theme-label {
+  font-size: 0.7rem;
+  color: #999;
+  text-transform: capitalize;
+}
+
+.unlock-tick {
+  color: #ff2d78;
+  font-size: 1.1rem;
+}
+
+.progress-bar-track {
+  height: 8px;
+  background: #f0f0f3;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff2d78, #ff8fb1);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.72rem;
+  color: #888;
+}
+
+.unlocked-text {
+  color: #ff2d78;
+  font-weight: 800;
+}
+
+/* ============================================
+   SENT — history list
+   ============================================ */
+.sent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sent-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.sent-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.sent-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.sent-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sent-gift-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.sent-to {
+  font-size: 0.76rem;
+  color: #ff2d78;
+  font-weight: 600;
+}
+
+.sent-preview {
+  font-size: 0.76rem;
+  color: #888;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.sent-message {
+  font-size: 0.76rem;
+  color: #666;
+  margin-top: 3px;
+}
+
+.sent-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.sent-price {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #d33;
+}
+
+.sent-date {
+  font-size: 0.7rem;
+  color: #aaa;
+}
+
+/* ============================================
+   THEMES — skin activation grid
+   ============================================ */
+.themes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 560px) {
+  .themes-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.theme-card {
+  border: 2px solid #eee;
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+  background: #fff;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.theme-card.active {
+  border-color: #ff2d78;
+  transform: translateY(-2px);
+}
+
+.theme-card-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.theme-emoji {
+  font-size: 1.8rem;
+}
+
+.theme-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.theme-toggle-btn {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  background: #f0f0f3;
+  color: #666;
+  transition: all 0.18s ease;
+}
+
+.theme-toggle-btn.on {
+  background: linear-gradient(90deg, #ff2d78, #ff6fa5);
+  color: #fff;
+}
+
+.theme-toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

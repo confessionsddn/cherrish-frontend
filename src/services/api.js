@@ -402,6 +402,78 @@ export const messagesAPI = {
 };
 
 // ============================================
+// GIFTS & THEMES API
+// ============================================
+export const giftsAPI = {
+  // Public gift catalog (all 12 gifts with price/type/theme/emoji).
+  async getCatalog() {
+    const response = await fetch(`${API_URL}/api/gifts/catalog`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch gift catalog');
+    }
+    return response.json();
+  },
+
+  // Received gifts inventory with unlock progress (full catalog).
+  async getInventory() {
+    const response = await fetch(`${API_URL}/api/gifts/inventory`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch inventory');
+    }
+    return response.json();
+  },
+
+  // History of gifts the current user has sent.
+  async getSent(params = {}) {
+    const url = new URL(`${API_URL}/api/gifts/sent`);
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        url.searchParams.append(key, value);
+      }
+    });
+    const response = await fetch(url.toString(), {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch sent gifts');
+    }
+    return response.json();
+  },
+
+  // Unlocked card-skin themes (+ which is active).
+  async getThemes() {
+    const response = await fetch(`${API_URL}/api/gifts/themes`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch themes');
+    }
+    return response.json();
+  },
+
+  // Activate/deactivate a card-skin theme (one active at a time).
+  async toggleTheme(themeName, isActive) {
+    const response = await fetch(`${API_URL}/api/gifts/themes/toggle`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ theme_name: themeName, is_active: isActive })
+    });
+    if (!response.ok) {
+      let error = {};
+      try {
+        error = await response.json();
+      } catch (_) {}
+      throw new Error(error.error || 'Failed to toggle theme');
+    }
+    return response.json();
+  }
+};
+
+// ============================================
 // DEFAULT EXPORT + API_URL + getAuthHeaders
 // ============================================
 const api = {
@@ -409,7 +481,8 @@ const api = {
   confessions: confessionsAPI,
   payments: paymentsAPI,
   polls: pollsAPI,
-  messages: messagesAPI
+  messages: messagesAPI,
+  gifts: giftsAPI
 };
 
 export default api;

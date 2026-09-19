@@ -73,7 +73,11 @@ export default function Header({
             <button className="neo-btn" onClick={() => window.location.href = '/community'}>
               COMMUNITY
             </button>
-            
+
+            <button className="neo-btn" onClick={() => window.location.href = '/gifts'}>
+              GIFTS
+            </button>
+
             <button className="neo-btn" onClick={() => window.location.href = '/admin-chat'}>
               SUPPORT
               {unreadCount > 0 && <span className="neo-badge">{unreadCount}</span>}
@@ -157,6 +161,10 @@ export default function Header({
               <div className="section-label">SOCIAL</div>
               <button onClick={() => { toggleMobileMenu(); window.location.href = '/community'; }} className="drawer-item">
                 COMMUNITY HUB <i className="fas fa-users"></i>
+              </button>
+
+              <button onClick={() => { toggleMobileMenu(); window.location.href = '/gifts'; }} className="drawer-item">
+                GIFTS &amp; SKINS <i className="fas fa-gift"></i>
               </button>
 
               <button onClick={() => { toggleMobileMenu(); window.location.href = '/admin-chat'; }} className="drawer-item">
