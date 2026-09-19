@@ -39,13 +39,10 @@ body {
   contain: layout style;
 }
 
-/* Skip rendering work for off-screen confession cards. The browser only
-   paints/lays out cards near the viewport; contain-intrinsic-size reserves
-   space so the scrollbar stays stable. Massive win on long feeds. */
-.feed-grid > * {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 320px;
-}
+/* NOTE: We intentionally do NOT use `content-visibility: auto` on feed cards.
+   It implies paint containment, which clips the mood sticker that pops out
+   above each card (top: -18px). The React.memo + cheap-animation work already
+   covers the scroll-perf wins without breaking the pop-out design. */
 
 /* Respect users who prefer reduced motion — kills all the infinite
    background animations for them (accessibility + perf). */
