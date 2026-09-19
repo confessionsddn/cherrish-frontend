@@ -7,10 +7,16 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 240, 245, 0.95); /* Matches page bg + transparent */
-  backdrop-filter: blur(5px);
-  border-bottom: 2px solid rgba(0,0,0,0.05);
+  /* Opaque background instead of backdrop-filter blur — a sticky blur over a
+     scrolling feed forces a re-blur every frame and is the #1 scroll-jank
+     source. Solid bg composites for free. */
+  background: #fff0f5;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
   padding: 10px 0;
+  /* Promote to its own compositor layer so the sticky bar doesn't repaint
+     the feed while scrolling. */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* --- 1. FILTERS (Scrollable Area) --- */

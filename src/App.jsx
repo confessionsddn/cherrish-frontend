@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { confessionsAPI, authAPI, API_URL } from './services/api'
 import LandingPage from './pages/LandingPage'
 import AccessCodePage from './pages/AccessCodePage'
@@ -283,8 +283,15 @@ useEffect(() => {
   // ============================================
   // REACTION HANDLER (Optimistic UI)
   // ============================================
-  
-  const handleReaction = async (confessionId, reactionType, action = 'add') => {
+
+  // Stable notification helper (declared before handleReaction so it can be a
+  // dependency without a temporal-dead-zone error).
+  const showNotification = useCallback((message, type) => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification(null), 3000)
+  }, [])
+
+  const handleReaction = useCallback(async (confessionId, reactionType, action = 'add') => {
     // Handle remove all
     if (action === 'remove_all') {
       try {
@@ -361,7 +368,7 @@ useEffect(() => {
         showNotification('Failed to react', 'error')
       }
     }
-  }
+  }, [showNotification])
 
   // ============================================
   // MODAL HANDLERS
@@ -390,10 +397,7 @@ useEffect(() => {
   document.documentElement.setAttribute('data-theme', saved);
 }, []);
 
-  const showNotification = (message, type) => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification(null), 3000)
-  }
+
 
   // ============================================
   // EFFECTS
@@ -646,9 +650,18 @@ useEffect(() => {
   // MAIN APP (Authenticated)
   // ============================================
   
-  const filteredConfessions = currentFilter === 'all' 
-    ? confessions 
-    : confessions.filter(conf => conf.mood_zone === currentFilter)
+  const filteredConfessions = useMemo(
+    () => (currentFilter === 'all'
+      ? confessions
+      : confessions.filter(conf => conf.mood_zone === currentFilter)),
+    [confessions, currentFilter]
+  )
+
+  // Stable handler so memoized ConfessionCard children don't re-render.
+  const handleGiftClick = useCallback((confessionId) => {
+    setSelectedConfessionId(confessionId)
+    setShowGiftModal(true)
+  }, [])
 
   return (
       <ThemeProvider user={user}>
@@ -708,10 +721,7 @@ useEffect(() => {
           <ConfessionFeed 
             confessions={filteredConfessions}
             onReaction={handleReaction}
-            onGiftClick={(confessionId) => {
-              setSelectedConfessionId(confessionId)
-              setShowGiftModal(true)
-            }}
+            onGiftClick={handleGiftClick}
             onCreditsUpdate={setUserCredits}
             currentUserId={user?.id}
             isPremium={user?.is_premium}

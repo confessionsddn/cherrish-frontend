@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, memo } from 'react'
 import './ConfessionCard.css'
 import RepliesSection from '../Replies/RepliesSection'
 import ConfessionMenu from './ConfessionMenu'
@@ -63,7 +63,7 @@ function formatRelativeTime(dateString) {
   return date.toLocaleDateString(); 
 }
 
-export default function ConfessionCard({ 
+function ConfessionCard({ 
   confession, 
   onReaction, 
   onGiftClick, 
@@ -71,8 +71,7 @@ export default function ConfessionCard({
   currentUserId,
   isPremium,
   premiumData,
-  isAdmin,
-  style 
+  isAdmin
 }) {
   // State
   const [activeReactions, setActiveReactions] = useState({})
@@ -190,10 +189,16 @@ export default function ConfessionCard({
     
     const emojis = emojiMap[reactionType] || ['✨']
     const container = document.body 
-    
-    // 20 particles (lighter on mobile, still looks great)
-    const count = window.innerWidth < 768 ? 15 : 25;
-    
+
+    // Global cap: if lots of particles are already flying (rapid tapping),
+    // skip spawning more so the main thread / compositor doesn't get buried.
+    const MAX_LIVE_PARTICLES = 40;
+    const live = document.querySelectorAll('.floating-heart').length;
+    if (live >= MAX_LIVE_PARTICLES) return;
+
+    // Fewer particles = smoother. Still reads as a satisfying burst.
+    const count = window.innerWidth < 768 ? 8 : 14;
+
     for (let i = 0; i < count; i++) { 
       const emoji = document.createElement('span')
       emoji.className = 'floating-heart'
@@ -297,7 +302,6 @@ export default function ConfessionCard({
     <div 
       ref={cardRef}
       className={`confession-card ${isSpotlightActive ? 'spotlight-active' : ''} ${confession.premium ? 'premium' : ''} ${confession.author_theme ? `theme-${confession.author_theme}` : ''} typing-animation`}
-      style={style}
     >
       {/* Spotlight Badge */}
       {isSpotlightActive && isOwner && (
@@ -495,3 +499,8 @@ export default function ConfessionCard({
     </div>
   )
 }
+
+// Memoized: a card only re-renders when its own props change, so a feed-wide
+// state update (notification popup, credits change) no longer re-renders
+// every card. Relies on App passing stable handler refs (useCallback).
+export default memo(ConfessionCard)

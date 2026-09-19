@@ -131,6 +131,8 @@
   opacity: 0.5;
   animation: iconFloatAcross 1.6s cubic-bezier(.45, .24, .56, 1.09) forwards;
   position: absolute;
+  left: 0;
+  will-change: transform, opacity;
 }
 
 @keyframes moodFadeIn {
@@ -140,11 +142,11 @@
 
 @keyframes iconFloatAcross {
   from {
-    left: -50px;
+    transform: translateX(-50px);
     opacity: 0;
   }
   to {
-    left: 100vw;
+    transform: translateX(100vw);
     opacity: 1;
   }
 }

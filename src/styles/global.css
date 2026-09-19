@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@400;500;700&display=swap');
+/* Dela Gothic One + Space Grotesk are loaded via <link> in index.html
+   (a CSS @import is render-blocking and serialized — slower than <link>). */
 
 /* LOVECONFESS - NEOBRUTALIST DESIGN SYSTEM */
 /* Converted from vanilla HTML/CSS to React-compatible */
@@ -23,19 +24,40 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Force GPU compositing on scrollable containers */
+/* Force GPU compositing on scrollable containers.
+   NOTE: dropped `will-change: scroll-position` — it's a documented
+   anti-pattern that browsers largely ignore and can waste memory. */
 .app-container,
 .feed-section,
 .confession-feed {
-  transform: translateZ(0);
   -webkit-overflow-scrolling: touch;
-  will-change: scroll-position;
 }
 
 /* Prevent layout thrashing on animations */
 .confetti-piece,
 [class*="anim"] {
   contain: layout style;
+}
+
+/* Skip rendering work for off-screen confession cards. The browser only
+   paints/lays out cards near the viewport; contain-intrinsic-size reserves
+   space so the scrollbar stays stable. Massive win on long feeds. */
+.feed-grid > * {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
+}
+
+/* Respect users who prefer reduced motion — kills all the infinite
+   background animations for them (accessibility + perf). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ============================================
@@ -305,8 +327,18 @@ p {
 }
 
 .typing-animation {
-  animation: brutaTypeIn 0.3s ease-out;
+  animation: brutaTypeIn 0.3s ease-out both;
 }
+
+/* Staggered entry for the first cards (replaces per-card inline animationDelay,
+   which broke React.memo). Only the first few need it — later cards animate
+   in as you scroll anyway. */
+.feed-grid > *:nth-child(1) { animation-delay: 0s; }
+.feed-grid > *:nth-child(2) { animation-delay: 0.05s; }
+.feed-grid > *:nth-child(3) { animation-delay: 0.1s; }
+.feed-grid > *:nth-child(4) { animation-delay: 0.15s; }
+.feed-grid > *:nth-child(5) { animation-delay: 0.2s; }
+.feed-grid > *:nth-child(6) { animation-delay: 0.25s; }
 
 @keyframes brutaTypeIn {
   from {

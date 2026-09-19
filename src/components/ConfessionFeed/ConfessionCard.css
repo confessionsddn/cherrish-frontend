@@ -12,6 +12,9 @@
   flex-direction: column;
   margin-top: 25px; /* Spacing for the pop-out sticker */
   height: auto;
+  /* Only transition transform (GPU-composited). box-shadow snaps instantly,
+     which keeps the neo-brutalist feel without per-frame repaints. */
+  transition: transform 0.12s ease;
 }
 
 .confession-card:hover {
@@ -327,13 +330,17 @@
   width: 4px;
   background: #CCC;
   border-radius: 2px;
-  height: 6px; /* Default static height */
+  /* Fixed full height; we animate scaleY (GPU-composited) instead of the
+     height property (which triggers layout every frame). */
+  height: 22px;
+  transform: scaleY(0.27); /* 6px / 22px default */
+  transform-origin: bottom center;
   transition: background 0.2s;
 }
 
-.wave-bar.medium { height: 12px; }
-.wave-bar.tall { height: 18px; }
-.wave-bar.short { height: 4px; }
+.wave-bar.medium { transform: scaleY(0.55); }  /* ~12px */
+.wave-bar.tall   { transform: scaleY(0.82); }  /* ~18px */
+.wave-bar.short  { transform: scaleY(0.18); }  /* ~4px  */
 
 .capsule-status {
   margin-left: auto; /* Push to right */
@@ -351,6 +358,7 @@
 .neo-audio-capsule.playing .wave-bar {
   background: var(--pop-green);
   animation: soundWave 0.6s infinite ease-in-out alternate;
+  will-change: transform;
 }
 
 /* Stagger animations for "Random" look */
@@ -360,8 +368,8 @@
 .neo-audio-capsule.playing .wave-bar:nth-child(4n) { animation-duration: 0.3s; }
 
 @keyframes soundWave {
-  0% { height: 6px; }
-  100% { height: 22px; }
+  0% { transform: scaleY(0.27); }
+  100% { transform: scaleY(1); }
 }
 
 /* Play/Pause Button */
@@ -396,7 +404,10 @@
   align-items: center;
   font-size: 0.9rem;
   margin-left: 4px;
+  /* Static glow (composited once), pulse handled by transform/opacity. */
+  filter: drop-shadow(0 0 5px gold);
   animation: premiumGlow 2s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .boost-action-btn {
@@ -427,14 +438,16 @@
 }
 
 
+/* Animating `filter` is not GPU-cheap. Use a static drop-shadow and pulse
+   only transform+opacity, which composite for free. */
 @keyframes premiumGlow {
-  0%, 100% { 
-    filter: drop-shadow(0 0 3px gold);
+  0%, 100% {
     transform: scale(1);
+    opacity: 0.9;
   }
-  50% { 
-    filter: drop-shadow(0 0 8px gold);
+  50% {
     transform: scale(1.1);
+    opacity: 1;
   }
 }
 /* --- MOBILE TWEAKS --- */

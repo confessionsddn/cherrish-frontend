@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { memo } from 'react'
 import ConfessionCard from './ConfessionCard'
 import './ConfessionFeed.css'
 
-export default function ConfessionFeed({ 
+function ConfessionFeed({ 
   confessions, 
   onReaction, 
   onGiftClick,
@@ -24,7 +24,7 @@ export default function ConfessionFeed({
 
   return (
     <div className="feed-grid">
-      {confessions.map((confession, index) => (
+      {confessions.map((confession) => (
         <ConfessionCard
           key={confession.id}
           confession={confession}
@@ -34,13 +34,11 @@ export default function ConfessionFeed({
           currentUserId={currentUserId}
           isPremium={isPremium}
           premiumData={premiumData}
-          isAdmin={isAdmin} 
-          style={{
-            animationDelay: `${index * 0.05}s`
-            
-          }}
+          isAdmin={isAdmin}
         />
       ))}
     </div>
   )
 }
+
+export default memo(ConfessionFeed)
