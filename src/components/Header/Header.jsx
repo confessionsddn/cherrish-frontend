@@ -53,11 +53,8 @@ export default function Header({
 
   return (
     <>
-      {/* FONTS INJECTION */}
-      <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500&display=swap" rel="stylesheet" />
-      <link href="https://api.fontshare.com/v2/css?f[]=archivo@400,600,700&display=swap" rel="stylesheet" />
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-
+      {/* Fonts (clash-display, archivo) and Font Awesome are loaded once in
+          index.html — no need to re-inject here. */}
       <header className="neo-header">
         <div className="neo-container">
           
