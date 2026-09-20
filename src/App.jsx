@@ -330,11 +330,20 @@ useEffect(() => {
     try {
       const data = await confessionsAPI.react(confessionId, reactionType, 'add')
       
-      // Replace optimistic update with real data
+      // Reconcile with the server, but never let a stale (out-of-order)
+      // response visually DECREASE a count below what's already shown. Rapid
+      // taps fire multiple requests; responses can arrive out of order, so we
+      // keep the higher of local vs server for each reaction type.
       setConfessions(prev => prev.map(conf => {
         if (conf.id === confessionId) {
           const { _pendingReaction, ...rest } = conf
-          return { ...rest, reactions: data.reactions }
+          const merged = { ...rest.reactions }
+          if (data.reactions) {
+            for (const key of Object.keys(data.reactions)) {
+              merged[key] = Math.max(rest.reactions?.[key] || 0, data.reactions[key])
+            }
+          }
+          return { ...rest, reactions: merged }
         }
         return conf
       }))

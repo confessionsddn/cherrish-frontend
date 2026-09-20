@@ -34,8 +34,8 @@
 }
 
 .brand-logo {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700;
+  font-family: 'Dela Gothic One', cursive;
+  font-weight: 400; /* Dela Gothic One only ships one weight */
   font-size: 24px; /* Reduced size as requested */
   color: var(--ink);
   margin: 0;

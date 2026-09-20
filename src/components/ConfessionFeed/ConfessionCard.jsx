@@ -269,18 +269,15 @@ function ConfessionCard({
 
     triggerEmojiBurst(reactionType, centerX, centerY)
 
-    if (reactionDebounceRef.current[key]) {
-      clearTimeout(reactionDebounceRef.current[key])
-    }
-    
-    reactionDebounceRef.current[key] = setTimeout(() => {
-      onReaction(confession.id, reactionType, 'add')
-      delete reactionDebounceRef.current[key]
-    }, 200)
-    
-    setActiveReactions({ ...activeReactions, [reactionType]: true })
+    // Fire immediately on every tap — no debounce. The old 200ms debounce
+    // swallowed rapid taps (only the last one within a 200ms window fired),
+    // which made the count feel laggy and inconsistent. App.handleReaction
+    // applies an optimistic +1 instantly and reconciles with the server.
+    onReaction(confession.id, reactionType, 'add')
+
+    setActiveReactions(prev => ({ ...prev, [reactionType]: true }))
     setTimeout(() => {
-      setActiveReactions({ ...activeReactions, [reactionType]: false })
+      setActiveReactions(prev => ({ ...prev, [reactionType]: false }))
     }, 300)
   }
 
@@ -486,9 +483,12 @@ function ConfessionCard({
             ))}
           </div>
 
-          <button className="gift-action-btn" onClick={() => onGiftClick(confession.id)}>
-            <i className="fas fa-gift"></i> GIFT
-          </button>
+          {/* Can't gift your own confession — hide the button for the owner */}
+          {!isOwner && (
+            <button className="gift-action-btn" onClick={() => onGiftClick(confession.id)}>
+              <i className="fas fa-gift"></i> GIFT
+            </button>
+          )}
         </div>
 
         <RepliesSection 
