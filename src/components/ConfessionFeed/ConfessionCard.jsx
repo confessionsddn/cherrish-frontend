@@ -493,6 +493,7 @@ function ConfessionCard({
 
         <RepliesSection 
           confessionId={confession.id}
+          initialCount={confession.replies_count || 0}
           onCreditsUpdate={onCreditsUpdate}
         />
       </div>

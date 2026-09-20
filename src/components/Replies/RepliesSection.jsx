@@ -4,14 +4,17 @@ import { API_URL } from '../../services/api';
 
 const QUICK_EMOJIS = ['❤️', '😂', '🔥', '😍', '😭', '😮', '👏', '👀', '💯', '✨', '💀', '🤡']
 
-export default function RepliesSection({ confessionId, onCreditsUpdate }) {
+export default function RepliesSection({ confessionId, initialCount = 0, onCreditsUpdate }) {
   const [replies, setReplies] = useState([])
   const [loading, setLoading] = useState(false)
   const [showReplies, setShowReplies] = useState(false)
   const [replyText, setReplyText] = useState('')
   const [posting, setPosting] = useState(false)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  
+  // Comment count shown before/after loading. Starts from the confession's
+  // replies_count, then tracks the loaded list once replies are fetched.
+  const [commentCount, setCommentCount] = useState(initialCount)
+
   const feedRef = useRef(null)
 
   useEffect(() => {
@@ -34,7 +37,10 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       })
       const data = await response.json()
-      if (data.success) setReplies(data.replies)
+      if (data.success) {
+        setReplies(data.replies)
+        setCommentCount(data.replies.length)
+      }
     } catch (error) {
       console.error('Failed to load replies:', error)
     } finally {
@@ -72,6 +78,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
     }
 
     setReplies(prev => [...prev, optimisticReply])
+    setCommentCount(c => c + 1)
 
     // 2. BACKGROUND SYNC
     try {
@@ -94,6 +101,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
     } catch (error) {
       console.error('Failed to post reply:', error)
       setReplies(prev => prev.filter(r => r.id !== tempId))
+      setCommentCount(c => Math.max(c - 1, 0))
       setReplyText(content)
       alert('❌ Failed to post.')
     }
@@ -125,6 +133,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
     
     const previousReplies = [...replies]
     setReplies(replies.filter(r => r.id !== replyId))
+    setCommentCount(c => Math.max(c - 1, 0))
 
     try {
       const response = await fetch(`${API_URL}/api/replies/${replyId}`, {
@@ -134,6 +143,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
       if (!response.ok) throw new Error('Delete failed')
     } catch (error) {
       setReplies(previousReplies)
+      setCommentCount(c => c + 1)
     }
   }
 
@@ -178,7 +188,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
           
           <div className="replies-header-actions">
              <span className="comments-title">
-               Comments {replies.length > 0 ? `(${replies.length})` : ''}
+               Comments {commentCount > 0 ? `(${commentCount})` : ''}
              </span>
              <button className="hide-comments-btn" onClick={() => setShowReplies(false)}>
                Hide <i className="fas fa-chevron-up"></i>
@@ -206,16 +216,11 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
                     <div className="reply-text-content">
                       {reply.content}
                     </div>
-                    {!reply.isOptimistic && (
+                    {!reply.isOptimistic && reply.user_id === localStorage.getItem('user_id') && (
                       <div className="reply-footer-actions">
-                        {reply.likes_count > 0 && (
-                          <span className="reply-likes-count">{reply.likes_count} likes</span>
-                        )}
-                        {reply.user_id === localStorage.getItem('user_id') && (
-                          <button className="text-delete-btn" onClick={() => handleDeleteReply(reply.id)}>
-                            delete
-                          </button>
-                        )}
+                        <button className="text-delete-btn" onClick={() => handleDeleteReply(reply.id)}>
+                          delete
+                        </button>
                       </div>
                     )}
                   </div>
@@ -225,6 +230,9 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
                     disabled={reply.isOptimistic}
                   >
                     <i className={`fas fa-heart`}></i>
+                    {reply.likes_count > 0 && (
+                      <span className="heart-count">{reply.likes_count}</span>
+                    )}
                   </button>
                 </div>
               ))
@@ -264,7 +272,7 @@ export default function RepliesSection({ confessionId, onCreditsUpdate }) {
         <input
           type="text"
           className="clean-input"
-          placeholder="Add a comment..."
+          placeholder={commentCount > 0 ? `Add a comment... (${commentCount})` : 'Add a comment...'}
           value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
           onFocus={handleInputFocus}

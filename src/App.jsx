@@ -371,10 +371,11 @@ useEffect(() => {
       // Show error message
       if (error.message?.includes('Not enough credits')) {
         showNotification('❌ Not enough credits!', 'error')
-      } else if (error.message?.includes('10 TIMES PER MINUTE')) {
-        showNotification('⏰ Slow down! 10 reactions per minute limit.', 'error')
+      } else if (error.message?.includes('bruh') || error.message?.includes('minute')) {
+        // Rate-limit hit (20 reactions/min) — backend already sends the fun copy.
+        showNotification('wait a minute, bruh!🤣', 'error')
       } else {
-        showNotification('Failed to react', 'error')
+        showNotification('wait a minute, bruh!🤣', 'error')
       }
     }
   }, [showNotification])

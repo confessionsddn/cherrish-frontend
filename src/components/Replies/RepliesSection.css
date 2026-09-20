@@ -153,12 +153,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
   margin-top: 5px;
 }
 
 .small-heart-btn.liked {
   color: var(--pop-pink);
   animation: popHeart 0.3s;
+}
+
+/* Like count shown beside the heart icon (replaces the '1 likes' text). */
+.heart-count {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #888;
+}
+
+.small-heart-btn.liked .heart-count {
+  color: var(--pop-pink);
 }
 
 @keyframes popHeart {
