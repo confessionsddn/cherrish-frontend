@@ -1,5 +1,11 @@
-// Cherrish PWA Service Worker
-const CACHE_NAME = 'cherrish-v2';
+// Cherrish combined Service Worker
+// IMPORTANT: OneSignal's push handling and this PWA cache must live in ONE
+// service worker at the root scope. Two separate workers registered at "/"
+// overwrite each other, which silently breaks OneSignal push subscriptions.
+// So we import the OneSignal SDK worker here and add our caching below.
+importScripts('/OneSignalSDKWorker.js');
+
+const CACHE_NAME = 'cherrish-v3';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -40,7 +46,10 @@ self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('/api/')) return;
   if (event.request.url.includes('socket.io')) return;
 
-  // Skip external/CDN requests (OneSignal, fonts, analytics, etc.)
+  // Skip OneSignal's own requests and SDK assets — let the SDK handle them
+  if (event.request.url.includes('onesignal') || event.request.url.includes('OneSignal')) return;
+
+  // Skip external/CDN requests (fonts, analytics, etc.)
   if (url.origin !== self.location.origin) return;
 
   // Skip video/audio files (they use range requests which return 206)

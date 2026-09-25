@@ -19,6 +19,7 @@ import PremiumSubscriptionModal from './components/Modals/PremiumSubscriptionMod
 import ChangeUsernameModal from './components/Modals/ChangeUsernameModal'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
 import PWAInstallPrompt from './components/PWAInstallPrompt/PWAInstallPrompt'
+import IOSInstallPrompt from './components/PWAInstallPrompt/IOSInstallPrompt'
 import ITMVotesBanner from './components/ITMVotesBanner/ITMVotesBanner'
 import { initOneSignal, unregisterOneSignal } from './services/oneSignalInit'
 // Community Pages
@@ -787,6 +788,7 @@ useEffect(() => {
         />
       )}
       <PWAInstallPrompt /> 
+      <IOSInstallPrompt />
     </>
         
           </ThemeProvider>

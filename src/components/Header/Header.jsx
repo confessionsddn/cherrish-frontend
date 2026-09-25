@@ -5,6 +5,7 @@ import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
 import ThemeSelectorModal from '../Modals/ThemeSelectorModal';
 import NotificationBell from '../NotificationBell/NotificationBell';
 import { API_URL } from '../../services/api';
+import { canInstallOnIOS, triggerIOSInstallPrompt } from '../../services/iosInstall';
 
 export default function Header({
   credits,
@@ -186,6 +187,17 @@ export default function Header({
               {!user.username_changed && (
                 <button onClick={() => { toggleMobileMenu(); setShowUsernameModal(true); }} className="drawer-item">
                   CHANGE USERNAME
+                </button>
+              )}
+
+              {/* iOS-only: re-trigger the Add-to-Home-Screen guide so users who
+                  dismissed it (and never installed) can enable push again. */}
+              {canInstallOnIOS() && (
+                <button
+                  onClick={() => { toggleMobileMenu(); triggerIOSInstallPrompt(); }}
+                  className="drawer-item"
+                >
+                  ENABLE NOTIFICATIONS <i className="fas fa-bell"></i>
                 </button>
               )}
 
