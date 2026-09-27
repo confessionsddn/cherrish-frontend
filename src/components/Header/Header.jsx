@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import './Header.css';
 import ChangeUsernameModal from '../Modals/ChangeUsernameModal';
 import ThemeSelectorModal from '../Modals/ThemeSelectorModal';
+import NotificationSettingsModal from '../Modals/NotificationSettingsModal';
 import NotificationBell from '../NotificationBell/NotificationBell';
 import { API_URL } from '../../services/api';
 import { canInstallOnIOS, triggerIOSInstallPrompt } from '../../services/iosInstall';
@@ -17,6 +18,7 @@ export default function Header({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [showThemeModal, setShowThemeModal] = useState(false);
+  const [showNotifSettings, setShowNotifSettings] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
   const handleLogout = () => {
@@ -121,6 +123,14 @@ export default function Header({
               >
                 🎨
               </button>
+
+              <button
+                className="neo-btn icon-btn"
+                onClick={() => setShowNotifSettings(true)}
+                title="Notification settings"
+              >
+                🔔
+              </button>
               
               <button className="neo-btn logout-desktop" onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt"></i>
@@ -190,6 +200,13 @@ export default function Header({
                 </button>
               )}
 
+              <button
+                onClick={() => { toggleMobileMenu(); setShowNotifSettings(true); }}
+                className="drawer-item"
+              >
+                NOTIFICATION SETTINGS <i className="fas fa-bell"></i>
+              </button>
+
               {/* iOS-only: re-trigger the Add-to-Home-Screen guide so users who
                   dismissed it (and never installed) can enable push again. */}
               {canInstallOnIOS() && (
@@ -232,6 +249,13 @@ export default function Header({
         <ThemeSelectorModal
           onClose={() => setShowThemeModal(false)}
           user={user}
+        />
+      )}
+
+      {/* Notification Settings Modal */}
+      {showNotifSettings && (
+        <NotificationSettingsModal
+          onClose={() => setShowNotifSettings(false)}
         />
       )}
     </>

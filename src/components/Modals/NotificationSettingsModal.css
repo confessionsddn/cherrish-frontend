@@ -1,0 +1,226 @@
+/* frontend/src/components/Modals/NotificationSettingsModal.css */
+
+.notif-settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+  animation: notifFade 0.2s ease;
+}
+
+@keyframes notifFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.notif-settings-modal {
+  background: #ffffff;
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  width: 100%;
+  max-width: 460px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 24px;
+  position: relative;
+}
+
+[data-theme="dark"] .notif-settings-modal {
+  background: #1a1a1a;
+  border-color: #ff69b4;
+  box-shadow: 8px 8px 0 #ff69b4;
+  color: #fff;
+}
+
+.notif-settings-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border: 3px solid #000;
+  background: #ff5722;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: 'Dela Gothic One', sans-serif;
+}
+
+[data-theme="dark"] .notif-settings-close {
+  border-color: #ff69b4;
+}
+
+.notif-settings-title {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 1.4rem;
+  margin: 0 0 4px;
+  color: #000;
+}
+
+[data-theme="dark"] .notif-settings-title {
+  color: #fff;
+}
+
+.notif-settings-subtitle {
+  font-size: 0.88rem;
+  color: #666;
+  margin: 0 0 18px;
+}
+
+[data-theme="dark"] .notif-settings-subtitle {
+  color: #bbb;
+}
+
+.notif-settings-loading {
+  text-align: center;
+  padding: 30px 0;
+  color: #888;
+  font-weight: 700;
+}
+
+.notif-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.notif-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 2px dashed #e5e5e5;
+}
+
+.notif-settings-row:last-child {
+  border-bottom: none;
+}
+
+[data-theme="dark"] .notif-settings-row {
+  border-bottom-color: #333;
+}
+
+.notif-settings-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.notif-settings-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.notif-settings-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.notif-settings-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #000;
+}
+
+[data-theme="dark"] .notif-settings-label {
+  color: #fff;
+}
+
+.notif-settings-desc {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+[data-theme="dark"] .notif-settings-desc {
+  color: #aaa;
+}
+
+/* Toggle switch */
+.notif-toggle {
+  flex-shrink: 0;
+  width: 52px;
+  height: 30px;
+  border: 3px solid #000;
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  padding: 0;
+}
+
+.notif-toggle.on {
+  background: #4caf50;
+}
+
+.notif-toggle.off {
+  background: #ccc;
+}
+
+[data-theme="dark"] .notif-toggle {
+  border-color: #ff69b4;
+}
+
+[data-theme="dark"] .notif-toggle.off {
+  background: #444;
+}
+
+.notif-toggle-knob {
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 50%;
+  transition: left 0.15s ease;
+}
+
+.notif-toggle.on .notif-toggle-knob {
+  left: 25px;
+}
+
+.notif-settings-error {
+  color: #e53935;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 10px;
+}
+
+.notif-settings-save {
+  width: 100%;
+  padding: 14px;
+  background: #ff69b4;
+  border: 3px solid #000;
+  color: #fff;
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  transition: all 0.1s;
+}
+
+.notif-settings-save:hover:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #000;
+}
+
+.notif-settings-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .notif-settings-save {
+  border-color: #ff69b4;
+  box-shadow: 4px 4px 0 #ff69b4;
+}

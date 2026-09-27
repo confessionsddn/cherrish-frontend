@@ -21,8 +21,12 @@ export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const dropdownRef = useRef(null);
   const socketRef = useRef(null);
+
+  const PAGE_SIZE = 20;
 
   // Fetch unread count on mount
   useEffect(() => {
@@ -78,15 +82,43 @@ export default function NotificationBell() {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/notifications/?limit=50`, {
+      const res = await fetch(`${API_URL}/api/notifications/?limit=${PAGE_SIZE}&offset=0`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
       const data = await res.json();
-      if (data.success) setNotifications(data.notifications);
+      if (data.success) {
+        setNotifications(data.notifications);
+        setHasMore(data.notifications.length === PAGE_SIZE);
+      }
     } catch (e) {
       console.error('Failed to fetch notifications:', e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await fetch(
+        `${API_URL}/api/notifications/?limit=${PAGE_SIZE}&offset=${notifications.length}`,
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` } }
+      );
+      const data = await res.json();
+      if (data.success) {
+        // De-dup against any live socket inserts that may overlap the page.
+        setNotifications(prev => {
+          const seen = new Set(prev.map(n => n.id));
+          const fresh = data.notifications.filter(n => !seen.has(n.id));
+          return [...prev, ...fresh];
+        });
+        setHasMore(data.notifications.length === PAGE_SIZE);
+      }
+    } catch (e) {
+      console.error('Failed to load more notifications:', e);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -110,7 +142,45 @@ export default function NotificationBell() {
     }
   };
 
+  const markOneRead = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/api/notifications/${id}/read`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+      const data = await res.json();
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+      if (data.success && typeof data.unread_count === 'number') {
+        setUnreadCount(data.unread_count);
+      }
+    } catch (e) {
+      console.error('Failed to mark notification read:', e);
+    }
+  };
+
+  const deleteOne = async (id) => {
+    // Optimistic removal for snappy UX; reconcile count from server response.
+    const prevList = notifications;
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    try {
+      const res = await fetch(`${API_URL}/api/notifications/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+      const data = await res.json();
+      if (data.success && typeof data.unread_count === 'number') {
+        setUnreadCount(data.unread_count);
+      } else if (!res.ok) {
+        setNotifications(prevList); // rollback on failure
+      }
+    } catch (e) {
+      console.error('Failed to delete notification:', e);
+      setNotifications(prevList); // rollback on failure
+    }
+  };
+
   const handleNotifClick = (notif) => {
+    if (!notif.is_read) markOneRead(notif.id);
     const url = notif.data?.url;
     if (url) window.location.href = url;
     setIsOpen(false);
@@ -166,8 +236,22 @@ export default function NotificationBell() {
                     <span className="notif-message">{n.message}</span>
                   </div>
                   <span className="notif-time">{timeAgo(n.created_at)}</span>
+                  <button
+                    className="notif-dismiss"
+                    aria-label="Delete notification"
+                    title="Delete"
+                    onClick={(e) => { e.stopPropagation(); deleteOne(n.id); }}
+                  >
+                    ✕
+                  </button>
                 </div>
               ))
+            )}
+
+            {!loading && hasMore && (
+              <button className="notif-load-more" onClick={loadMore} disabled={loadingMore}>
+                {loadingMore ? 'Loading…' : 'Load more'}
+              </button>
             )}
           </div>
         </div>
