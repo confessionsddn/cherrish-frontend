@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { API_URL } from '../../services/api';
 import { io } from 'socket.io-client';
+import { playNotifFeedback, isNotifMuted, setNotifMuted } from '../../services/notifFeedback';
 import './NotificationBell.css';
 
 const NOTIF_ICONS = {
@@ -23,8 +24,11 @@ export default function NotificationBell() {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
+  const [toast, setToast] = useState(null); // { title, message } | null
+  const [muted, setMuted] = useState(isNotifMuted());
   const dropdownRef = useRef(null);
   const socketRef = useRef(null);
+  const toastTimerRef = useRef(null);
 
   const PAGE_SIZE = 20;
 
@@ -47,6 +51,13 @@ export default function NotificationBell() {
     socket.on('new_notification', (notif) => {
       setUnreadCount(prev => prev + 1);
       setNotifications(prev => [notif, ...prev].slice(0, 50));
+
+      // In-app feedback: sound + vibration (respects mute), and a transient
+      // toast so the user sees it without opening the dropdown.
+      playNotifFeedback();
+      setToast({ title: notif.title, message: notif.message, data: notif.data });
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = setTimeout(() => setToast(null), 5000);
     });
 
     socket.on('notification_count', ({ unread_count }) => {
@@ -55,8 +66,21 @@ export default function NotificationBell() {
 
     return () => {
       socket.disconnect();
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     };
   }, []);
+
+  const handleToastClick = () => {
+    const url = toast?.data?.url;
+    setToast(null);
+    if (url) window.location.href = url;
+  };
+
+  const toggleMute = () => {
+    const next = !muted;
+    setMuted(next);
+    setNotifMuted(next);
+  };
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -206,13 +230,40 @@ export default function NotificationBell() {
         )}
       </button>
 
+      {toast && (
+        <div className="notif-toast" onClick={handleToastClick} role="alert">
+          <span className="notif-toast-icon">{NOTIF_ICONS[toast.data?.type] || '🔔'}</span>
+          <div className="notif-toast-body">
+            <span className="notif-toast-title">{toast.title}</span>
+            <span className="notif-toast-message">{toast.message}</span>
+          </div>
+          <button
+            className="notif-toast-close"
+            aria-label="Dismiss"
+            onClick={(e) => { e.stopPropagation(); setToast(null); }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {isOpen && (
         <div className="notif-dropdown">
           <div className="notif-dropdown-header">
             <span>NOTIFICATIONS</span>
-            {unreadCount > 0 && (
-              <button className="notif-mark-read" onClick={markAllRead}>Mark all read</button>
-            )}
+            <div className="notif-header-actions">
+              <button
+                className="notif-mute-btn"
+                onClick={toggleMute}
+                title={muted ? 'Unmute sound' : 'Mute sound'}
+                aria-label={muted ? 'Unmute notification sound' : 'Mute notification sound'}
+              >
+                <i className={`fas ${muted ? 'fa-volume-mute' : 'fa-volume-up'}`}></i>
+              </button>
+              {unreadCount > 0 && (
+                <button className="notif-mark-read" onClick={markAllRead}>Mark all read</button>
+              )}
+            </div>
           </div>
 
           <div className="notif-dropdown-list">

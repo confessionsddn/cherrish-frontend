@@ -22,6 +22,7 @@ import PWAInstallPrompt from './components/PWAInstallPrompt/PWAInstallPrompt'
 import IOSInstallPrompt from './components/PWAInstallPrompt/IOSInstallPrompt'
 import ITMVotesBanner from './components/ITMVotesBanner/ITMVotesBanner'
 import { initOneSignal, unregisterOneSignal } from './services/oneSignalInit'
+import { getTargetConfessionId, clearConfessionParam, scrollToConfession } from './services/deepLink'
 // Community Pages
 import CommunityPage from './pages/CommunityPage'
 import GiftsPage from './pages/GiftsPage'
@@ -465,6 +466,28 @@ useEffect(() => {
       loadConfessions()
     }
   }, [currentFilter, isAuthenticated, sortBy, currentPath])
+
+  // Deep-link: when arriving via a notification (/?confession=<id>), scroll to
+  // and highlight that confession once the feed has rendered. Retries briefly
+  // in case the card mounts a tick after confessions state updates.
+  useEffect(() => {
+    if (currentPath !== '/' || confessions.length === 0) return
+    const targetId = getTargetConfessionId()
+    if (!targetId) return
+
+    let attempts = 0
+    const tryScroll = () => {
+      attempts += 1
+      if (scrollToConfession(targetId) || attempts >= 10) {
+        clearConfessionParam()
+        return
+      }
+      setTimeout(tryScroll, 300)
+    }
+    // Defer one frame so the DOM has the card ids.
+    const t = setTimeout(tryScroll, 100)
+    return () => clearTimeout(t)
+  }, [confessions, currentPath])
 
   // Apply theme
 

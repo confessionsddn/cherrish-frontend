@@ -298,6 +298,7 @@ function ConfessionCard({
   return (
     <div 
       ref={cardRef}
+      id={`confession-${confession.id}`}
       className={`confession-card ${isSpotlightActive ? 'spotlight-active' : ''} ${confession.premium ? 'premium' : ''} ${confession.author_theme ? `theme-${confession.author_theme}` : ''} typing-animation`}
     >
       {/* Spotlight Badge */}
