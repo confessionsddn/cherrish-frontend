@@ -468,25 +468,52 @@ useEffect(() => {
   }, [currentFilter, isAuthenticated, sortBy, currentPath])
 
   // Deep-link: when arriving via a notification (/?confession=<id>), scroll to
-  // and highlight that confession once the feed has rendered. Retries briefly
-  // in case the card mounts a tick after confessions state updates.
+  // and highlight that confession. If it isn't in the loaded feed page, fetch
+  // it by id and inject it at the top so the link always lands. Runs once the
+  // feed has loaded; guarded so it only acts on a real target.
   useEffect(() => {
     if (currentPath !== '/' || confessions.length === 0) return
     const targetId = getTargetConfessionId()
     if (!targetId) return
 
-    let attempts = 0
-    const tryScroll = () => {
-      attempts += 1
-      if (scrollToConfession(targetId) || attempts >= 10) {
-        clearConfessionParam()
-        return
+    let cancelled = false
+
+    const scrollWithRetry = () => {
+      let attempts = 0
+      const tick = () => {
+        if (cancelled) return
+        attempts += 1
+        if (scrollToConfession(targetId) || attempts >= 10) {
+          clearConfessionParam()
+          return
+        }
+        setTimeout(tick, 300)
       }
-      setTimeout(tryScroll, 300)
+      setTimeout(tick, 100)
     }
-    // Defer one frame so the DOM has the card ids.
-    const t = setTimeout(tryScroll, 100)
-    return () => clearTimeout(t)
+
+    const present = confessions.some(c => String(c.id) === String(targetId))
+    if (present) {
+      scrollWithRetry()
+    } else {
+      // Not on this page — fetch the single confession and inject it.
+      confessionsAPI.getById(targetId)
+        .then(data => {
+          if (cancelled || !data?.confession) {
+            clearConfessionParam()
+            return
+          }
+          setConfessions(prev =>
+            prev.some(c => String(c.id) === String(data.confession.id))
+              ? prev
+              : [data.confession, ...prev]
+          )
+          scrollWithRetry()
+        })
+        .catch(() => { if (!cancelled) clearConfessionParam() })
+    }
+
+    return () => { cancelled = true }
   }, [confessions, currentPath])
 
   // Apply theme

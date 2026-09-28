@@ -70,6 +70,16 @@ export const confessionsAPI = {
     return response.json();
   },
 
+  async getById(id) {
+    const response = await fetch(`${API_URL}/api/confessions/${id}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch confession');
+    }
+    return response.json();
+  },
+
   async create(confession) {
     const formData = new FormData();
     formData.append('content', confession.content);
